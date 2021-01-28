@@ -5,7 +5,8 @@ const app = express();
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
-const session = require("express-session");
+const session = require('express-session')
+const MemoryStore = require('memorystore')(session)
 
 const {
     registerRouter,
@@ -33,13 +34,13 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(
   session({
-    key: "userId",
-    secret: "subscribe",
+    cookie: { maxAge: 86400000 },
+    store: new MemoryStore({
+      checkPeriod: 86400000 // prune expired entries every 24h
+    }),
     resave: false,
-    saveUninitialized: false,
-    cookie: {
-      expires: 60 * 60 * 24,
-    },
+    secret: 'keyboard cat',
+    saveUninitialized: false
   })
 );
 
