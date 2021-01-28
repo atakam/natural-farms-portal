@@ -1,7 +1,8 @@
 const express = require("express");
+const path = require('path');
 const app = express();
 
-const cors = require("cors");
+//const cors = require("cors");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const session = require("express-session");
@@ -17,14 +18,16 @@ const {
   ordersByUserRouter
 } = require('./api/orders');
 
-app.use(express.json());
-app.use(
-  cors({
-    origin: ["http://localhost:3000"],
-    methods: ["GET", "POST"],
-    credentials: true,
-  })
-);
+// app.use(express.json());
+// app.use(
+//   cors({
+//     origin: ["http://localhost:3000"],
+//     methods: ["GET", "POST"],
+//     credentials: true,
+//   })
+// );
+app.use(express.static(path.join(__dirname, '../client/build')));
+
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }));
 
