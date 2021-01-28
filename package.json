@@ -12,6 +12,7 @@
       "configure": "./bin/configure_db.sh",
       "build": "cd client && npm install && npm run build"
     },
+    "heroku-run-build-script": true,
     "author": "",
     "license": "ISC",
     "dependencies": {
