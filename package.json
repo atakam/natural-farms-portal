@@ -4,7 +4,13 @@
     "description": "",
     "main": "index.js",
     "scripts": {
-      "test": "echo \"Error: no test specified\" && exit 1"
+      "start": "node ./server",
+      "server": "nodemon ./server",
+      "test": "npm -v",
+      "client": "cd client && npm install && npm start",
+      "configure-dev": "npm run configure && npm run dev",
+      "configure": "./bin/configure_db.sh",
+      "heroku-postbuild": "cd client && npm install && npm run build"
     },
     "author": "",
     "license": "ISC",
