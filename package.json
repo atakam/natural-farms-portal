@@ -10,7 +10,7 @@
       "client": "cd client && npm install && npm start",
       "configure-dev": "npm run configure && npm run dev",
       "configure": "./bin/configure_db.sh",
-      "heroku-postbuild": "cd client && npm install && npm run build"
+      "build": "cd client && npm install && npm run build"
     },
     "author": "",
     "license": "ISC",
