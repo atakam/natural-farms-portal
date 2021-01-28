@@ -13,6 +13,10 @@ const {
     logoutRouter
 } = require('./api/credentials');
 
+const {
+  ordersByUserRouter
+} = require('./api/orders');
+
 app.use(express.json());
 app.use(
   cors({
@@ -43,5 +47,7 @@ app.get("/login", loginGetRouter);
 app.get("/logout", logoutRouter);
 
 app.post("/login", loginPostRouter);
+
+app.get("/orders/:id", ordersByUserRouter);
 
 module.exports = app;

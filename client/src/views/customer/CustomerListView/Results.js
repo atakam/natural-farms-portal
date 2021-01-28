@@ -6,6 +6,7 @@ import PerfectScrollbar from 'react-perfect-scrollbar';
 import {
   Avatar,
   Box,
+  IconButton,
   Card,
   Checkbox,
   Table,
@@ -14,10 +15,15 @@ import {
   TableHead,
   TablePagination,
   TableRow,
+  Tooltip,
   Typography,
   makeStyles
 } from '@material-ui/core';
 import getInitials from 'src/utils/getInitials';
+import DescriptionIcon from '@material-ui/icons/Description';
+import InsertDriveFileIcon from '@material-ui/icons/InsertDriveFile';
+import GetAppIcon from '@material-ui/icons/GetApp';
+import EditIcon from '@material-ui/icons/Edit';
 
 const useStyles = makeStyles((theme) => ({
   root: {},
@@ -26,7 +32,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const Results = ({ className, customers, ...rest }) => {
+const Results = ({ className, results, ...rest }) => {
   const classes = useStyles();
   const [selectedCustomerIds, setSelectedCustomerIds] = useState([]);
   const [limit, setLimit] = useState(10);
@@ -36,7 +42,7 @@ const Results = ({ className, customers, ...rest }) => {
     let newSelectedCustomerIds;
 
     if (event.target.checked) {
-      newSelectedCustomerIds = customers.map((customer) => customer.id);
+      newSelectedCustomerIds = results.map((customer) => customer.formid);
     } else {
       newSelectedCustomerIds = [];
     }
@@ -72,6 +78,31 @@ const Results = ({ className, customers, ...rest }) => {
     setPage(newPage);
   };
 
+  const delivery = (customer) => {
+    if (customer.deliver1 === 0) return moment(customer.conditions_firstdeliverydate).format('DD/MM/YYYY') + " (1st)";
+    else if (customer.deliver2 === 0) return moment(customer.conditions_seconddeliverydate).format('DD/MM/YYYY') + " (2nd)";
+    else if (customer.deliver3 === 0) return moment(customer.conditions_thirddeliverydate).format('DD/MM/YYYY') + " (3rd)";
+    else return "No Delivery";
+  };
+
+  const openInNewTab = (url) => {
+    var win = window.open(url, '_blank');
+    win.focus();
+  }
+
+  const goToView = ({formid, userid}) => {
+    openInNewTab(`https://www.portal.naturalfarms.ca/order/contract.php?id=${formid}&uid=${userid}&edited=yes`);
+  };
+  const goToOriginal = ({formid, userid}) => {
+    openInNewTab(`https://www.portal.naturalfarms.ca/order/contract.php?id=${formid}&uid=${userid}&edited=yes`);
+  };
+  const goToDownload = ({formid, userid}) => {
+    openInNewTab(`https://www.portal.naturalfarms.ca/order/contracts/NFCT_${formid}.pdf`);
+  };
+  const goToModify = ({formid, userid}) => {
+    openInNewTab(`https://www.portal.naturalfarms.ca/order/edit.php?id=${formid}&edit=yes&uid=${userid}`);
+  };
+
   return (
     <Card
       className={clsx(classes.root, className)}
@@ -84,43 +115,49 @@ const Results = ({ className, customers, ...rest }) => {
               <TableRow>
                 <TableCell padding="checkbox">
                   <Checkbox
-                    checked={selectedCustomerIds.length === customers.length}
+                    checked={selectedCustomerIds.length > 0 && selectedCustomerIds.length === results.length}
                     color="primary"
                     indeterminate={
                       selectedCustomerIds.length > 0
-                      && selectedCustomerIds.length < customers.length
+                      && selectedCustomerIds.length < results.length
                     }
                     onChange={handleSelectAll}
                   />
                 </TableCell>
                 <TableCell>
-                  Name
+                  Order Date
                 </TableCell>
                 <TableCell>
-                  Email
+                  Points
                 </TableCell>
                 <TableCell>
-                  Location
+                  Price
                 </TableCell>
                 <TableCell>
-                  Phone
+                  Next Delivery
                 </TableCell>
                 <TableCell>
-                  Registration date
+                  Sales Rep
+                </TableCell>
+                <TableCell>
+                  Status
+                </TableCell>
+                <TableCell>
+                  Actions
                 </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {customers.slice(0, limit).map((customer) => (
+              {results.slice(0, limit).map((customer) => (
                 <TableRow
                   hover
-                  key={customer.id}
-                  selected={selectedCustomerIds.indexOf(customer.id) !== -1}
+                  key={customer.formid}
+                  selected={selectedCustomerIds.indexOf(customer.formid) !== -1}
                 >
                   <TableCell padding="checkbox">
                     <Checkbox
-                      checked={selectedCustomerIds.indexOf(customer.id) !== -1}
-                      onChange={(event) => handleSelectOne(event, customer.id)}
+                      checked={selectedCustomerIds.indexOf(customer.formid) !== -1}
+                      onChange={(event) => handleSelectOne(event, customer.formid)}
                       value="true"
                     />
                   </TableCell>
@@ -129,31 +166,78 @@ const Results = ({ className, customers, ...rest }) => {
                       alignItems="center"
                       display="flex"
                     >
-                      <Avatar
-                        className={classes.avatar}
-                        src={customer.avatarUrl}
-                      >
-                        {getInitials(customer.name)}
-                      </Avatar>
                       <Typography
                         color="textPrimary"
                         variant="body1"
                       >
-                        {customer.name}
+                        {moment(customer.signature_date).format('DD/MM/YYYY')}
                       </Typography>
                     </Box>
                   </TableCell>
                   <TableCell>
-                    {customer.email}
+                    {customer.total_points}
                   </TableCell>
                   <TableCell>
-                    {`${customer.address.city}, ${customer.address.state}, ${customer.address.country}`}
+                    {customer.price}
                   </TableCell>
                   <TableCell>
-                    {customer.phone}
+                    {delivery(customer)}
                   </TableCell>
                   <TableCell>
-                    {moment(customer.createdAt).format('DD/MM/YYYY')}
+                    {customer.repName}
+                  </TableCell>
+                  <TableCell>
+                    {
+                    customer.status === 1 ?
+                    <Typography color="textSecondary">Completed</Typography> :
+                    <Typography color="error">Pending</Typography>
+                    }
+                  </TableCell>
+                  <TableCell>
+                    <Tooltip title="View Contract">
+                      <IconButton
+                        color="primary"
+                        fullWidth
+                        size="large"
+                        variant="contained"
+                        onClick={() => goToView({formid: customer.formid, userid: customer.customer_id})}
+                      >
+                        <DescriptionIcon />
+                      </IconButton>
+                    </Tooltip>
+                    <Tooltip title="View Original">
+                      <IconButton
+                        color="primary"
+                        fullWidth
+                        size="large"
+                        variant="contained"
+                        onClick={() => goToOriginal({formid: customer.formid, userid: customer.customer_id})}
+                      >
+                        <InsertDriveFileIcon />
+                      </IconButton>
+                    </Tooltip>
+                    <Tooltip title="Download">
+                      <IconButton
+                        color="primary"
+                        fullWidth
+                        size="large"
+                        variant="contained"
+                        onClick={() => goToDownload({formid: customer.formid, userid: customer.customer_id})}
+                      >
+                        <GetAppIcon />
+                      </IconButton>
+                    </Tooltip>
+                    <Tooltip title="Modify Order">
+                      <IconButton
+                        color="primary"
+                        fullWidth
+                        size="large"
+                        variant="contained"
+                        onClick={() => goToModify({formid: customer.formid, userid: customer.customer_id})}
+                      >
+                        <EditIcon /> 
+                      </IconButton>
+                    </Tooltip>
                   </TableCell>
                 </TableRow>
               ))}
@@ -163,7 +247,7 @@ const Results = ({ className, customers, ...rest }) => {
       </PerfectScrollbar>
       <TablePagination
         component="div"
-        count={customers.length}
+        count={results.length}
         onChangePage={handlePageChange}
         onChangeRowsPerPage={handleLimitChange}
         page={page}
@@ -176,7 +260,7 @@ const Results = ({ className, customers, ...rest }) => {
 
 Results.propTypes = {
   className: PropTypes.string,
-  customers: PropTypes.array.isRequired
+  results: PropTypes.array.isRequired
 };
 
 export default Results;

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import {
   Box,
   Container,
@@ -7,7 +7,7 @@ import {
 import Page from 'src/components/Page';
 import Results from './Results';
 import Toolbar from './Toolbar';
-import data from './data';
+import AppContext from "../../../components/AppContext";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -18,9 +18,26 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
+const getOrders = async (id, setResults) => {
+  const response = await fetch('/orders/' + id, {
+    headers: {
+      'Content-Type': 'application/json',
+    }
+  });
+  const body = await response.text();
+  const result = JSON.parse(body);
+  console.log("results", JSON.parse(body));
+  setResults(result);
+};
+
 const CustomerListView = () => {
   const classes = useStyles();
-  const [customers] = useState(data);
+  const [results, setResults] = useState([]);
+  const context = useContext(AppContext);
+
+  useEffect(() => {
+    getOrders(context.credentials.user.id, setResults);
+  }, []);
 
   return (
     <Page
@@ -30,7 +47,7 @@ const CustomerListView = () => {
       <Container maxWidth={false}>
         <Toolbar />
         <Box mt={3}>
-          <Results customers={customers} />
+          <Results results={results} />
         </Box>
       </Container>
     </Page>
