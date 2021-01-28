@@ -1,0 +1,3 @@
+.halfWidth {
+    width: calc(50% - 10px);
+}
