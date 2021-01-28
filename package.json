@@ -1,26 +1,55 @@
 {
-    "name": "natural-farms-portal",
-    "version": "1.0.0",
-    "description": "",
-    "main": "index.js",
-    "scripts": {
-      "start": "node ./server",
-      "server": "nodemon ./server",
-      "test": "npm -v",
-      "client": "cd client && npm install && npm start",
-      "configure-dev": "npm run configure && npm run dev",
-      "configure": "./bin/configure_db.sh",
-      "heroku-postbuild": "cd client && npm install && npm run build"
-    },
-    "author": "",
-    "license": "ISC",
-    "dependencies": {
-      "bcrypt": "^5.0.0",
-      "body-parser": "^1.19.0",
-      "cookie-parser": "^1.4.5",
-      "cors": "^2.8.5",
-      "express": "^4.17.1",
-      "express-session": "^1.17.1",
-      "mysql": "^2.18.1"
-    }
+  "name": "react-material-dashboard",
+  "author": "DeviasIO",
+  "licence": "MIT",
+  "version": "1.0.0",
+  "private": false,
+  "scripts": {
+    "start-client": "react-scripts start",
+    "build": "react-scripts build && (cd server && npm install)",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "start": "cd server && npm start"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "dependencies": {
+    "@material-ui/core": "^4.11.0",
+    "@material-ui/icons": "^4.9.1",
+    "@material-ui/lab": "^4.0.0-alpha.56",
+    "@material-ui/styles": "^4.10.0",
+    "axios": "^0.21.1",
+    "chart.js": "^2.9.4",
+    "clsx": "^1.1.1",
+    "formik": "^2.1.5",
+    "history": "^5.0.0",
+    "lodash": "^4.17.19",
+    "moment": "^2.27.0",
+    "nprogress": "^0.2.0",
+    "prop-types": "^15.7.2",
+    "react": "^16.13.1",
+    "react-chartjs-2": "^2.10.0",
+    "react-dom": "^16.13.1",
+    "react-feather": "^2.0.8",
+    "react-helmet": "^6.1.0",
+    "react-perfect-scrollbar": "^1.5.8",
+    "react-router": "^6.0.0-beta.0",
+    "react-router-dom": "^6.0.0-beta.0",
+    "react-scripts": "^4.0.0",
+    "uuid": "^8.3.0",
+    "yup": "^0.29.3"
+  },
+  "devDependencies": {
+    "prettier": "^1.19.1"
   }
+}

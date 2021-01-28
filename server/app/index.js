@@ -1,6 +1,7 @@
 const express = require("express");
 const app = express();
 
+const path = require('path');
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
@@ -17,14 +18,10 @@ const {
   ordersByUserRouter
 } = require('./api/orders');
 
-app.use(express.json());
-app.use(
-  cors({
-    origin: ["http://localhost:3000"],
-    methods: ["GET", "POST"],
-    credentials: true,
-  })
-);
+const buildPath = path.join(__dirname, '..', 'build');
+app.use(express.static(buildPath));
+app.use(cors());
+
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }));
 
