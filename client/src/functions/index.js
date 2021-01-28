@@ -26,4 +26,15 @@ const register = (entries, role, callback) => {
     });
 };
 
-export { signin, register, logout };
+const updateUser = ({entries, id}) => {
+  return Axios.post("/user/" + id, entries).then((response) => {
+    console.log(response);
+  });
+}
+
+export {
+  signin,
+  register,
+  logout,
+  updateUser
+};

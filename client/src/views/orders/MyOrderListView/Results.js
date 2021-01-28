@@ -197,8 +197,7 @@ const Results = ({ className, results, ...rest }) => {
                     <Tooltip title="View Contract">
                       <IconButton
                         color="primary"
-                        fullWidth
-                        size="large"
+                        size="medium"
                         variant="contained"
                         onClick={() => goToView({formid: customer.formid, userid: customer.customer_id})}
                       >
@@ -208,8 +207,7 @@ const Results = ({ className, results, ...rest }) => {
                     <Tooltip title="View Original">
                       <IconButton
                         color="primary"
-                        fullWidth
-                        size="large"
+                        size="medium"
                         variant="contained"
                         onClick={() => goToOriginal({formid: customer.formid, userid: customer.customer_id})}
                       >
@@ -219,8 +217,7 @@ const Results = ({ className, results, ...rest }) => {
                     <Tooltip title="Download">
                       <IconButton
                         color="primary"
-                        fullWidth
-                        size="large"
+                        size="medium"
                         variant="contained"
                         onClick={() => goToDownload({formid: customer.formid, userid: customer.customer_id})}
                       >
@@ -230,8 +227,7 @@ const Results = ({ className, results, ...rest }) => {
                     <Tooltip title="Modify Order">
                       <IconButton
                         color="primary"
-                        fullWidth
-                        size="large"
+                        size="medium"
                         variant="contained"
                         onClick={() => goToModify({formid: customer.formid, userid: customer.customer_id})}
                       >

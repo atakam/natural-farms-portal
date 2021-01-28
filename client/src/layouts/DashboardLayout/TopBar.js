@@ -15,7 +15,7 @@ import MenuIcon from '@material-ui/icons/Menu';
 import NotificationsIcon from '@material-ui/icons/NotificationsOutlined';
 import InputIcon from '@material-ui/icons/Input';
 import Logo from 'src/components/Logo';
-import { logout } from '../../functions/authentication';
+import { logout } from '../../functions/index';
 import AppContext from "../../components/AppContext";
 
 const useStyles = makeStyles(() => ({

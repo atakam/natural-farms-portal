@@ -36,7 +36,11 @@ class Password extends Component {
             className={this.props.fullWidth ? '' : "halfWidth"}
             fullWidth={this.props.fullWidth}
             InputProps={{
-            endAdornment:
+              autoComplete: 'new-password',
+              form: {
+                autoComplete: 'off',
+              },
+              endAdornment:
                 <InputAdornment position="end">
                 <IconButton
                     aria-label="toggle password visibility"

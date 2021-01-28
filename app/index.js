@@ -16,8 +16,14 @@ const {
 } = require('./api/credentials');
 
 const {
-  ordersByUserRouter
+  ordersByUserRouter,
+  orders
 } = require('./api/orders');
+
+const {
+  userById,
+  updateUserById
+} = require('./api/users');
 
 app.use(express.json());
 app.use(
@@ -53,5 +59,11 @@ app.get("/logout", logoutRouter);
 app.post("/login", loginPostRouter);
 
 app.get("/orders/:id", ordersByUserRouter);
+
+app.get("/orders", orders);
+
+app.get("/user/:id", userById);
+
+app.post("/user/:id", updateUserById);
 
 module.exports = app;

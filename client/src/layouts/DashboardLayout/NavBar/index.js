@@ -29,9 +29,15 @@ const items = [
     role: [1]
   },
   {
+    href: '/app/allorders',
+    icon: ShoppingBagIcon,
+    title: 'All Orders',
+    role: [1,2,3]
+  },
+  {
     href: '/app/orders',
     icon: ShoppingBagIcon,
-    title: 'Orders',
+    title: 'My Orders',
     role: [1,2,3]
   },
   {
@@ -50,7 +56,7 @@ const items = [
     href: '/app/settings',
     icon: SettingsIcon,
     title: 'Settings',
-    role: [1]
+    role: [1,2,3]
   }
 ];
 

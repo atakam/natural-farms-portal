@@ -17,7 +17,7 @@ import RegisterView from './RegisterView';
 import Password from './Password';
 import AppContext from "../../components/AppContext";
 
-import { signin } from '../../functions/authentication';
+import { signin } from '../../functions/index';
 
 const useStyles = makeStyles((theme) => ({
   root: {

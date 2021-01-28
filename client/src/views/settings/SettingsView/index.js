@@ -7,6 +7,7 @@ import {
 import Page from 'src/components/Page';
 import Notifications from './Notifications';
 import Password from './Password';
+import Profile from './Profile';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -26,10 +27,7 @@ const SettingsView = () => {
       title="Settings"
     >
       <Container maxWidth="lg">
-        <Notifications />
-        <Box mt={3}>
-          <Password />
-        </Box>
+        <Profile />
       </Container>
     </Page>
   );
