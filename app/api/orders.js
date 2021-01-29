@@ -27,7 +27,22 @@ const orders = (req, res) => {
   );
 }
 
+const deleteForm = (req, res) => {
+  const formid = req.params.formid;
+  db.query(
+    "DELETE FROM form_completion WHERE id = ?",
+    formid,
+    (err, result) => {
+      if (err) {
+        res.send({ err: err });
+      }
+      res.send(result);
+    }
+  );
+}
+
 module.exports = {
     ordersByUserRouter,
-    orders
+    orders,
+    deleteForm
 };

@@ -9,7 +9,7 @@ import {
   Button,
   IconButton,
   Card,
-  Checkbox,
+  Dialog,
   ListItemIcon,
   Menu,
   MenuItem,
@@ -30,6 +30,9 @@ import AssignmentIcon from '@material-ui/icons/Assignment';
 import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
 import VerifiedUserIcon from '@material-ui/icons/VerifiedUser';
 import AssignmentLateIcon from '@material-ui/icons/AssignmentLate';
+import AppDialog from '../../../components/AppDialog';
+import { deleteForm } from '../../../functions/index';
+import Profile from 'src/components/Profile';
 
 const useStyles = makeStyles((theme) => ({
   root: {},
@@ -38,10 +41,13 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const Results = ({ className, results, userid, ...rest }) => {
+const Results = ({ className, results, userid, getOrders, ...rest }) => {
   const classes = useStyles();
   const [limit, setLimit] = useState(50);
   const [page, setPage] = useState(0);
+  const [profileName, setProfileName] = useState('');
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [profileDialogOpen, setProfileDialogOpen] = useState(false);
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [objectProp, setObject] = React.useState({formid: '', rid: ''});
 
@@ -62,6 +68,19 @@ const Results = ({ className, results, userid, ...rest }) => {
     setPage(newPage);
   };
 
+  const handleCloseDialog = () => {
+    setDialogOpen(false);
+    setProfileDialogOpen(false);
+    setProfileName('');
+  }
+
+  const handleConfirmDelete = () => {
+    setDialogOpen(false);
+    setProfileName('');
+    deleteForm({formid: objectProp.formid})
+    .then(() => getOrders());
+  }
+
   const delivery = (customer) => {
     if (customer.deliver1 === 0) return moment(customer.conditions_firstdeliverydate).format('DD/MM/YYYY') + " (1st)";
     else if (customer.deliver2 === 0) return moment(customer.conditions_seconddeliverydate).format('DD/MM/YYYY') + " (2nd)";
@@ -76,16 +95,22 @@ const Results = ({ className, results, userid, ...rest }) => {
     
     else if ((customer.confirm1 === 0 && customer.deliver1 === 0)) return {color: 'textSecondary', message: 'Not Confirm (1)'};
     else if ((customer.confirm1 === 1 && customer.deliver1 === 1) && 
-    (customer.confirm2 === 0 && customer.deliver1 === 0)) return {color: 'textSecondary', message: 'Not Confirm (2)'};
+    (customer.confirm2 === 0 && customer.deliver2 === 0)) return {color: 'textSecondary', message: 'Not Confirm (2)'};
     else if ((customer.confirm1 === 1 && customer.deliver1 === 1) && 
-    (customer.confirm2 === 1 && customer.deliver1 === 1) &&
-    (customer.confirm3 === 0 && customer.deliver1 === 0)) return {color: 'textSecondary', message: 'Not Confirm (3)'};
+    (customer.confirm2 === 1 && customer.deliver2 === 1) &&
+    (customer.confirm3 === 0 && customer.deliver3 === 0)) return {color: 'textSecondary', message: 'Not Confirm (3)'};
 
     else if ((customer.confirm1 === 1 && customer.deliver1 === 1) && 
     (customer.confirm2 === 1 && customer.deliver1 === 1) &&
     (customer.confirm3 === 1 && customer.deliver1 === 1)) return {color: 'error', message: 'Expired'};
 
     else return {color: 'error', message: 'Unkwon'};
+  };
+
+  const edited = (customer) => {
+    if (customer.edited_status === 1) return {color: 'textPrimary', message: 'Approved'};
+    else if (customer.edited === 1) return {color: 'error', message: 'Pending'};
+    else return {color: 'textPrimary', message: '-'};
   };
 
   const openInNewTab = (url) => {
@@ -107,14 +132,51 @@ const Results = ({ className, results, userid, ...rest }) => {
   };
   const goToVerify = () => {
     setAnchorEl(null);
-    openInNewTab(`https://www.portal.naturalfarms.ca/order/edit.php?id=${objectProp.formid}&edit=yes&uid=${objectProp.uid}`);
+    openInNewTab(`https://www.portal.naturalfarms.ca/order/edit.php?id=${objectProp.formid}&edit=yes&uid=${objectProp.id}`);
   };
+  const deleteOrder = () => {
+    setAnchorEl(null);
+    setDialogOpen(true);
+    setProfileName(objectProp.name);
+  }
+  const editProfile = () => {
+    setAnchorEl(null);
+    setProfileDialogOpen(true);
+    setProfileName(objectProp.name);
+  }
+  const updateCallback = () => {
+    handleCloseDialog();
+    getOrders();
+  }
 
   return (
     <Card
       className={clsx(classes.root, className)}
       {...rest}
     >
+      <AppDialog
+        open={dialogOpen}
+        handleClose={handleCloseDialog}
+        handleConfirm={handleConfirmDelete}
+        title='Confirm Delete'
+        content={'Are you sure you want to delete this order from '+profileName+'?'}
+        subcontent={'This action is irreversible!'}
+      />
+      <Dialog
+        open={profileDialogOpen}
+        onClose={handleCloseDialog}
+        aria-labelledby="draggable-dialog-title"
+        fullWidth
+        maxWidth={'lg'}
+      >
+        <Profile
+          title={profileName}
+          subtitle={"Modify account information"}
+          id={objectProp.id}
+          updateCallback={updateCallback}
+          cancel={handleCloseDialog}
+        />
+      </Dialog>
       <PerfectScrollbar>
         <Box minWidth={1050}>
           <Table>
@@ -130,10 +192,10 @@ const Results = ({ className, results, userid, ...rest }) => {
                   Date
                 </TableCell>
                 <TableCell>
-                  T. Points
+                  Total Points
                 </TableCell>
                 <TableCell>
-                  T. Price
+                  Total Price
                 </TableCell>
                 <TableCell>
                   Next Delivery
@@ -192,7 +254,7 @@ const Results = ({ className, results, userid, ...rest }) => {
                     {customer.repName}
                   </TableCell>
                   <TableCell>
-                    {'-'}
+                  <Typography color={edited(customer).color}>{edited(customer).message}</Typography> 
                   </TableCell>
                   <TableCell>
                     <Typography color={status(customer).color}>{status(customer).message}</Typography> 
@@ -207,7 +269,8 @@ const Results = ({ className, results, userid, ...rest }) => {
                         rid: customer.representative_id,
                         email: customer.email,
                         phoneNumber: customer.phoneNumber,
-                        name: customer.firstName + ' ' + customer.lastName
+                        name: customer.firstName + ' ' + customer.lastName,
+                        id: customer.uid
                       })}
                       color="secondary"
                     >
@@ -220,7 +283,7 @@ const Results = ({ className, results, userid, ...rest }) => {
                       open={Boolean(anchorEl)}
                       onClose={handleClose}
                     >
-                      <MenuItem onClick={handleClose}>
+                      <MenuItem onClick={editProfile}>
                         <ListItemIcon>
                           <EditIcon fontSize="small" />
                         </ListItemIcon>
@@ -262,7 +325,7 @@ const Results = ({ className, results, userid, ...rest }) => {
                         </ListItemIcon>
                         Verify Changes
                       </MenuItem>
-                      <MenuItem onClick={handleClose}>
+                      <MenuItem onClick={deleteOrder}>
                         <ListItemIcon>
                           <DeleteIcon fontSize="small" />
                         </ListItemIcon>
@@ -292,7 +355,8 @@ const Results = ({ className, results, userid, ...rest }) => {
 Results.propTypes = {
   className: PropTypes.string,
   results: PropTypes.array.isRequired,
-  id: PropTypes.number
+  id: PropTypes.number,
+  getOrders: PropTypes.func
 };
 
 export default Results;

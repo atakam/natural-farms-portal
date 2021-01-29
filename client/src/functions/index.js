@@ -32,9 +32,16 @@ const updateUser = ({entries, id}) => {
   });
 }
 
+const deleteForm = ({formid}) => {
+  return Axios.delete("/orders/delete/" + formid).then((response) => {
+    console.log(response);
+  });
+}
+
 export {
   signin,
   register,
   logout,
-  updateUser
+  updateUser,
+  deleteForm
 };

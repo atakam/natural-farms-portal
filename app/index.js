@@ -17,7 +17,8 @@ const {
 
 const {
   ordersByUserRouter,
-  orders
+  orders,
+  deleteForm
 } = require('./api/orders');
 
 const {
@@ -29,7 +30,7 @@ app.use(express.json());
 app.use(
   cors({
     origin: ["http://localhost:3000"],
-    methods: ["GET", "POST"],
+    methods: ["GET", "POST", "DELETE"],
     credentials: true,
   })
 );
@@ -61,6 +62,8 @@ app.post("/login", loginPostRouter);
 app.get("/orders/:id", ordersByUserRouter);
 
 app.get("/orders", orders);
+
+app.delete("/orders/delete/:formid", deleteForm);
 
 app.get("/user/:id", userById);
 

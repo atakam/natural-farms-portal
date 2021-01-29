@@ -1,13 +1,9 @@
 import React from 'react';
 import {
-  Box,
-  Container,
   makeStyles
 } from '@material-ui/core';
 import Page from 'src/components/Page';
-import Notifications from './Notifications';
-import Password from './Password';
-import Profile from './Profile';
+import Profile from '../../../components/Profile';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -26,9 +22,10 @@ const SettingsView = () => {
       className={classes.root}
       title="Settings"
     >
-      <Container maxWidth="lg">
-        <Profile />
-      </Container>
+      <Profile
+        title={"Profile"}
+        subtitle={"Modify account information"}
+      />
     </Page>
   );
 };

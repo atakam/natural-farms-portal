@@ -76,9 +76,10 @@ const RegisterView = (props) => {
   const context = useContext(AppContext);
   const [user, setUser] = useState(null);
   // const navigate = useNavigate();
+  const userid = props.id || context.credentials.user.id;
 
   useEffect(() => {
-    getProfile(context.credentials.user.id, setUser);
+    getProfile(userid, setUser);
   }, []);
 
   let provinces = ["Alberta", "British Columbia", "Manitoba", "New Brunswick", "Newfoundland and Labrador", "Northwest Territories", "Nova Scotia", "Nunavut", "Ontario", "Prince Edward Island", "Quebec", "Saskatchewan", "Yukon Territory"];
@@ -167,6 +168,13 @@ const RegisterView = (props) => {
       justifyContent="flex-end"
       p={2}
     >
+      {props.cancel && (<Button
+        variant="contained"
+        onClick={props.cancel}
+        style={{marginRight: '10px'}}
+      >
+        Cancel
+      </Button>)}
       <Button
         color="primary"
         variant="contained"
@@ -236,13 +244,14 @@ const RegisterView = (props) => {
             onSubmit={(values) => {
               console.log(values);
               if (props.isProfile) {
-                updateUser({entries: values, id: context.credentials.user.id}).then((response) => {
+                updateUser({entries: values, id: userid}).then((response) => {
                   console.log("UPDATE:", response);
                   if (!response) {
                     alert("Successfully updated profile");
                   } else {
                     alert("Error while updating profile");
                   }
+                  props.updateCallback && props.updateCallback();
                 });
               } else {
                 register(values, 3, setErrorMessage)

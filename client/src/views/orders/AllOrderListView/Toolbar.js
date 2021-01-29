@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
 import {
@@ -23,8 +23,13 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const Toolbar = ({ className, ...rest }) => {
+const Toolbar = ({ className, filter, ...rest }) => {
   const classes = useStyles();
+  const [searchValue, setSearchValue] = useState('');
+  const handleChange = (event) => {
+    setSearchValue(event.target.value);
+    setTimeout(function(){ filter(searchValue); }, 1000);
+  };
 
   return (
     <div
@@ -60,7 +65,9 @@ const Toolbar = ({ className, ...rest }) => {
                     </InputAdornment>
                   )
                 }}
-                placeholder="Search customer"
+                value={searchValue}
+                onChange={handleChange}
+                placeholder="Search"
                 variant="outlined"
               />
             </Box>
@@ -72,7 +79,8 @@ const Toolbar = ({ className, ...rest }) => {
 };
 
 Toolbar.propTypes = {
-  className: PropTypes.string
+  className: PropTypes.string,
+  filter: PropTypes.func
 };
 
 export default Toolbar;
