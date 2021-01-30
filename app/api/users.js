@@ -1,4 +1,5 @@
 const db = require("../../databasePool");
+const { clean } = require('../utils/utils');
 
 const userById = (req, res) => {
     const id = req.params.id;
@@ -45,28 +46,40 @@ const updateUserById = (req, res) => {
 
   user = clean(user);
 
-  db.query(
-    "UPDATE users SET ? WHERE id = ?",
-    [user, id],
-    (err, result) => {
+  if (user.password) {
+    bcrypt.hash(password, saltRounds, (err, hash) => {
       if (err) {
-        res.send({ err: err });
+        console.log(err);
       }
-      res.send(result);
-    }
-  );
+      db.query(
+        "UPDATE users SET ? WHERE id = ?",
+        [user, id],
+        (errr, result) => {
+          if (err) {
+            res.send({ err: errr });
+          }
+          res.send(result);
+        }
+      );
+    });
+  }
+  else {
+    db.query(
+      "UPDATE users SET ? WHERE id = ?",
+      [user, id],
+      (err, result) => {
+        if (err) {
+          res.send({ err: err });
+        }
+        res.send(result);
+      }
+    );
+  }
+
+  
 }
 
 module.exports = {
   userById,
   updateUserById
 };
-
-const clean = (obj) => {
-  for (var propName in obj) {
-    if (obj[propName] === null || obj[propName] === undefined || obj[propName] === '') {
-      delete obj[propName];
-    }
-  }
-  return obj
-}

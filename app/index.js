@@ -18,7 +18,11 @@ const {
 const {
   ordersByUserRouter,
   orders,
-  deleteForm
+  deleteForm,
+  originalOrders,
+  updatedOrders,
+  updateOrderConfirmDeliverById,
+  getUpdates
 } = require('./api/orders');
 
 const {
@@ -63,7 +67,15 @@ app.get("/orders/:id", ordersByUserRouter);
 
 app.get("/orders", orders);
 
+app.get("/orders/original/:formid", originalOrders);
+
+app.get("/orders/updated/:formid", updatedOrders);
+
+app.get("/orderscheck/updated", getUpdates);
+
 app.delete("/orders/delete/:formid", deleteForm);
+
+app.post("/orders/update/:formid", updateOrderConfirmDeliverById);
 
 app.get("/user/:id", userById);
 

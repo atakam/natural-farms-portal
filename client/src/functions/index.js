@@ -38,10 +38,17 @@ const deleteForm = ({formid}) => {
   });
 }
 
+const updateOrder = ({entries, formid}) => {
+  return Axios.post("/orders/update/" + formid, entries).then((response) => {
+    console.log(response);
+  });
+}
+
 export {
   signin,
   register,
   logout,
   updateUser,
-  deleteForm
+  deleteForm,
+  updateOrder
 };

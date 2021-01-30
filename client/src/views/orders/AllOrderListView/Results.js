@@ -33,6 +33,7 @@ import AssignmentLateIcon from '@material-ui/icons/AssignmentLate';
 import AppDialog from '../../../components/AppDialog';
 import { deleteForm } from '../../../functions/index';
 import Profile from 'src/components/Profile';
+import SingleOrderView from '../SingleOrderView/index';
 
 const useStyles = makeStyles((theme) => ({
   root: {},
@@ -41,13 +42,15 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const Results = ({ className, results, userid, getOrders, ...rest }) => {
+const Results = ({ className, results, updates, userid, callback, ...rest }) => {
   const classes = useStyles();
   const [limit, setLimit] = useState(50);
   const [page, setPage] = useState(0);
   const [profileName, setProfileName] = useState('');
+  const [original, setOriginal] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [profileDialogOpen, setProfileDialogOpen] = useState(false);
+  const [orderDialogOpen, setOrderDialogOpen] = useState(false);
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [objectProp, setObject] = React.useState({formid: '', rid: ''});
 
@@ -71,14 +74,17 @@ const Results = ({ className, results, userid, getOrders, ...rest }) => {
   const handleCloseDialog = () => {
     setDialogOpen(false);
     setProfileDialogOpen(false);
+    setOrderDialogOpen(false);
     setProfileName('');
+    setOriginal(false);
   }
 
   const handleConfirmDelete = () => {
     setDialogOpen(false);
     setProfileName('');
+    setOriginal(false);
     deleteForm({formid: objectProp.formid})
-    .then(() => getOrders());
+    .then(() => callback());
   }
 
   const delivery = (customer) => {
@@ -108,8 +114,10 @@ const Results = ({ className, results, userid, getOrders, ...rest }) => {
   };
 
   const edited = (customer) => {
-    if (customer.edited_status === 1) return {color: 'textPrimary', message: 'Approved'};
-    else if (customer.edited === 1) return {color: 'error', message: 'Pending'};
+    if (updates.includes(customer.formid)) {
+      if (customer.edited_status === 1) return {color: 'textPrimary', message: 'Approved'};
+      else if (customer.edited === 1) return {color: 'error', message: 'Pending'};
+    }
     else return {color: 'textPrimary', message: '-'};
   };
 
@@ -146,7 +154,13 @@ const Results = ({ className, results, userid, getOrders, ...rest }) => {
   }
   const updateCallback = () => {
     handleCloseDialog();
-    getOrders();
+    callback();
+  }
+  const viewOrders = (isOriginal) => {
+    setAnchorEl(null);
+    setOrderDialogOpen(true);
+    setProfileName(objectProp.name);
+    setOriginal(isOriginal);
   }
 
   return (
@@ -175,6 +189,22 @@ const Results = ({ className, results, userid, getOrders, ...rest }) => {
           id={objectProp.id}
           updateCallback={updateCallback}
           cancel={handleCloseDialog}
+        />
+      </Dialog>
+      <Dialog
+        open={orderDialogOpen}
+        onClose={handleCloseDialog}
+        aria-labelledby="draggable-dialog-title"
+        fullWidth
+        maxWidth={'lg'}
+      >
+        <SingleOrderView
+          title={profileName}
+          subtitle={original ? "ORIGINAL ORDER" : "MODIFIED ORDER"}
+          id={objectProp.formid}
+          updateCallback={updateCallback}
+          cancel={handleCloseDialog}
+          original={original}
         />
       </Dialog>
       <PerfectScrollbar>
@@ -295,13 +325,13 @@ const Results = ({ className, results, userid, getOrders, ...rest }) => {
                         </ListItemIcon>
                         Edit Contract
                       </MenuItem>
-                      <MenuItem onClick={handleClose}>
+                      <MenuItem onClick={() => viewOrders(false)}>
                         <ListItemIcon>
                           <LocalMallIcon fontSize="small" />
                         </ListItemIcon>
                         View Current Order
                       </MenuItem>
-                      <MenuItem onClick={handleClose}>
+                      <MenuItem onClick={() => viewOrders(true)}>
                         <ListItemIcon>
                           <ShoppingCartIcon fontSize="small" />
                         </ListItemIcon>
@@ -354,9 +384,10 @@ const Results = ({ className, results, userid, getOrders, ...rest }) => {
 
 Results.propTypes = {
   className: PropTypes.string,
+  updates: PropTypes.array,
   results: PropTypes.array.isRequired,
   id: PropTypes.number,
-  getOrders: PropTypes.func
+  callback: PropTypes.func
 };
 
 export default Results;

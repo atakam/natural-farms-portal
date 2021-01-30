@@ -1,41 +1,29 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Container,
-  makeStyles
+  Card,
+  CardHeader,
+  Divider,
+  CardContent,
+  IconButton,
+  Tooltip
 } from '@material-ui/core';
-import Page from 'src/components/Page';
-import Results from './Results';
-import Toolbar from './Toolbar';
-import AppContext from "../../../components/AppContext";
+import CloseIcon from '@material-ui/icons/Close';
+import Delivery from './Delivery';
 
-const useStyles = makeStyles((theme) => ({
-  root: {
-    backgroundColor: theme.palette.background.dark,
-    minHeight: '100%',
-    paddingBottom: theme.spacing(3),
-    paddingTop: theme.spacing(3)
-  }
-}));
-
-const CustomerListView = () => {
-  const classes = useStyles();
+const CustomerListView = ({
+    title,
+    subtitle,
+    id,
+    updateCallback,
+    cancel,
+    original
+}) => {
   const [results, setResults] = useState([]);
-  const [filteredResults, setFilteredResults] = useState([]);
-  const context = useContext(AppContext);
-
-  const filter = (text) => {
-    const newResults = results.filter((el) => {
-      for (let i=0; i<Object.values(el).length; i++) {
-          if (String(Object.values(el)[i]).toLowerCase().indexOf(text.toLowerCase()) > -1) return true;
-      }
-      return false;
-    });
-    setFilteredResults(newResults);
-  };
 
   const getOrders = async () => {
-    const response = await fetch('/orders/', {
+    const response = await fetch('/orders/original/' + id, {
       headers: {
         'Content-Type': 'application/json',
       }
@@ -44,25 +32,52 @@ const CustomerListView = () => {
     const result = JSON.parse(body);
     console.log("results", JSON.parse(body));
     setResults(result);
-    setFilteredResults(result);
+  };
+
+  const getUpdatedOrders = async () => {
+    const response = await fetch('/orders/updated/' + id, {
+      headers: {
+        'Content-Type': 'application/json',
+      }
+    });
+    const body = await response.text();
+    const result = JSON.parse(body);
+    console.log("results", JSON.parse(body));
+    setResults(result);
   };
 
   useEffect(() => {
-    getOrders();
+    original ? getOrders() : getUpdatedOrders();
   }, []);
 
   return (
-    <Page
-      className={classes.root}
-      title="Customers"
-    >
-      <Container maxWidth={false}>
-        <Toolbar filter={filter} />
-        <Box mt={3}>
-          <Results results={filteredResults} userid={context.credentials.user.id} getOrders={getOrders} />
-        </Box>
-      </Container>
-    </Page>
+    <Container maxWidth="lg">
+      <Card>
+            <CardHeader
+                subheader={subtitle}
+                title={title}
+            >
+                <Box 
+                    p={2}
+                    >
+                    <Tooltip title="Modify Order">
+                        <IconButton
+                            color="primary"
+                            size="medium"
+                            variant="contained"
+                            onClick={cancel}
+                        >
+                            <CloseIcon /> 
+                        </IconButton>
+                    </Tooltip>
+                </Box>
+            </CardHeader>
+            <Divider />
+            <CardContent>
+                <Delivery results={results} callback={updateCallback} />
+            </CardContent>
+      </Card>
+    </Container>
   );
 };
 

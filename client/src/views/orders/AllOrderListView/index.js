@@ -21,6 +21,7 @@ const useStyles = makeStyles((theme) => ({
 const CustomerListView = () => {
   const classes = useStyles();
   const [results, setResults] = useState([]);
+  const [updates, setUpdates] = useState([]);
   const [filteredResults, setFilteredResults] = useState([]);
   const context = useContext(AppContext);
 
@@ -40,11 +41,27 @@ const CustomerListView = () => {
         'Content-Type': 'application/json',
       }
     });
+
+    const updated = await fetch('/orderscheck/updated', {
+      headers: {
+        'Content-Type': 'application/json',
+      }
+    });
+
     const body = await response.text();
     const result = JSON.parse(body);
     console.log("results", JSON.parse(body));
     setResults(result);
     setFilteredResults(result);
+
+    const body2 = await updated.text();
+    let update = JSON.parse(body2);
+    update = update.map(a => a.form_id);
+    update = update.filter(function(item, pos) {
+        return update.indexOf(item) == pos;
+    })
+    console.log("updates", update);
+    setUpdates(update);
   };
 
   useEffect(() => {
@@ -59,7 +76,7 @@ const CustomerListView = () => {
       <Container maxWidth={false}>
         <Toolbar filter={filter} />
         <Box mt={3}>
-          <Results results={filteredResults} userid={context.credentials.user.id} getOrders={getOrders} />
+          <Results updates={updates} results={filteredResults} userid={context.credentials.user.id} callback={getOrders} />
         </Box>
       </Container>
     </Page>
