@@ -41,6 +41,12 @@ const items = [
     role: [1,2,3]
   },
   {
+    href: '/app/customers',
+    icon: UserIcon,
+    title: 'Customers',
+    role: [1,2,3]
+  },
+  {
     href: '/app/products',
     icon: ShoppingBagIcon,
     title: 'Products',

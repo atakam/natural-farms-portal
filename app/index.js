@@ -27,7 +27,9 @@ const {
 
 const {
   userById,
-  updateUserById
+  updateUserById,
+  usersByRole,
+  deleteUser
 } = require('./api/users');
 
 app.use(express.json());
@@ -79,6 +81,10 @@ app.post("/orders/update/:formid", updateOrderConfirmDeliverById);
 
 app.get("/user/:id", userById);
 
+app.get("/users/:role", usersByRole);
+
 app.post("/user/:id", updateUserById);
+
+app.delete("/user/delete/:id", deleteUser);
 
 module.exports = app;

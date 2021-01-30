@@ -16,6 +16,21 @@ const userById = (req, res) => {
     );
 }
 
+const usersByRole = (req, res) => {
+  const role = req.params.role;
+
+  db.query(
+    "SELECT id, email, firstName, lastName, streetAddress, city, postalCode, province, phoneNumber, weekAmount FROM users WHERE role = ?",
+    role,
+    (err, result) => {
+      if (err) {
+        res.send({ err: err });
+      }
+      res.send(result);
+    }
+  );
+}
+
 const updateUserById = (req, res) => {
   const id = req.params.id;
   const {
@@ -75,11 +90,25 @@ const updateUserById = (req, res) => {
       }
     );
   }
+}
 
-  
+const deleteUser = (req, res) => {
+  const id = req.params.id;
+  db.query(
+    "DELETE FROM users WHERE id = ?",
+    id,
+    (err, result) => {
+      if (err) {
+        res.send({ err: err });
+      }
+      res.send(result);
+    }
+  );
 }
 
 module.exports = {
   userById,
-  updateUserById
+  updateUserById,
+  usersByRole,
+  deleteUser
 };
