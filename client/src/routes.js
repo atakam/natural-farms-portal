@@ -24,6 +24,7 @@ const routes = [
       { path: 'account', element: <AccountView /> },
       { path: 'orders', element: <MyOrderListView /> },
       { path: 'allorders', element: <AllOrderListView /> },
+      { path: 'modifiedorders', element: <AllOrderListView isModified /> },
       { path: 'products', element: <ProductListView /> },
       { path: 'categories', element: <CategoryListView /> },
       { path: 'customers', element: <CustomerListView /> },

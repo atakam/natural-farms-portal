@@ -58,6 +58,18 @@ const updatedOrders = (req, res) => {
   );
 }
 
+const modifiedFormOrders = (req, res) => {
+  db.query(
+    "SELECT *, form_completion.id AS formid, users.id AS uid, representative.name AS repName FROM form_completion LEFT JOIN users ON users.id = form_completion.customer_id LEFT JOIN representative ON representative.id = form_completion.representative_id WHERE form_completion.customer_id = users.id AND form_completion.id IN (SELECT DISTINCT form_id FROM orders_updates)",
+    (err, result) => {
+      if (err) {
+        res.send({ err: err });
+      }
+      res.send(result);
+    }
+  );
+}
+
 const getUpdates = (req, res) => {
   console.log('UPDATE CHECK');
   db.query(
@@ -125,6 +137,7 @@ module.exports = {
     deleteForm,
     originalOrders,
     updatedOrders,
+    modifiedFormOrders,
     getUpdates,
     updateOrderConfirmDeliverById
 };

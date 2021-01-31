@@ -21,6 +21,7 @@ const {
   deleteForm,
   originalOrders,
   updatedOrders,
+  modifiedFormOrders,
   updateOrderConfirmDeliverById,
   getUpdates
 } = require('./api/orders');
@@ -93,6 +94,8 @@ app.post("/login", loginPostRouter);
 app.get("/orders/:id", ordersByUserRouter);
 
 app.get("/orders", orders);
+
+app.get("/ordersmodified", modifiedFormOrders);
 
 app.get("/orders/original/:formid", originalOrders);
 

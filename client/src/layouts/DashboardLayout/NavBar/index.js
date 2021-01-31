@@ -20,7 +20,8 @@ import {
   Users as UsersIcon,
   Mail as MailIcon,
   Tag as TagIcon,
-  PieChart
+  PieChart,
+  ShoppingCart
 } from 'react-feather';
 import NavItem from './NavItem';
 import AppContext from "../../../components/AppContext";
@@ -30,12 +31,18 @@ const items = [
     href: '/app/dashboard',
     icon: BarChartIcon,
     title: 'Dashboard',
-    role: [1]
+    role: [1,2,3]
   },
   {
     href: '/app/allorders',
     icon: ShoppingBagIcon,
     title: 'All Orders',
+    role: [1,2,3]
+  },
+  {
+    href: '/app/modifiedorders',
+    icon: ShoppingCart,
+    title: 'Modified Orders',
     role: [1,2,3]
   },
   {

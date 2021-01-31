@@ -18,7 +18,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const CustomerListView = () => {
+const CustomerListView = (props) => {
   const classes = useStyles();
   const [results, setResults] = useState([]);
   const [updates, setUpdates] = useState([]);
@@ -35,12 +35,20 @@ const CustomerListView = () => {
     setFilteredResults(newResults);
   };
 
-  const getOrders = async () => {
-    const response = await fetch('/orders/', {
-      headers: {
-        'Content-Type': 'application/json',
-      }
-    });
+  const getOrders = async (isModified) => {
+    const response = isModified ? (
+      await fetch('/ordersmodified', {
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      })
+    ) : (
+      await fetch('/orders', {
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      })
+    );
 
     const updated = await fetch('/orderscheck/updated', {
       headers: {
@@ -65,8 +73,8 @@ const CustomerListView = () => {
   };
 
   useEffect(() => {
-    getOrders();
-  }, []);
+    getOrders(props.isModified);
+  }, [props.isModified]);
 
   return (
     <Page
