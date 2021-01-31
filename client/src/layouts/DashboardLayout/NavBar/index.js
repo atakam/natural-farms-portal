@@ -17,7 +17,8 @@ import {
   Settings as SettingsIcon,
   ShoppingBag as ShoppingBagIcon,
   User as UserIcon,
-  Users as UsersIcon
+  Users as UsersIcon,
+  Mail as MailIcon
 } from 'react-feather';
 import NavItem from './NavItem';
 import AppContext from "../../../components/AppContext";
@@ -51,6 +52,12 @@ const items = [
     href: '/app/staff',
     icon: UserIcon,
     title: 'Staff',
+    role: [1,2,3]
+  },
+  {
+    href: '/app/emailtemplates',
+    icon: MailIcon,
+    title: 'Email Templates',
     role: [1,2,3]
   },
   {

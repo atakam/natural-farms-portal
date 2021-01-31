@@ -74,6 +74,12 @@ const registerStaff = (entries, callback) => {
   });
 };
 
+const updateEmailTemplate = ({entries, id}) => {
+  return Axios.post("/templates/email/" + id, entries).then((response) => {
+    console.log(response);
+  });
+}
+
 export {
   signin,
   register,
@@ -84,5 +90,6 @@ export {
   deleteUser,
   deleteStaff,
   updateStaff,
-  registerStaff
+  registerStaff,
+  updateEmailTemplate
 };

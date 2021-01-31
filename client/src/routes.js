@@ -13,6 +13,7 @@ import RegisterView from 'src/views/auth/RegisterView';
 import SettingsView from 'src/views/settings/SettingsView';
 import CustomerListView from 'src/views/users/CustomerListView';
 import StaffListView from 'src/views/users/StaffListView';
+import EmailTemplateView from 'src/views/templates/EmailTemplateView';
 
 const routes = [
   {
@@ -24,6 +25,7 @@ const routes = [
       { path: 'allorders', element: <AllOrderListView /> },
       { path: 'customers', element: <CustomerListView /> },
       { path: 'staff', element: <StaffListView /> },
+      { path: 'emailtemplates', element: <EmailTemplateView /> },
       { path: 'dashboard', element: <DashboardView /> },
       { path: 'products', element: <ProductListView /> },
       { path: 'settings', element: <SettingsView /> },

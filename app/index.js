@@ -37,6 +37,12 @@ const {
   registerStaff
 } = require('./api/users');
 
+const {
+  emailTemplateById,
+  updateEmailTemplateById,
+  getEmailTemplates
+} = require('./api/templates');
+
 app.use(express.json());
 app.use(
   cors({
@@ -101,5 +107,11 @@ app.post("/staff/:id", updateStaffById);
 app.post("/register/staff", registerStaff);
 
 app.delete("/staff/delete/:id", deleteStaff);
+
+app.get("/templates/email", getEmailTemplates);
+
+app.get("/templates/email/:id", emailTemplateById);
+
+app.post("/templates/email/:id", updateEmailTemplateById);
 
 module.exports = app;
