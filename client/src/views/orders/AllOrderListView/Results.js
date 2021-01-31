@@ -7,7 +7,7 @@ import {
   Avatar,
   Box,
   Button,
-  IconButton,
+  Chip,
   Card,
   Dialog,
   ListItemIcon,
@@ -115,10 +115,22 @@ const Results = ({ className, results, updates, userid, callback, ...rest }) => 
 
   const edited = (customer) => {
     if (updates.includes(customer.formid)) {
-      if (customer.edited_status === 1) return {color: 'textPrimary', message: 'Approved'};
-      else if (customer.edited === 1) return {color: 'error', message: 'Pending'};
+      if (customer.edited_status === 1) return (
+        <Chip
+          color="primary"
+          label='Approved'
+          size="small"
+        />
+      );
+      else if (customer.edited === 1) return (
+        <Chip
+          color="secondary"
+          label='Pending'
+          size="small"
+        />
+      );
     }
-    else return {color: 'textPrimary', message: '-'};
+    else return '-';
   };
 
   const openInNewTab = (url) => {
@@ -284,7 +296,7 @@ const Results = ({ className, results, updates, userid, callback, ...rest }) => 
                     {customer.repName}
                   </TableCell>
                   <TableCell>
-                  <Typography color={edited(customer).color}>{edited(customer).message}</Typography> 
+                    {edited(customer)}
                   </TableCell>
                   <TableCell>
                     <Typography color={status(customer).color}>{status(customer).message}</Typography> 

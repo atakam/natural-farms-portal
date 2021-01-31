@@ -1,3 +1,12 @@
 .halfWidth {
     width: calc(50% - 10px);
 }
+.MuiChip-colorSecondary {
+    background-color: #f44336 !important;
+}
+.top-products td.MuiTableCell-root.MuiTableCell-body {
+    font-size: 10px;
+}
+.top-products {
+    width: auto !important;
+}

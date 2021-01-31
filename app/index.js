@@ -23,7 +23,8 @@ const {
   updatedOrders,
   modifiedFormOrders,
   updateOrderConfirmDeliverById,
-  getUpdates
+  getUpdates,
+  getStatistics
 } = require('./api/orders');
 
 const {
@@ -152,5 +153,8 @@ app.put("/categories/:id", createCategory);
 app.delete("/category/delete/:id", deleteCategory);
 
 app.get("/packaging/product/:id", packagingByProductId);
+
+
+app.get("/statistics", getStatistics);
 
 module.exports = app;

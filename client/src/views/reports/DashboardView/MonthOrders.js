@@ -11,8 +11,7 @@ import {
   colors,
   makeStyles
 } from '@material-ui/core';
-import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
-import PeopleIcon from '@material-ui/icons/PeopleOutlined';
+import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -32,7 +31,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const TotalCustomers = ({ className, ...rest }) => {
+const MonthOrders = ({ className, count, ...rest }) => {
   const classes = useStyles();
 
   return (
@@ -52,18 +51,18 @@ const TotalCustomers = ({ className, ...rest }) => {
               gutterBottom
               variant="h6"
             >
-              TOTAL CUSTOMERS
+              LAST 30 DAYS
             </Typography>
             <Typography
               color="textPrimary"
               variant="h3"
             >
-              1,600
+              {count}
             </Typography>
           </Grid>
           <Grid item>
             <Avatar className={classes.avatar}>
-              <PeopleIcon />
+              <ShoppingCartIcon />
             </Avatar>
           </Grid>
         </Grid>
@@ -72,18 +71,11 @@ const TotalCustomers = ({ className, ...rest }) => {
           display="flex"
           alignItems="center"
         >
-          <ArrowUpwardIcon className={classes.differenceIcon} />
-          <Typography
-            className={classes.differenceValue}
-            variant="body2"
-          >
-            16%
-          </Typography>
           <Typography
             color="textSecondary"
             variant="caption"
           >
-            Since last month
+            Orders made in the last 30 days
           </Typography>
         </Box>
       </CardContent>
@@ -91,8 +83,8 @@ const TotalCustomers = ({ className, ...rest }) => {
   );
 };
 
-TotalCustomers.propTypes = {
+MonthOrders.propTypes = {
   className: PropTypes.string
 };
 
-export default TotalCustomers;
+export default MonthOrders;

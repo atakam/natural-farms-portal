@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import clsx from 'clsx';
 import moment from 'moment';
-import { v4 as uuid } from 'uuid';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import PropTypes from 'prop-types';
 import {
@@ -16,74 +16,9 @@ import {
   TableCell,
   TableHead,
   TableRow,
-  TableSortLabel,
-  Tooltip,
   makeStyles
 } from '@material-ui/core';
 import ArrowRightIcon from '@material-ui/icons/ArrowRight';
-
-const data = [
-  {
-    id: uuid(),
-    ref: 'CDD1049',
-    amount: 30.5,
-    customer: {
-      name: 'Ekaterina Tankova'
-    },
-    createdAt: 1555016400000,
-    status: 'pending'
-  },
-  {
-    id: uuid(),
-    ref: 'CDD1048',
-    amount: 25.1,
-    customer: {
-      name: 'Cao Yu'
-    },
-    createdAt: 1555016400000,
-    status: 'delivered'
-  },
-  {
-    id: uuid(),
-    ref: 'CDD1047',
-    amount: 10.99,
-    customer: {
-      name: 'Alexa Richardson'
-    },
-    createdAt: 1554930000000,
-    status: 'refunded'
-  },
-  {
-    id: uuid(),
-    ref: 'CDD1046',
-    amount: 96.43,
-    customer: {
-      name: 'Anje Keizer'
-    },
-    createdAt: 1554757200000,
-    status: 'pending'
-  },
-  {
-    id: uuid(),
-    ref: 'CDD1045',
-    amount: 32.54,
-    customer: {
-      name: 'Clarke Gillebert'
-    },
-    createdAt: 1554670800000,
-    status: 'delivered'
-  },
-  {
-    id: uuid(),
-    ref: 'CDD1044',
-    amount: 16.76,
-    customer: {
-      name: 'Adam Denisov'
-    },
-    createdAt: 1554670800000,
-    status: 'delivered'
-  }
-];
 
 const useStyles = makeStyles(() => ({
   root: {},
@@ -92,9 +27,50 @@ const useStyles = makeStyles(() => ({
   }
 }));
 
-const LatestOrders = ({ className, ...rest }) => {
+const getUpdates = async (setUpdates) => {
+  const updated = await fetch('/orderscheck/updated', {
+    headers: {
+      'Content-Type': 'application/json',
+    }
+  });
+  const body2 = await updated.text();
+    let update = JSON.parse(body2);
+    update = update.map(a => a.form_id);
+    update = update.filter(function(item, pos) {
+        return update.indexOf(item) == pos;
+    })
+    console.log("updates", update);
+    setUpdates(update);
+};
+
+const LatestOrders = ({ className, orders, ...rest }) => {
   const classes = useStyles();
-  const [orders] = useState(data);
+  const [updates, setUpdates] = useState([]);
+  const navigate = useNavigate();
+  
+  useEffect(() => {
+    getUpdates(setUpdates);
+  }, []);
+
+  const edited = (customer) => {
+    if (updates.includes(customer.formid)) {
+      if (customer.edited_status === 1) return (
+        <Chip
+          color="primary"
+          label='Approved'
+          size="small"
+        />
+      );
+      else if (customer.edited === 1) return (
+        <Chip
+          color="secondary"
+          label='Pending'
+          size="small"
+        />
+      );
+    }
+    else return '-';
+  };
 
   return (
     <Card
@@ -109,23 +85,16 @@ const LatestOrders = ({ className, ...rest }) => {
             <TableHead>
               <TableRow>
                 <TableCell>
-                  Order Ref
+                  NFF
                 </TableCell>
                 <TableCell>
                   Customer
                 </TableCell>
-                <TableCell sortDirection="desc">
-                  <Tooltip
-                    enterDelay={300}
-                    title="Sort"
-                  >
-                    <TableSortLabel
-                      active
-                      direction="desc"
-                    >
-                      Date
-                    </TableSortLabel>
-                  </Tooltip>
+                <TableCell>
+                  Date
+                </TableCell>
+                <TableCell>
+                  Total Points
                 </TableCell>
                 <TableCell>
                   Status
@@ -133,26 +102,25 @@ const LatestOrders = ({ className, ...rest }) => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {orders.map((order) => (
+              {orders.map((order, index) => (
                 <TableRow
                   hover
-                  key={order.id}
+                  key={index}
                 >
                   <TableCell>
-                    {order.ref}
+                    {order.nff}
                   </TableCell>
                   <TableCell>
-                    {order.customer.name}
+                    {order.firstName + ' ' + order.lastName}
                   </TableCell>
                   <TableCell>
-                    {moment(order.createdAt).format('DD/MM/YYYY')}
+                    {moment(order.signature_date).format('DD/MM/YYYY')}
                   </TableCell>
                   <TableCell>
-                    <Chip
-                      color="primary"
-                      label={order.status}
-                      size="small"
-                    />
+                    {order.total_points}
+                  </TableCell>
+                  <TableCell>
+                    {edited(order)}
                   </TableCell>
                 </TableRow>
               ))}
@@ -170,6 +138,9 @@ const LatestOrders = ({ className, ...rest }) => {
           endIcon={<ArrowRightIcon />}
           size="small"
           variant="text"
+          onClick={ () => {
+            navigate('/app/allorders', { replace: true });
+          }}
         >
           View all
         </Button>
