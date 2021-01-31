@@ -41,7 +41,7 @@ const getProduct = async (id, setResults) => {
 };
 
 const getCategory = async (setResults) => {
-  const response = await fetch('/categories/product', {
+  const response = await fetch('/categories', {
     headers: {
       'Content-Type': 'application/json',
     }

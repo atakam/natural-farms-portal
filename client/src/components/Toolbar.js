@@ -74,6 +74,7 @@ const Toolbar = ({ className, filter, buttonProps, ...rest }) => {
                 onChange={handleChange}
                 placeholder="Search"
                 variant="outlined"
+                disabled={!filter}
               />
             </Box>
           </CardContent>

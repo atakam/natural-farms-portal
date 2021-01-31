@@ -108,6 +108,27 @@ const createProduct = (entries, id) => {
   });
 };
 
+const deleteCategory = ({id}) => {
+  return Axios.delete("/category/delete/" + id).then((response) => {
+    console.log(response);
+    return response;
+  });
+}
+
+const updateCategory = ({entries, id}) => {
+  return Axios.post("/categories/" + id, entries).then((response) => {
+    console.log(response);
+    return response;
+  });
+}
+
+const createCategory = (entries, id) => {
+  return Axios.put("/categories/" + id, entries).then((response) => {
+    console.log(response);
+    return response;
+  });
+};
+
 export {
   signin,
   register,
@@ -122,5 +143,8 @@ export {
   updateEmailTemplate,
   deleteProduct,
   updateProduct,
-  createProduct
+  createProduct,
+  deleteCategory,
+  updateCategory,
+  createCategory
 };

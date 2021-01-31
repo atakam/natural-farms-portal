@@ -50,7 +50,11 @@ const {
   deleteProduct,
   categories,
   createProduct,
-  packagingByProductId
+  packagingByProductId,
+  updateCategoryById,
+  deleteCategory,
+  createCategory,
+  categoryById
 } = require('./api/products');
 
 app.use(express.json());
@@ -134,7 +138,15 @@ app.put("/products/:id", createProduct);
 
 app.delete("/product/delete/:id", deleteProduct);
 
-app.get("/categories/product", categories);
+app.get("/categories", categories);
+
+app.get("/categories/:id", categoryById);
+
+app.post("/categories/:id", updateCategoryById);
+
+app.put("/categories/:id", createCategory);
+
+app.delete("/category/delete/:id", deleteCategory);
 
 app.get("/packaging/product/:id", packagingByProductId);
 

@@ -19,7 +19,8 @@ import {
   User as UserIcon,
   Users as UsersIcon,
   Mail as MailIcon,
-  Tag as TagIcon
+  Tag as TagIcon,
+  PieChart
 } from 'react-feather';
 import NavItem from './NavItem';
 import AppContext from "../../../components/AppContext";
@@ -47,6 +48,12 @@ const items = [
     href: '/app/products',
     icon: TagIcon,
     title: 'Products',
+    role: [1,2,3]
+  },
+  {
+    href: '/app/categories',
+    icon: PieChart,
+    title: 'Categories',
     role: [1,2,3]
   },
   {

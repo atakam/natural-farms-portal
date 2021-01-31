@@ -121,6 +121,85 @@ const packagingByProductId = (req, res) => {
   );
 }
 
+const createCategory = (req, res) => {
+  const {
+    name_en,
+    name_fr,
+    slug
+   } = req.body;
+
+  const entry = {
+      name_en,
+      name_fr,
+      slug
+  };
+
+  db.query(
+    "INSERT INTO products_category SET ?",
+    entry,
+    (error, result) => {
+        if (error) {
+          console.log(error);
+          res.send(error);
+        } else {
+          console.log(result);
+          res.send(result);
+        }
+    }
+  );
+};
+
+const updateCategoryById = (req, res) => {
+  const id = req.params.id;
+  const {
+    name_en, name_fr, slug
+  } = req.body;
+
+  let product = {
+    name_en, name_fr, slug
+  };
+
+  db.query(
+    "UPDATE products_category SET ? WHERE id = ?",
+    [product, id],
+    (err, result) => {
+      if (err) {
+        res.send({ err: err });
+      }
+      res.send(result);
+    }
+  );
+}
+
+const deleteCategory = (req, res) => {
+  const id = req.params.id;
+  db.query(
+    "DELETE FROM products_category WHERE id = ?",
+    id,
+    (err, result) => {
+      if (err) {
+        res.send({ err: err });
+      }
+      res.send(result);
+    }
+  );
+}
+
+const categoryById = (req, res) => {
+  const id = req.params.id;
+
+  db.query(
+    "SELECT name_en, name_fr, slug FROM products_category WHERE id = ?",
+    id,
+    (err, result) => {
+      if (err) {
+        res.send({ err: err });
+      }
+      res.send(result);
+    }
+  );
+}
+
 module.exports = {
   getProducts,
   updateProductById,
@@ -128,5 +207,9 @@ module.exports = {
   productById,
   categories,
   createProduct,
-  packagingByProductId
+  packagingByProductId,
+  createCategory,
+  updateCategoryById,
+  deleteCategory,
+  categoryById
 };
