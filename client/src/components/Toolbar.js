@@ -23,7 +23,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const Toolbar = ({ className, filter, ...rest }) => {
+const Toolbar = ({ className, filter, buttonProps, ...rest }) => {
   const classes = useStyles();
   const [searchValue, setSearchValue] = useState('');
   const handleChange = (event) => {
@@ -31,11 +31,7 @@ const Toolbar = ({ className, filter, ...rest }) => {
     setTimeout(function(){ filter(searchValue); }, 1000);
   };
 
-  return (
-    <div
-      className={clsx(classes.root, className)}
-      {...rest}
-    >
+  const button = buttonProps ? (
       <Box
         display="flex"
         justifyContent="flex-end"
@@ -43,10 +39,19 @@ const Toolbar = ({ className, filter, ...rest }) => {
         <Button
           color="primary"
           variant="contained"
+          onClick={buttonProps.action}
         >
-          NEW ORDER
+          {buttonProps.label}
         </Button>
       </Box>
+    ) : '';
+
+  return (
+    <div
+      className={clsx(classes.root, className)}
+      {...rest}
+    >
+      {button}
       <Box mt={3}>
         <Card>
           <CardContent>

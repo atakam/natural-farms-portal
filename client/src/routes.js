@@ -11,7 +11,8 @@ import NotFoundView from 'src/views/errors/NotFoundView';
 import ProductListView from 'src/views/product/ProductListView';
 import RegisterView from 'src/views/auth/RegisterView';
 import SettingsView from 'src/views/settings/SettingsView';
-import CustomerListView from 'src/views/customers/CustomerListView';
+import CustomerListView from 'src/views/users/CustomerListView';
+import StaffListView from 'src/views/users/StaffListView';
 
 const routes = [
   {
@@ -22,6 +23,7 @@ const routes = [
       { path: 'orders', element: <MyOrderListView /> },
       { path: 'allorders', element: <AllOrderListView /> },
       { path: 'customers', element: <CustomerListView /> },
+      { path: 'staff', element: <StaffListView /> },
       { path: 'dashboard', element: <DashboardView /> },
       { path: 'products', element: <ProductListView /> },
       { path: 'settings', element: <SettingsView /> },

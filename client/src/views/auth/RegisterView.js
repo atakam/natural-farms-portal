@@ -79,7 +79,7 @@ const RegisterView = (props) => {
   const userid = props.id || context.credentials.user.id;
 
   useEffect(() => {
-    getProfile(userid, setUser);
+    props.isProfile && getProfile(userid, setUser);
   }, []);
 
   let provinces = ["Alberta", "British Columbia", "Manitoba", "New Brunswick", "Newfoundland and Labrador", "Northwest Territories", "Nova Scotia", "Nunavut", "Ontario", "Prince Edward Island", "Quebec", "Saskatchewan", "Yukon Territory"];

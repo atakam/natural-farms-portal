@@ -20,8 +20,8 @@ import {
 } from '@material-ui/core';
 import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';
-import AppDialog from '../../../components/AppDialog';
-import { deleteUser } from '../../../functions/index';
+import AppDialog from 'src/components/AppDialog';
+import { deleteStaff } from 'src/functions/index';
 import Profile from 'src/components/Profile';
 
 const useStyles = makeStyles((theme) => ({
@@ -67,7 +67,7 @@ const Results = ({ className, results, updates, userid, callback, ...rest }) => 
   const handleConfirmDelete = () => {
     setDialogOpen(false);
     setProfileName('');
-    deleteUser({id: objectProp.id})
+    deleteStaff({id: objectProp.id})
     .then(() => callback());
   }
 
@@ -85,6 +85,15 @@ const Results = ({ className, results, updates, userid, callback, ...rest }) => 
     handleCloseDialog();
     callback();
   }
+
+  const deleteEl = objectProp.role !== 'admin' ? (
+    <MenuItem onClick={removeUser}>
+      <ListItemIcon>
+        <DeleteIcon fontSize="small" />
+      </ListItemIcon>
+      Delete
+    </MenuItem>
+  ) : '';
 
   return (
     <Card
@@ -108,10 +117,11 @@ const Results = ({ className, results, updates, userid, callback, ...rest }) => 
       >
         <Profile
           title={profileName}
-          subtitle={"Modify account information"}
+          subtitle={"Modify staff information"}
           id={objectProp.id}
           updateCallback={updateCallback}
           cancel={handleCloseDialog}
+          isStaff
         />
       </Dialog>
       <PerfectScrollbar>
@@ -120,19 +130,16 @@ const Results = ({ className, results, updates, userid, callback, ...rest }) => 
             <TableHead>
               <TableRow>
                 <TableCell>
-                  NFF
+                  Username
                 </TableCell>
                 <TableCell>
                   Name
                 </TableCell>
                 <TableCell>
-                  Phone
-                </TableCell>
-                <TableCell>
                   Email
                 </TableCell>
                 <TableCell>
-                  Address
+                  Role
                 </TableCell>
                 <TableCell>
                   Actions
@@ -140,25 +147,22 @@ const Results = ({ className, results, updates, userid, callback, ...rest }) => 
               </TableRow>
             </TableHead>
             <TableBody>
-              {results.slice(0, limit).map((customer) => (
+              {results.slice(0, limit).map((staff) => (
                 <TableRow
                   hover
-                  key={customer.id}
+                  key={staff.id}
                 >
                   <TableCell>
-                    {customer.nff}
+                    {staff.username}
                   </TableCell>
                   <TableCell>
-                    {customer.firstName + ' ' + customer.lastName}
+                    {staff.name}
                   </TableCell>
                   <TableCell>
-                    {customer.phoneNumber}
+                    {staff.email}
                   </TableCell>
                   <TableCell>
-                    {customer.email}
-                  </TableCell>
-                  <TableCell>
-                    {customer.streetAddress + ' ' + customer.city + ', ' + customer.province+ ' ' + customer.postalCode }
+                    {staff.role === 'admin' ? 'Administrator' : (staff.role === 'supplier' ? 'Supplier' : (staff.role === 'delivery' ? 'Delivery' : 'Sales Representative'))}
                   </TableCell>
                   <TableCell>
                     <Button
@@ -166,10 +170,10 @@ const Results = ({ className, results, updates, userid, callback, ...rest }) => 
                       aria-controls="simple-menu"
                       aria-haspopup="true"
                       onClick={(e) => handleClick(e, {
-                        id: customer.id,
-                        email: customer.email,
-                        phoneNumber: customer.phoneNumber,
-                        name: customer.firstName + ' ' + customer.lastName,
+                        id: staff.id,
+                        name: staff.name,
+                        email: staff.email,
+                        role: staff.role
                       })}
                       color="secondary"
                     >
@@ -188,13 +192,7 @@ const Results = ({ className, results, updates, userid, callback, ...rest }) => 
                         </ListItemIcon>
                         Edit Profile
                       </MenuItem>
-                      
-                      <MenuItem onClick={removeUser}>
-                        <ListItemIcon>
-                          <DeleteIcon fontSize="small" />
-                        </ListItemIcon>
-                        Delete
-                      </MenuItem>
+                      {deleteEl}
                     </Menu>
                   </TableCell>
                 </TableRow>

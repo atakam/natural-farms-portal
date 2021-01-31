@@ -16,7 +16,8 @@ import {
   BarChart as BarChartIcon,
   Settings as SettingsIcon,
   ShoppingBag as ShoppingBagIcon,
-  User as UserIcon
+  User as UserIcon,
+  Users as UsersIcon
 } from 'react-feather';
 import NavItem from './NavItem';
 import AppContext from "../../../components/AppContext";
@@ -42,8 +43,14 @@ const items = [
   },
   {
     href: '/app/customers',
-    icon: UserIcon,
+    icon: UsersIcon,
     title: 'Customers',
+    role: [1,2,3]
+  },
+  {
+    href: '/app/staff',
+    icon: UserIcon,
+    title: 'Staff',
     role: [1,2,3]
   },
   {

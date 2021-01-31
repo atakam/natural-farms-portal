@@ -29,7 +29,12 @@ const {
   userById,
   updateUserById,
   usersByRole,
-  deleteUser
+  deleteUser,
+  getStaff,
+  deleteStaff,
+  staffById,
+  updateStaffById,
+  registerStaff
 } = require('./api/users');
 
 app.use(express.json());
@@ -86,5 +91,15 @@ app.get("/users/:role", usersByRole);
 app.post("/user/:id", updateUserById);
 
 app.delete("/user/delete/:id", deleteUser);
+
+app.get("/staff", getStaff);
+
+app.get("/staff/:id", staffById);
+
+app.post("/staff/:id", updateStaffById);
+
+app.post("/register/staff", registerStaff);
+
+app.delete("/staff/delete/:id", deleteStaff);
 
 module.exports = app;

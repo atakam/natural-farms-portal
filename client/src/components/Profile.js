@@ -9,12 +9,13 @@ import {
   Container
 } from '@material-ui/core';
 import RegisterView from 'src/views/auth/RegisterView';
+import StaffFormView from 'src/views/auth/StaffFormView';
 
 const useStyles = makeStyles(({
   root: {}
 }));
 
-const Profile = ({ className, title, subtitle, id, updateCallback, cancel, ...rest }) => {
+const Profile = ({ className, title, subtitle, id, updateCallback, cancel, isStaff, ...rest }) => {
   const classes = useStyles();
 
   return (
@@ -26,13 +27,25 @@ const Profile = ({ className, title, subtitle, id, updateCallback, cancel, ...re
           />
           <Divider />
           <CardContent>
-            <RegisterView
-              classes={classes}
-              isProfile
-              id={id}
-              updateCallback={updateCallback}
-              cancel={cancel}
-            />
+            {
+              isStaff ? (
+                <StaffFormView
+                  classes={classes}
+                  isProfile
+                  id={id}
+                  updateCallback={updateCallback}
+                  cancel={cancel}
+                />
+              ) : (
+                <RegisterView
+                  classes={classes}
+                  isProfile
+                  id={id}
+                  updateCallback={updateCallback}
+                  cancel={cancel}
+                />
+              )
+            }
           </CardContent>
       </Card>
     </Container>

@@ -50,6 +50,30 @@ const deleteUser = ({id}) => {
   });
 }
 
+const deleteStaff = ({id}) => {
+  return Axios.delete("/staff/delete/" + id).then((response) => {
+    console.log(response);
+  });
+}
+
+const updateStaff = ({entries, id}) => {
+  return Axios.post("/staff/" + id, entries).then((response) => {
+    console.log(response);
+  });
+}
+
+const registerStaff = (entries, callback) => {
+  return Axios.post("/register/staff", entries).then((response) => {
+    console.log(response);
+    if (response.data.errno) {
+      callback && callback(response.data.sqlMessage);
+    } else {
+      callback && callback('');
+      return response;
+    }
+  });
+};
+
 export {
   signin,
   register,
@@ -57,5 +81,8 @@ export {
   updateUser,
   deleteForm,
   updateOrder,
-  deleteUser
+  deleteUser,
+  deleteStaff,
+  updateStaff,
+  registerStaff
 };
