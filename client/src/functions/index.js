@@ -29,36 +29,42 @@ const register = (entries, role, callback) => {
 const updateUser = ({entries, id}) => {
   return Axios.post("/user/" + id, entries).then((response) => {
     console.log(response);
+    return response;
   });
 }
 
 const deleteForm = ({formid}) => {
   return Axios.delete("/orders/delete/" + formid).then((response) => {
     console.log(response);
+    return response;
   });
 }
 
 const updateOrder = ({entries, formid}) => {
   return Axios.post("/orders/update/" + formid, entries).then((response) => {
     console.log(response);
+    return response;
   });
 }
 
 const deleteUser = ({id}) => {
   return Axios.delete("/user/delete/" + id).then((response) => {
     console.log(response);
+    return response;
   });
 }
 
 const deleteStaff = ({id}) => {
   return Axios.delete("/staff/delete/" + id).then((response) => {
     console.log(response);
+    return response;
   });
 }
 
 const updateStaff = ({entries, id}) => {
   return Axios.post("/staff/" + id, entries).then((response) => {
     console.log(response);
+    return response;
   });
 }
 
@@ -77,8 +83,30 @@ const registerStaff = (entries, callback) => {
 const updateEmailTemplate = ({entries, id}) => {
   return Axios.post("/templates/email/" + id, entries).then((response) => {
     console.log(response);
+    return response;
   });
 }
+
+const deleteProduct = ({id}) => {
+  return Axios.delete("/product/delete/" + id).then((response) => {
+    console.log(response);
+    return response;
+  });
+}
+
+const updateProduct = ({entries, id}) => {
+  return Axios.post("/products/" + id, entries).then((response) => {
+    console.log(response);
+    return response;
+  });
+}
+
+const createProduct = (entries, id) => {
+  return Axios.put("/products/" + id, entries).then((response) => {
+    console.log(response);
+    return response;
+  });
+};
 
 export {
   signin,
@@ -91,5 +119,8 @@ export {
   deleteStaff,
   updateStaff,
   registerStaff,
-  updateEmailTemplate
+  updateEmailTemplate,
+  deleteProduct,
+  updateProduct,
+  createProduct
 };

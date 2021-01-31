@@ -19,7 +19,10 @@ import {
   makeStyles
 } from '@material-ui/core';
 import EditIcon from '@material-ui/icons/Edit';
-import EmailTemplate from './EmailTemplate';
+import DeleteIcon from '@material-ui/icons/Delete';
+import AppDialog from 'src/components/AppDialog';
+import { deleteProduct } from 'src/functions/index';
+import Product from './Product';
 
 const useStyles = makeStyles((theme) => ({
   root: {},
@@ -32,8 +35,9 @@ const Results = ({ className, results, updates, userid, callback, ...rest }) => 
   const classes = useStyles();
   const [limit, setLimit] = useState(50);
   const [page, setPage] = useState(0);
-  const [profileName, setProfileName] = useState('');
+  const [productName, setProductName] = useState('');
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [profileDialogOpen, setProfileDialogOpen] = useState(false);
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [objectProp, setObject] = React.useState({id: ''});
 
@@ -56,13 +60,26 @@ const Results = ({ className, results, updates, userid, callback, ...rest }) => 
 
   const handleCloseDialog = () => {
     setDialogOpen(false);
-    setProfileName('');
+    setProfileDialogOpen(false);
+    setProductName('');
   }
 
-  const editTemplate = () => {
+  const handleConfirmDelete = () => {
+    setDialogOpen(false);
+    setProductName('');
+    deleteProduct({id: objectProp.id})
+    .then(() => callback());
+  }
+
+  const removeProduct = () => {
     setAnchorEl(null);
     setDialogOpen(true);
-    setProfileName(objectProp.name);
+    setProductName(objectProp.name);
+  }
+  const editProduct = () => {
+    setAnchorEl(null);
+    setProfileDialogOpen(true);
+    setProductName(objectProp.name);
   }
   const updateCallback = () => {
     handleCloseDialog();
@@ -74,19 +91,28 @@ const Results = ({ className, results, updates, userid, callback, ...rest }) => 
       className={clsx(classes.root, className)}
       {...rest}
     >
-      <Dialog
+      <AppDialog
         open={dialogOpen}
+        handleClose={handleCloseDialog}
+        handleConfirm={handleConfirmDelete}
+        title='Confirm Delete'
+        content={'Are you sure you want to delete '+productName+'?'}
+        subcontent={'This action is irreversible!'}
+      />
+      <Dialog
+        open={profileDialogOpen}
         onClose={handleCloseDialog}
         aria-labelledby="draggable-dialog-title"
         fullWidth
         maxWidth={'lg'}
       >
-        <EmailTemplate
-          title={profileName}
-          subtitle={"Modify email template"}
+        <Product
+          title={productName}
+          subtitle={"Modify product information"}
           id={objectProp.id}
           updateCallback={updateCallback}
           cancel={handleCloseDialog}
+          isUpdate
         />
       </Dialog>
       <PerfectScrollbar>
@@ -98,10 +124,10 @@ const Results = ({ className, results, updates, userid, callback, ...rest }) => 
                   Name
                 </TableCell>
                 <TableCell>
-                  Subject (English)
+                  Category
                 </TableCell>
                 <TableCell>
-                  Subject (French)
+                  Active
                 </TableCell>
                 <TableCell>
                   Actions
@@ -109,19 +135,19 @@ const Results = ({ className, results, updates, userid, callback, ...rest }) => 
               </TableRow>
             </TableHead>
             <TableBody>
-              {results.slice(page * limit, (page * limit) + limit).map((template) => (
+              {results.slice(page * limit, (page * limit) + limit).map((product) => (
                 <TableRow
                   hover
-                  key={template.id}
+                  key={product.product_id}
                 >
                   <TableCell>
-                    {template.name}
+                    {product.product_name_en + ' / ' + product.product_name_fr}
                   </TableCell>
                   <TableCell>
-                    {template.subject_en}
+                    {product.category_name_en + ' / ' + product.category_name_fr}
                   </TableCell>
                   <TableCell>
-                    {template.subject_fr}
+                    {product.active === 1 ? 'Active' : <span style={{color: 'red'}}>Not Active</span>}
                   </TableCell>
                   <TableCell>
                     <Button
@@ -129,12 +155,11 @@ const Results = ({ className, results, updates, userid, callback, ...rest }) => 
                       aria-controls="simple-menu"
                       aria-haspopup="true"
                       onClick={(e) => handleClick(e, {
-                        id: template.id,
-                        name: template.name,
-                        subject_en: template.subject_en,
-                        subject_fr: template.subject_fr,
-                        content_en: template.content_en,
-                        content_fr: template.content_fr
+                        id: product.product_id,
+                        name: product.product_name_en + ' / ' + product.product_name_fr,
+                        category_name_en: product.category_name_en,
+                        category_name_fr: product.category_name_fr,
+                        active: product.active
                       })}
                       color="secondary"
                     >
@@ -147,11 +172,17 @@ const Results = ({ className, results, updates, userid, callback, ...rest }) => 
                       open={Boolean(anchorEl)}
                       onClose={handleClose}
                     >
-                      <MenuItem onClick={editTemplate}>
+                      <MenuItem onClick={editProduct}>
                         <ListItemIcon>
                           <EditIcon fontSize="small" />
                         </ListItemIcon>
-                        Edit Template
+                        Edit
+                      </MenuItem>
+                      <MenuItem onClick={removeProduct}>
+                        <ListItemIcon>
+                          <DeleteIcon fontSize="small" />
+                        </ListItemIcon>
+                        Delete
                       </MenuItem>
                     </Menu>
                   </TableCell>

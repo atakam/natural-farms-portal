@@ -23,11 +23,11 @@ const routes = [
       { path: 'account', element: <AccountView /> },
       { path: 'orders', element: <MyOrderListView /> },
       { path: 'allorders', element: <AllOrderListView /> },
+      { path: 'products', element: <ProductListView /> },
       { path: 'customers', element: <CustomerListView /> },
       { path: 'staff', element: <StaffListView /> },
       { path: 'emailtemplates', element: <EmailTemplateView /> },
       { path: 'dashboard', element: <DashboardView /> },
-      { path: 'products', element: <ProductListView /> },
       { path: 'settings', element: <SettingsView /> },
       { path: '*', element: <Navigate to="/404" /> }
     ]

@@ -1,15 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Container,
-  Grid,
+  Dialog,
   makeStyles
 } from '@material-ui/core';
-import { Pagination } from '@material-ui/lab';
 import Page from 'src/components/Page';
-import Toolbar from './Toolbar';
-import ProductCard from './ProductCard';
-import data from './data';
+import Results from './Results';
+import Toolbar from 'src/components/Toolbar';
+import CreateProduct from './CreateProduct';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -17,58 +16,79 @@ const useStyles = makeStyles((theme) => ({
     minHeight: '100%',
     paddingBottom: theme.spacing(3),
     paddingTop: theme.spacing(3)
-  },
-  productCard: {
-    height: '100%'
   }
 }));
 
-const ProductList = () => {
+const ProductListView = () => {
   const classes = useStyles();
-  const [products] = useState(data);
+  const [results, setResults] = useState([]);
+  const [filteredResults, setFilteredResults] = useState([]);
+  const [profileDialogOpen, setProfileDialogOpen] = useState(false);
+
+  const filter = (text) => {
+    const newResults = results.filter((el) => {
+      for (let i=0; i<Object.values(el).length; i++) {
+          if (String(Object.values(el)[i]).toLowerCase().indexOf(text.toLowerCase()) > -1) return true;
+      }
+      return false;
+    });
+    setFilteredResults(newResults);
+  };
+
+  const getProducts = async () => {
+    const response = await fetch('/products', {
+      headers: {
+        'Content-Type': 'application/json',
+      }
+    });
+
+    const body = await response.text();
+    const result = JSON.parse(body);
+    console.log("results", result);
+    setResults(result);
+    setFilteredResults(result);
+  };
+
+  const createProduct = () => {
+    setProfileDialogOpen(true);
+  };
+
+  const handleCloseDialog = () => {
+    setProfileDialogOpen(false);
+  }
+
+  useEffect(() => {
+    getProducts();
+  }, []);
 
   return (
     <Page
       className={classes.root}
-      title="Products"
+      title="Staff"
     >
+      <Dialog
+        open={profileDialogOpen}
+        onClose={handleCloseDialog}
+        aria-labelledby="draggable-dialog-title"
+        fullWidth
+        maxWidth={'lg'}
+      >
+        <CreateProduct
+          title={'Create New Product'}
+          subtitle={"Create a new product according to available categories"}
+          updateCallback={getProducts}
+          cancel={handleCloseDialog}
+          isStaff
+        />
+      </Dialog>
       <Container maxWidth={false}>
-        <Toolbar />
+        <Toolbar filter={filter} buttonProps={{ label: 'ADD PRODUCT', action: createProduct }} />
         <Box mt={3}>
-          <Grid
-            container
-            spacing={3}
-          >
-            {products.map((product) => (
-              <Grid
-                item
-                key={product.id}
-                lg={4}
-                md={6}
-                xs={12}
-              >
-                <ProductCard
-                  className={classes.productCard}
-                  product={product}
-                />
-              </Grid>
-            ))}
-          </Grid>
-        </Box>
-        <Box
-          mt={3}
-          display="flex"
-          justifyContent="center"
-        >
-          <Pagination
-            color="primary"
-            count={3}
-            size="small"
-          />
+          <Results results={filteredResults} callback={getProducts}/>
         </Box>
       </Container>
     </Page>
   );
 };
 
-export default ProductList;
+export default ProductListView;

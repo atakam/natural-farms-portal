@@ -43,6 +43,16 @@ const {
   getEmailTemplates
 } = require('./api/templates');
 
+const {
+  getProducts,
+  updateProductById,
+  productById,
+  deleteProduct,
+  categories,
+  createProduct,
+  packagingByProductId
+} = require('./api/products');
+
 app.use(express.json());
 app.use(
   cors({
@@ -113,5 +123,19 @@ app.get("/templates/email", getEmailTemplates);
 app.get("/templates/email/:id", emailTemplateById);
 
 app.post("/templates/email/:id", updateEmailTemplateById);
+
+app.get("/products", getProducts);
+
+app.get("/products/:id", productById);
+
+app.post("/products/:id", updateProductById);
+
+app.put("/products/:id", createProduct);
+
+app.delete("/product/delete/:id", deleteProduct);
+
+app.get("/categories/product", categories);
+
+app.get("/packaging/product/:id", packagingByProductId);
 
 module.exports = app;

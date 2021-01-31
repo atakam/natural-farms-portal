@@ -147,7 +147,7 @@ const Results = ({ className, results, updates, userid, callback, ...rest }) => 
               </TableRow>
             </TableHead>
             <TableBody>
-              {results.slice(0, limit).map((staff) => (
+              {results.slice(page * limit, (page * limit) + limit).map((staff) => (
                 <TableRow
                   hover
                   key={staff.id}
@@ -208,7 +208,7 @@ const Results = ({ className, results, updates, userid, callback, ...rest }) => 
         onChangeRowsPerPage={handleLimitChange}
         page={page}
         rowsPerPage={limit}
-        rowsPerPageOptions={[5, 10, 25]}
+        rowsPerPageOptions={[5, 10, 25, 50]}
       />
     </Card>
   );
