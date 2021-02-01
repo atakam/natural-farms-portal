@@ -164,11 +164,6 @@ const StaffFormView = (props) => {
               if (props.isProfile) {
                 updateStaff({entries: values, id: userid}).then((response) => {
                   console.log("UPDATE:", response);
-                  if (!response) {
-                    alert("Successfully updated staff");
-                  } else {
-                    alert("Error while updating staff");
-                  }
                   props.updateCallback && props.updateCallback();
                 });
               } else {

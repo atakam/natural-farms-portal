@@ -246,11 +246,6 @@ const RegisterView = (props) => {
               if (props.isProfile) {
                 updateUser({entries: values, id: userid}).then((response) => {
                   console.log("UPDATE:", response);
-                  if (!response) {
-                    alert("Successfully updated profile");
-                  } else {
-                    alert("Error while updating profile");
-                  }
                   props.updateCallback && props.updateCallback();
                 });
               } else {

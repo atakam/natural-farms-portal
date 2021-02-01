@@ -26,6 +26,7 @@ const CustomerListView = (props) => {
   const [updates, setUpdates] = useState([]);
   const [openNewOrder, setOpenNewOrder] = useState(false);
   const [filteredResults, setFilteredResults] = useState([]);
+  const [calendarView, setCalendarView] = useState(false);
   const context = useContext(AppContext);
 
   const getOrders = async (isModified) => {
@@ -137,9 +138,19 @@ const CustomerListView = (props) => {
     >
       <NewOrder open={openNewOrder} close={handleClose} getOrders={getOrders} user={context.credentials.user} />
       <Container maxWidth={false}>
-      <Toolbar performSearch={performSearch} buttonProps={{ label: 'NEW ORDER', action: newOrder }}/>
+      <Toolbar
+        performSearch={performSearch}
+        buttonProps={{ label: 'NEW ORDER', action: newOrder }}
+        calendarView={calendarView}
+        calendarButtonProps={{
+          calendarLabel: 'CALENDAR VIEW',
+          calendarAction: () => setCalendarView(true),
+          listLabel: 'LIST VIEW',
+          listAction: () => setCalendarView(false)
+        }}
+      />
         <Box mt={3}>
-          <Results updates={updates} results={filteredResults} userid={context.credentials.user.id} callback={getOrders} />
+          <Results updates={updates} results={filteredResults} userid={context.credentials.user.id} callback={getOrders} calendarView={calendarView} />
         </Box>
       </Container>
     </Page>

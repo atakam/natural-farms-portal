@@ -23,6 +23,7 @@ const {
   updatedOrders,
   modifiedFormOrders,
   updateOrderConfirmDeliverById,
+  updateDeliveryDateById,
   getUpdates,
   getStatistics
 } = require('./api/orders');
@@ -108,6 +109,8 @@ app.get("/orderscheck/updated", getUpdates);
 app.delete("/orders/delete/:formid", deleteForm);
 
 app.post("/orders/update/:formid", updateOrderConfirmDeliverById);
+
+app.post("/orders/delivery/update/:formid", updateDeliveryDateById)
 
 app.get("/user/:id", userById);
 

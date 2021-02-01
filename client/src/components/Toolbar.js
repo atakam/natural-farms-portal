@@ -11,6 +11,9 @@ import {
   SvgIcon,
   makeStyles
 } from '@material-ui/core';
+import AddIcon from '@material-ui/icons/Add';
+import CalendarIcon from '@material-ui/icons/Event';
+import ListIcon from '@material-ui/icons/List';
 import { Search as SearchIcon } from 'react-feather';
 
 const useStyles = makeStyles((theme) => ({
@@ -23,7 +26,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const Toolbar = ({ className, performSearch, buttonProps, ...rest }) => {
+const Toolbar = ({ className, performSearch, buttonProps, calendarButtonProps, calendarView, ...rest }) => {
   const classes = useStyles();
   const [searchValue, setSearchValue] = useState('');
   const handleChange = (event) => {
@@ -31,6 +34,36 @@ const Toolbar = ({ className, performSearch, buttonProps, ...rest }) => {
   };
   let typingTimer;
   const doneTypingInterval = 1500;
+
+  const calendarButton = calendarButtonProps && !calendarView ? (
+    <Box
+      display="flex"
+      justifyContent="flex-end"
+    >
+      <Button
+        color="primary"
+        variant="contained"
+        onClick={calendarButtonProps.calendarAction}
+        startIcon={<CalendarIcon />}
+      >
+        {calendarButtonProps.calendarLabel}
+      </Button>
+    </Box>
+  ) : (
+    <Box
+      display="flex"
+      justifyContent="flex-end"
+    >
+      <Button
+        color="primary"
+        variant="contained"
+        onClick={calendarButtonProps.listAction}
+        startIcon={<ListIcon />}
+      >
+        {calendarButtonProps.listLabel}
+      </Button>
+    </Box>
+  );
 
   const button = buttonProps ? (
       <Box
@@ -41,6 +74,7 @@ const Toolbar = ({ className, performSearch, buttonProps, ...rest }) => {
           color="primary"
           variant="contained"
           onClick={buttonProps.action}
+          startIcon={<AddIcon />}
         >
           {buttonProps.label}
         </Button>
@@ -52,7 +86,15 @@ const Toolbar = ({ className, performSearch, buttonProps, ...rest }) => {
       className={clsx(classes.root, className)}
       {...rest}
     >
-      {button}
+      <Box
+        display="flex"
+        justifyContent="flex-end"
+        p={2}
+      >
+        {calendarButton}
+        <span style={{padding: '0 10px'}} />
+        {button}
+      </Box>
       <Box mt={3}>
         <Card>
           <CardContent>

@@ -34,6 +34,7 @@ import AppDialog from '../../../components/AppDialog';
 import { deleteForm } from '../../../functions/index';
 import Profile from 'src/components/Profile';
 import SingleOrderView from '../SingleOrderView/index';
+import CalendarView from './CalendarView';
 
 const useStyles = makeStyles((theme) => ({
   root: {},
@@ -42,7 +43,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const Results = ({ className, results, updates, userid, callback, ...rest }) => {
+const Results = ({ className, results, updates, userid, callback, calendarView, ...rest }) => {
   const classes = useStyles();
   const [limit, setLimit] = useState(50);
   const [page, setPage] = useState(0);
@@ -54,8 +55,8 @@ const Results = ({ className, results, updates, userid, callback, ...rest }) => 
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [objectProp, setObject] = React.useState({formid: '', rid: ''});
 
-  const handleClick = (event, obj) => {
-    setAnchorEl(event.currentTarget);
+  const handleClick = (target, obj) => {
+    setAnchorEl(target);
     setObject(obj);
   };
   
@@ -175,6 +176,71 @@ const Results = ({ className, results, updates, userid, callback, ...rest }) => 
     setOriginal(isOriginal);
   }
 
+  const menuItems = (
+    <Menu
+      id="simple-menu"
+      anchorEl={anchorEl && document.getElementById(anchorEl.id)}
+      keepMounted
+      open={Boolean(anchorEl)}
+      onClose={handleClose}
+      className={anchorEl && anchorEl.menuStyle}
+    >
+      {anchorEl && <MenuItem>
+        <strong>{anchorEl.customerName}</strong>
+      </MenuItem>}
+      <MenuItem onClick={editProfile}>
+        <ListItemIcon>
+          <EditIcon fontSize="small" />
+        </ListItemIcon>
+        Edit Profile
+      </MenuItem>
+      <MenuItem onClick={() => goToEditContract()}>
+        <ListItemIcon>
+          <AssignmentLateIcon fontSize="small" />
+        </ListItemIcon>
+        Edit Contract
+      </MenuItem>
+      {objectProp.isEdited &&
+        <MenuItem onClick={() => viewOrders(false)}>
+          <ListItemIcon>
+            <LocalMallIcon fontSize="small" />
+          </ListItemIcon>
+          View Current Order
+        </MenuItem>
+      }
+      <MenuItem onClick={() => viewOrders(true)}>
+        <ListItemIcon>
+          <ShoppingCartIcon fontSize="small" />
+        </ListItemIcon>
+        {objectProp.isEdited ? 'View Original Order' : 'View Order'}
+      </MenuItem>
+      <MenuItem onClick={() => goToContract()}>
+        <ListItemIcon>
+          <AssignmentIcon fontSize="small" />
+        </ListItemIcon>
+        View Contract
+      </MenuItem>
+      <MenuItem onClick={() => resendEmail()}>
+        <ListItemIcon>
+          <EmailIcon fontSize="small" />
+        </ListItemIcon>
+        Resend Contract Email
+      </MenuItem>
+      <MenuItem onClick={() => goToVerify()}>
+        <ListItemIcon>
+          <VerifiedUserIcon fontSize="small" />
+        </ListItemIcon>
+        Verify Changes
+      </MenuItem>
+      <MenuItem onClick={deleteOrder}>
+        <ListItemIcon>
+          <DeleteIcon fontSize="small" />
+        </ListItemIcon>
+        Delete
+      </MenuItem>
+    </Menu>
+  )
+
   return (
     <Card
       className={clsx(classes.root, className)}
@@ -219,178 +285,146 @@ const Results = ({ className, results, updates, userid, callback, ...rest }) => 
           original={original}
         />
       </Dialog>
-      <PerfectScrollbar>
-        <Box minWidth={1050}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>
-                  NFF
-                </TableCell>
-                <TableCell>
-                  Name
-                </TableCell>
-                <TableCell>
-                  Date
-                </TableCell>
-                <TableCell>
-                  Total Points
-                </TableCell>
-                <TableCell>
-                  Total Price
-                </TableCell>
-                <TableCell>
-                  Next Delivery
-                </TableCell>
-                <TableCell>
-                  Sales Rep
-                </TableCell>
-                <TableCell>
-                  Modified
-                </TableCell>
-                <TableCell>
-                  Status
-                </TableCell>
-                <TableCell>
-                  Actions
-                </TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {results.slice(page * limit, (page * limit) + limit).map((customer) => (
-                <TableRow
-                  hover
-                  key={customer.formid}
-                >
+      {!calendarView ? 
+      (<span>
+        <PerfectScrollbar>
+          <Box minWidth={1050}>
+            <Table>
+              <TableHead>
+                <TableRow>
                   <TableCell>
-                    {customer.nff}
+                    NFF
                   </TableCell>
                   <TableCell>
-                    {customer.firstName + ' ' + customer.lastName}
-                    <br/>
-                    {customer.phoneNumber}
+                    Name
                   </TableCell>
                   <TableCell>
-                    <Box
-                      alignItems="center"
-                      display="flex"
-                    >
-                      <Typography
-                        color="textPrimary"
-                        variant="body1"
-                      >
-                        {moment(customer.signature_date).format('DD/MM/YYYY')}
-                      </Typography>
-                    </Box>
+                    Date
                   </TableCell>
                   <TableCell>
-                    {customer.total_points}
+                    Total Points
                   </TableCell>
                   <TableCell>
-                    {customer.price}
+                    Total Price
                   </TableCell>
                   <TableCell>
-                    {delivery(customer)}
+                    Next Delivery
                   </TableCell>
                   <TableCell>
-                    {customer.repName}
+                    Sales Rep
                   </TableCell>
                   <TableCell>
-                    {edited(customer)}
+                    Modified
                   </TableCell>
                   <TableCell>
-                    <Typography color={status(customer).color}>{status(customer).message}</Typography> 
+                    Status
                   </TableCell>
                   <TableCell>
-                    <Button
-                      variant="contained"
-                      aria-controls="simple-menu"
-                      aria-haspopup="true"
-                      onClick={(e) => handleClick(e, {
-                        formid: customer.formid,
-                        rid: customer.representative_id,
-                        email: customer.email,
-                        phoneNumber: customer.phoneNumber,
-                        name: customer.firstName + ' ' + customer.lastName,
-                        id: customer.uid
-                      })}
-                      color="secondary"
-                    >
-                      Action List
-                    </Button>
-                    <Menu
-                      id="simple-menu"
-                      anchorEl={anchorEl}
-                      keepMounted
-                      open={Boolean(anchorEl)}
-                      onClose={handleClose}
-                    >
-                      <MenuItem onClick={editProfile}>
-                        <ListItemIcon>
-                          <EditIcon fontSize="small" />
-                        </ListItemIcon>
-                        Edit Profile
-                      </MenuItem>
-                      <MenuItem onClick={() => goToEditContract()}>
-                        <ListItemIcon>
-                          <AssignmentLateIcon fontSize="small" />
-                        </ListItemIcon>
-                        Edit Contract
-                      </MenuItem>
-                      <MenuItem onClick={() => viewOrders(false)}>
-                        <ListItemIcon>
-                          <LocalMallIcon fontSize="small" />
-                        </ListItemIcon>
-                        View Current Order
-                      </MenuItem>
-                      <MenuItem onClick={() => viewOrders(true)}>
-                        <ListItemIcon>
-                          <ShoppingCartIcon fontSize="small" />
-                        </ListItemIcon>
-                        View Original Order
-                      </MenuItem>
-                      <MenuItem onClick={() => goToContract()}>
-                        <ListItemIcon>
-                          <AssignmentIcon fontSize="small" />
-                        </ListItemIcon>
-                        View Contract
-                      </MenuItem>
-                      <MenuItem onClick={() => resendEmail()}>
-                        <ListItemIcon>
-                          <EmailIcon fontSize="small" />
-                        </ListItemIcon>
-                        Resend Contract Email
-                      </MenuItem>
-                      <MenuItem onClick={() => goToVerify()}>
-                        <ListItemIcon>
-                          <VerifiedUserIcon fontSize="small" />
-                        </ListItemIcon>
-                        Verify Changes
-                      </MenuItem>
-                      <MenuItem onClick={deleteOrder}>
-                        <ListItemIcon>
-                          <DeleteIcon fontSize="small" />
-                        </ListItemIcon>
-                        Delete
-                      </MenuItem>
-                    </Menu>
+                    Actions
                   </TableCell>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </Box>
-      </PerfectScrollbar>
-      <TablePagination
-        component="div"
-        count={results.length}
-        onChangePage={handlePageChange}
-        onChangeRowsPerPage={handleLimitChange}
-        page={page}
-        rowsPerPage={limit}
-        rowsPerPageOptions={[5, 10, 25, 50]}
-      />
-    </Card>
+              </TableHead>
+              <TableBody>
+                {results.slice(page * limit, (page * limit) + limit).map((customer) => (
+                  <TableRow
+                    hover
+                    key={customer.formid}
+                  >
+                    <TableCell>
+                      {customer.nff}
+                    </TableCell>
+                    <TableCell>
+                      {customer.firstName + ' ' + customer.lastName}
+                      <br/>
+                      {customer.phoneNumber}
+                    </TableCell>
+                    <TableCell>
+                      <Box
+                        alignItems="center"
+                        display="flex"
+                      >
+                        <Typography
+                          color="textPrimary"
+                          variant="body1"
+                        >
+                          {moment(customer.signature_date).format('DD/MM/YYYY')}
+                        </Typography>
+                      </Box>
+                    </TableCell>
+                    <TableCell>
+                      {customer.total_points}
+                    </TableCell>
+                    <TableCell>
+                      {customer.price}
+                    </TableCell>
+                    <TableCell>
+                      {delivery(customer)}
+                    </TableCell>
+                    <TableCell>
+                      {customer.repName}
+                    </TableCell>
+                    <TableCell>
+                      {edited(customer)}
+                    </TableCell>
+                    <TableCell>
+                      <Typography color={status(customer).color}>{status(customer).message}</Typography> 
+                    </TableCell>
+                    <TableCell>
+                      <Button
+                        id="actionListButton"
+                        variant="contained"
+                        aria-controls="simple-menu"
+                        aria-haspopup="true"
+                        onClick={(e) => handleClick(e.currentTarget, {
+                          formid: customer.formid,
+                          rid: customer.representative_id,
+                          email: customer.email,
+                          phoneNumber: customer.phoneNumber,
+                          name: customer.firstName + ' ' + customer.lastName,
+                          id: customer.uid,
+                          isEdited: edited(customer) !== '-'
+                        })}
+                        color="secondary"
+                      >
+                        Action List
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </Box>
+        </PerfectScrollbar>
+        <TablePagination
+          component="div"
+          count={results.length}
+          onChangePage={handlePageChange}
+          onChangeRowsPerPage={handleLimitChange}
+          page={page}
+          rowsPerPage={limit}
+          rowsPerPageOptions={[5, 10, 25, 50]}
+        />
+      </span>
+      )
+      :
+      <CalendarView
+        results={results}
+        callback={callback}
+        showDate={new Date()}
+        actions={{
+          goToVerify,
+          deleteOrder,
+          resendEmail,
+          goToContract,
+          viewOrders,
+          goToEditContract,
+          editProfile,
+          setObject
+        }}
+        handleClick={handleClick}
+      /> }
+      {menuItems}
+    </Card> 
   );
 };
 

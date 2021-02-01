@@ -82,11 +82,6 @@ const EmailTemplateView = (props) => {
               console.log(values);
               updateEmailTemplate({entries: values, id: templateId}).then((response) => {
                 console.log("UPDATE:", response);
-                if (!response) {
-                  alert("Successfully updated template");
-                } else {
-                  alert("Error while updating template");
-                }
                 props.updateCallback && props.updateCallback();
               });
               // navigate('/app/dashboard', { replace: true });

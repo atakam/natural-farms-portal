@@ -129,6 +129,18 @@ const createCategory = (entries, id) => {
   });
 };
 
+const updateFormDeliveryDate = ({formid, delivery, date}) => {
+  const num = delivery === 2 ? 'second' : (delivery === 3 ? 'third': 'first');
+  delivery = 'conditions_' + num + 'deliverydate';
+  const entries = {
+    [delivery] : date
+  }
+  return Axios.post("/orders/delivery/update/" + formid, entries).then((response) => {
+    console.log(response);
+    return response;
+  });
+}
+
 export {
   signin,
   register,
@@ -146,5 +158,6 @@ export {
   createProduct,
   deleteCategory,
   updateCategory,
-  createCategory
+  createCategory,
+  updateFormDeliveryDate
 };

@@ -131,6 +131,34 @@ const updateOrderConfirmDeliverById = (req, res) => {
   );
 }
 
+const updateDeliveryDateById = (req, res) => {
+  const formid = req.params.formid;
+  const {
+    conditions_firstdeliverydate,
+    conditions_seconddeliverydate,
+    conditions_thirddeliverydate
+  } = req.body;
+
+  let order = {
+    conditions_firstdeliverydate,
+    conditions_seconddeliverydate,
+    conditions_thirddeliverydate
+  };
+
+  order = clean(order);
+
+  db.query(
+    "UPDATE form_completion SET ? WHERE id = ?",
+    [order, formid],
+    (err, result) => {
+      if (err) {
+        res.send({ err: err });
+      }
+      res.send(result);
+    }
+  );
+}
+
 const getStatistics = (req, res) => {
   console.log('STATISTICS');
   db.query(
@@ -210,5 +238,6 @@ module.exports = {
     modifiedFormOrders,
     getUpdates,
     updateOrderConfirmDeliverById,
+    updateDeliveryDateById,
     getStatistics
 };

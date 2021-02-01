@@ -101,12 +101,12 @@ const Results = ({ className, results, userid, callback, ...rest }) => {
                         <TableCell
                         style={{textAlign:'right'}}
                         >
-                        {'$ ' + price}
+                        {'$ ' + price.toFixed(2)}
                         </TableCell>
                         <TableCell
                         style={{textAlign:'right'}}
                         >
-                        {'$ ' + purchasePrice}
+                        {'$ ' + purchasePrice.toFixed(2)}
                         </TableCell>
                     </TableRow>
                     );
@@ -128,12 +128,12 @@ const Results = ({ className, results, userid, callback, ...rest }) => {
                     <TableCell
                     style={{textAlign:'right'}}
                     >
-                    {'$ ' + totalPrice}
+                    {'$ ' + totalPrice.toFixed(2)}
                     </TableCell>
                     <TableCell
                     style={{textAlign:'right'}}
                     >
-                    {'$ ' + totalPurchasePrice}
+                    {'$ ' + totalPurchasePrice.toFixed(2)}
                     </TableCell>
                 </TableRow>
             </TableHead>
@@ -258,7 +258,7 @@ const Results = ({ className, results, userid, callback, ...rest }) => {
     >
       <PerfectScrollbar>
         <Box minWidth={1050}>
-          <Tabs tabs={tabs} />
+          <Tabs value={2} tabs={tabs} />
         </Box>
       </PerfectScrollbar>
     </Card>
