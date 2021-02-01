@@ -200,8 +200,21 @@ const categoryById = (req, res) => {
   );
 }
 
+const getProductDetails = (req, res) => {
+  db.query(
+    "SELECT *, products_details.id AS product_details_id FROM products LEFT JOIN products_details ON products_details.product_id = products.id LEFT JOIN product_packaging ON product_packaging.id = products_details.packaging_id",
+    (err, result) => {
+      if (err) {
+        res.send({ err: err });
+      }
+      res.send(result);
+    }
+  );
+}
+
 module.exports = {
   getProducts,
+  getProductDetails,
   updateProductById,
   deleteProduct,
   productById,

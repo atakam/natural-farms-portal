@@ -47,6 +47,7 @@ const {
 
 const {
   getProducts,
+  getProductDetails,
   updateProductById,
   productById,
   deleteProduct,
@@ -133,6 +134,8 @@ app.get("/templates/email/:id", emailTemplateById);
 app.post("/templates/email/:id", updateEmailTemplateById);
 
 app.get("/products", getProducts);
+
+app.get("/productdetails", getProductDetails);
 
 app.get("/products/:id", productById);
 

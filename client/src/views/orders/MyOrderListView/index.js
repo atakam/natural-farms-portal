@@ -8,6 +8,7 @@ import Page from 'src/components/Page';
 import Results from './Results';
 import Toolbar from 'src/components/Toolbar';
 import AppContext from "src/components/AppContext";
+import NewOrder from "../NewOrder";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -33,19 +34,32 @@ const getOrders = async (id, setResults) => {
 const CustomerListView = () => {
   const classes = useStyles();
   const [results, setResults] = useState([]);
+  const [openNewOrder, setOpenNewOrder] = useState(false);
   const context = useContext(AppContext);
 
   useEffect(() => {
     getOrders(context.credentials.user.id, setResults);
   }, []);
 
-  const newOrder = () => {};
+  const newOrder = () => {
+    setOpenNewOrder(true);
+  }
+
+  const handleClose = () => {
+    setOpenNewOrder(false);
+  }
 
   return (
     <Page
       className={classes.root}
       title="Customers"
     >
+      <NewOrder
+        open={openNewOrder}
+        close={handleClose}
+        getOrders={() => getOrders(context.credentials.user.id, setResults)}
+        user={context.credentials.user}
+      />
       <Container maxWidth={false}>
         <Toolbar buttonProps={{ label: 'NEW ORDER', action: newOrder }}/>
         <Box mt={3}>
