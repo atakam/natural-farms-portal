@@ -22,16 +22,6 @@ const CustomerListView = () => {
   const [results, setResults] = useState([]);
   const [filteredResults, setFilteredResults] = useState([]);
 
-  const filter = (text) => {
-    const newResults = results.filter((el) => {
-      for (let i=0; i<Object.values(el).length; i++) {
-          if (String(Object.values(el)[i]).toLowerCase().indexOf(text.toLowerCase()) > -1) return true;
-      }
-      return false;
-    });
-    setFilteredResults(newResults);
-  };
-
   const getCustomers = async () => {
     const response = await fetch('/users/:3', {
       headers: {
@@ -50,13 +40,28 @@ const CustomerListView = () => {
     getCustomers();
   }, []);
 
+  const performSearch = (value) => {
+    const filter = value.toUpperCase();
+
+    const newResults = results.filter((el) => {
+      if ((String(el.firstName) + ' '+ String(el.lastName)).toUpperCase().indexOf(filter) > -1
+        || (String(el.streetAddress) + ' '+ String(el.city) + ', '+ String(el.province)+ ' '+ String(el.postalCode)).toUpperCase().indexOf(filter) > -1
+        || String(el.nff).toUpperCase().indexOf(filter) > -1
+        || String(el.email).toUpperCase().indexOf(filter) > -1
+        || String(el.phoneNumber).toUpperCase().indexOf(filter) > -1
+      ) return true;
+      return false;
+    });
+    setFilteredResults(newResults);
+  };
+
   return (
     <Page
       className={classes.root}
       title="Customers"
     >
       <Container maxWidth={false}>
-        <Toolbar filter={filter} />
+        <Toolbar performSearch={performSearch}/>
         <Box mt={3}>
           <Results results={filteredResults} callback={getCustomers}/>
         </Box>

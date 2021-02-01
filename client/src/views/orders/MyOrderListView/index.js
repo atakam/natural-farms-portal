@@ -6,8 +6,8 @@ import {
 } from '@material-ui/core';
 import Page from 'src/components/Page';
 import Results from './Results';
-import Toolbar from './Toolbar';
-import AppContext from "../../../components/AppContext";
+import Toolbar from 'src/components/Toolbar';
+import AppContext from "src/components/AppContext";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -39,13 +39,15 @@ const CustomerListView = () => {
     getOrders(context.credentials.user.id, setResults);
   }, []);
 
+  const newOrder = () => {};
+
   return (
     <Page
       className={classes.root}
       title="Customers"
     >
       <Container maxWidth={false}>
-        <Toolbar />
+        <Toolbar buttonProps={{ label: 'NEW ORDER', action: newOrder }}/>
         <Box mt={3}>
           <Results results={results} />
         </Box>

@@ -25,16 +25,6 @@ const StaffListView = () => {
   const [filteredResults, setFilteredResults] = useState([]);
   const [profileDialogOpen, setProfileDialogOpen] = useState(false);
 
-  const filter = (text) => {
-    const newResults = results.filter((el) => {
-      for (let i=0; i<Object.values(el).length; i++) {
-          if (String(Object.values(el)[i]).toLowerCase().indexOf(text.toLowerCase()) > -1) return true;
-      }
-      return false;
-    });
-    setFilteredResults(newResults);
-  };
-
   const getStaff = async () => {
     const response = await fetch('/staff', {
       headers: {
@@ -61,6 +51,21 @@ const StaffListView = () => {
     getStaff();
   }, []);
 
+  const performSearch = (value) => {
+    const filter = value.toUpperCase();
+
+    const newResults = results.filter((el) => {
+      const role = el.role === 'admin' ? 'Administrator' : (el.role === 'supplier' ? 'Supplier' : (el.role === 'delivery' ? 'Delivery' : 'Sales Representative'));
+      if (String(el.username).toUpperCase().indexOf(filter) > -1
+        || String(el.name).toUpperCase().indexOf(filter) > -1
+        || String(el.email).toUpperCase().indexOf(filter) > -1
+        || String(role).toUpperCase().indexOf(filter) > -1
+      ) return true;
+      return false;
+    });
+    setFilteredResults(newResults);
+  };
+
   return (
     <Page
       className={classes.root}
@@ -82,7 +87,7 @@ const StaffListView = () => {
         />
       </Dialog>
       <Container maxWidth={false}>
-        <Toolbar filter={filter} buttonProps={{ label: 'ADD STAFF', action: createStaff }} />
+        <Toolbar performSearch={performSearch} buttonProps={{ label: 'ADD STAFF', action: createStaff }} />
         <Box mt={3}>
           <Results results={filteredResults} callback={getStaff}/>
         </Box>

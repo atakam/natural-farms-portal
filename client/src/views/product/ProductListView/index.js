@@ -25,16 +25,6 @@ const ProductListView = () => {
   const [filteredResults, setFilteredResults] = useState([]);
   const [profileDialogOpen, setProfileDialogOpen] = useState(false);
 
-  const filter = (text) => {
-    const newResults = results.filter((el) => {
-      for (let i=0; i<Object.values(el).length; i++) {
-          if (String(Object.values(el)[i]).toLowerCase().indexOf(text.toLowerCase()) > -1) return true;
-      }
-      return false;
-    });
-    setFilteredResults(newResults);
-  };
-
   const getProducts = async () => {
     const response = await fetch('/products', {
       headers: {
@@ -61,6 +51,20 @@ const ProductListView = () => {
     getProducts();
   }, []);
 
+  const performSearch = (value) => {
+    const filter = value.toUpperCase();
+
+    const newResults = results.filter((el) => {
+      const active = el.active === 1 ? 'Active' : 'Not Active';
+      if ((String(el.product_name_en) + ' / '+ String(el.product_name_fr)).toUpperCase().indexOf(filter) > -1
+        || (String(el.category_name_en) + ' / '+ String(el.category_name_fr)).toUpperCase().indexOf(filter) > -1
+        || String(active).toUpperCase().indexOf(filter) > -1
+      ) return true;
+      return false;
+    });
+    setFilteredResults(newResults);
+  };
+
   return (
     <Page
       className={classes.root}
@@ -82,7 +86,7 @@ const ProductListView = () => {
         />
       </Dialog>
       <Container maxWidth={false}>
-        <Toolbar filter={filter} buttonProps={{ label: 'ADD PRODUCT', action: createProduct }} />
+        <Toolbar performSearch={performSearch} buttonProps={{ label: 'ADD PRODUCT', action: createProduct }} />
         <Box mt={3}>
           <Results results={filteredResults} callback={getProducts}/>
         </Box>

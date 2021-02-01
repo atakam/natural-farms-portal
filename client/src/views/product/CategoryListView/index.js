@@ -22,6 +22,7 @@ const useStyles = makeStyles((theme) => ({
 const CategoryListView = () => {
   const classes = useStyles();
   const [results, setResults] = useState([]);
+  const [filteredResults, setFilteredResults] = useState([]);
   const [dialogOpen, setDialogOpen] = useState(false);
 
   const getCategories = async () => {
@@ -34,6 +35,7 @@ const CategoryListView = () => {
     const result = JSON.parse(body);
     console.log("results", result);
     setResults(result);
+    setFilteredResults(result);
   };
 
   const createCategory = () => {
@@ -47,6 +49,19 @@ const CategoryListView = () => {
   useEffect(() => {
     getCategories();
   }, []);
+
+  const performSearch = (value) => {
+    const filter = value.toUpperCase();
+
+    const newResults = results.filter((el) => {
+      if (String(el.name_en).toUpperCase().indexOf(filter) > -1
+        || String(el.name_fr).toUpperCase().indexOf(filter) > -1
+        || String(el.slug).toUpperCase().indexOf(filter) > -1
+      ) return true;
+      return false;
+    });
+    setFilteredResults(newResults);
+  };
 
   return (
     <Page
@@ -69,9 +84,9 @@ const CategoryListView = () => {
         />
       </Dialog>
       <Container maxWidth={false}>
-      <Toolbar buttonProps={{ label: 'ADD CATEGORY', action: createCategory }} />
+        <Toolbar performSearch={performSearch} buttonProps={{ label: 'ADD CATEGORY', action: createCategory }} />
         <Box mt={3}>
-          <Results results={results} callback={getCategories}/>
+          <Results results={filteredResults} callback={getCategories}/>
         </Box>
       </Container>
     </Page>

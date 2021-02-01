@@ -23,13 +23,14 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const Toolbar = ({ className, filter, buttonProps, ...rest }) => {
+const Toolbar = ({ className, performSearch, buttonProps, ...rest }) => {
   const classes = useStyles();
   const [searchValue, setSearchValue] = useState('');
   const handleChange = (event) => {
     setSearchValue(event.target.value);
-    setTimeout(function(){ filter(searchValue); }, 1000);
   };
+  let typingTimer;
+  const doneTypingInterval = 1500;
 
   const button = buttonProps ? (
       <Box
@@ -68,13 +69,19 @@ const Toolbar = ({ className, filter, buttonProps, ...rest }) => {
                         <SearchIcon />
                       </SvgIcon>
                     </InputAdornment>
-                  )
+                  ),
+                  onKeyUp: (event) => {
+                    clearTimeout(typingTimer);
+                    const value = event.target.value;
+                    typingTimer = setTimeout(() => performSearch(value), doneTypingInterval);
+                  },
+                  onKeyDown: () => clearTimeout(typingTimer)
                 }}
                 value={searchValue}
                 onChange={handleChange}
                 placeholder="Search"
                 variant="outlined"
-                disabled={!filter}
+                disabled={!performSearch}
               />
             </Box>
           </CardContent>
@@ -85,8 +92,7 @@ const Toolbar = ({ className, filter, buttonProps, ...rest }) => {
 };
 
 Toolbar.propTypes = {
-  className: PropTypes.string,
-  filter: PropTypes.func
+  className: PropTypes.string
 };
 
 export default Toolbar;
