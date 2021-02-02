@@ -36,7 +36,7 @@ const Results = ({ className, results, userid, callback, date, isSupplier, ...re
         return results.map((customer, index) => {
             const user = customer[0];
             return(
-            <div key={'i' + index} id={'print'+index}>
+            <div className={index !== 0 ? 'pagebreak' : ''} key={'i' + index} id={'print'+index}>
             <Box key={'n' + index}>
                 <h2>{user.firstName + ' ' + user.lastName}</h2>
                 <h3>{user.streetAddress + ' ' + user.city + ', ' + user.province + ' ' + user.postalCode}</h3>
@@ -160,7 +160,7 @@ const Results = ({ className, results, userid, callback, date, isSupplier, ...re
       {...rest}
     >
       <PerfectScrollbar>
-        <Box minWidth={1050}>
+        <Box minWidth={1050} id='printDiv'>
           {summary()}
         </Box>
       </PerfectScrollbar>

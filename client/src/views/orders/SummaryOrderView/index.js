@@ -49,7 +49,13 @@ const SummaryOrderView = ({
   const printDiv = () => {
     const mywindow = window.open('', 'PRINT', 'height=400,width=600');
 
-    mywindow.document.write('<html><head><title>' + document.title  + '</title>');
+    mywindow.document.write('<html><head><title>' + document.title  + '</title><style>');
+    const styles = document.head.getElementsByTagName('style')
+    for (let i=0; i<styles.length; i++) {
+      mywindow.document.write(styles[i].innerHTML);
+    }
+    mywindow.document.write('</style>');
+    
     mywindow.document.write('</head><body >');
     mywindow.document.write('<h1>' + document.title  + '</h1>');
     mywindow.document.write(document.getElementById('printDiv').innerHTML);
@@ -117,7 +123,7 @@ const SummaryOrderView = ({
                 }
             />
             <Divider />
-            <CardContent id={'printDiv'}>
+            <CardContent>
                 {
                     showMap ? <MapView addresses={addresses} /> : <Results results={summary} isSupplier={isSupplier} callback={updateCallback} date={title} />
                 }
