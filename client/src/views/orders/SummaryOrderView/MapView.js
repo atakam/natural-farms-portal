@@ -1,5 +1,7 @@
 import React from "react";
 import Axios from 'axios';
+import mbxClient from '@mapbox/mapbox-sdk';
+import mbxGeocodeClient from '@mapbox/mapbox-sdk/services/geocoding';
 
 class MyFancyComponent extends React.PureComponent {
     constructor(props) {
@@ -13,33 +15,18 @@ class MyFancyComponent extends React.PureComponent {
     fetchGeocode = () => {
         const addresses = [];
         const promises = this.state.addresses.map((address) => {
-            const params = {
-                key: '62tY9B0Ff32nkABubAGeK2biYB5emO1o',
-                location: address.address
-            }
-            return Axios.get("http://open.mapquestapi.com/geocoding/v1/address", {
-                params,
-                headers: {
-                    "Access-Control-Allow-Origin": "*",
-                    'Content-Type': 'application/json'
-                }
-            })
+            const baseClient = mbxClient({ accessToken: this.apiKey });
+            const geocodeClient = mbxGeocodeClient(baseClient);
 
-            // const params = {
-            //     access_key: 'd324ff0da1ed4708136227639de090d3',
-            //     query: address.address
-            // }
-            // return Axios.get("http://api.positionstack.com/v1/forward", {
-            //     params,
-            //     headers: {
-            //         "Access-Control-Allow-Origin": "*",
-            //         'Content-Type': 'application/json'
-            //     }
-            // })
+            return geocodeClient.forwardGeocode({
+                query: address.address,
+                limit: 2
+            }).send()
             .then((response) => {
                 addresses.push({
                     user: address.user,
-                    coordinates: [response.results[0].locations[0].latLng.lng, response.results[0].locations[0].latLng.lng]
+                    address: address.address,
+                    coordinates: response.body.features[0].geometry.coordinates
                 });
                 return response;
             });
@@ -70,7 +57,7 @@ class MyFancyComponent extends React.PureComponent {
                 },
                 properties: {
                   title: add.user,
-                  description: add.address.address
+                  description: add.address
                 }
               };
         });
