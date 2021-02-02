@@ -2,7 +2,7 @@ import React from "react";
 import Axios from 'axios';
 
 function initMap(addresses) {
-    var mymap = L.map('mapid').setView(addresses[0], 12);
+    var mymap = L.map('mapid').setView(addresses[0].coordinates, 12);
 
 	L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
 		maxZoom: 18,
@@ -14,7 +14,10 @@ function initMap(addresses) {
     }).addTo(mymap);
     
     addresses.forEach((add) => {
-        L.marker(add).addTo(mymap);
+        L.marker(add.coordinates).addTo(mymap);
+        // .setPopup(new L.Popup({ offset: 25 }) // add popups
+        // .setHTML('<h3>' + add.user + '</h3>'))
+        
     });
 }
 
@@ -30,14 +33,17 @@ class MyFancyComponent extends React.PureComponent {
         const addresses = [];
         const promises = this.state.addresses.map((address) => {
             const params = {
-                apiKey: 'Csfp8cowhVtB5fn18cfN4_xKblUvJP2Etmdm0mL9Bxo',
-                q: address
+                apiKey: 'cX4Z2BzaQuCueR8IPso10mJOcGlc_GveEO8ui_iMgW4',
+                q: address.address
             }
             return Axios.get("https://geocode.search.hereapi.com/v1/geocode", {
                 params,
             })
             .then((response) => {
-                addresses.push([response.data.items[0].position.lat, response.data.items[0].position.lng]);
+                addresses.push({
+                    user: address.user,
+                    coordinates: [response.data.items[0].position.lat, response.data.items[0].position.lng]
+                });
                 return response;
             });
         });
@@ -49,6 +55,14 @@ class MyFancyComponent extends React.PureComponent {
     }
 
     componentDidMount() {
+        const script = document.createElement("script");
+
+        script.src = "https://unpkg.com/leaflet@1.7.1/dist/leaflet.js";
+        script.integrity = "sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==";
+        script.crossOrigin = "";
+        script.async = true;
+        document.body.appendChild(script);
+        
         this.fetchGeocode();
     }
 

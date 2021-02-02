@@ -26,7 +26,7 @@ const SummaryOrderView = ({
     slotDate
 }) => {
   const [showMap, setShowMap] = useState(false);
-  const [addresses, setAddresses] = useState(false);
+  const [addresses, setAddresses] = useState([]);
 
   const showMapView = () => {
     let results = summary.reduce((r, a) => {
@@ -35,7 +35,10 @@ const SummaryOrderView = ({
     }, {});
     results = Object.values(results);
     const adds = results.map((user) => {
-      return user[0].streetAddress + ' ' + user[0].city + ', ' + user[0].province + ' ' + user[0].postalCode;
+      return {
+        user: 'hello',
+        address: user[0].streetAddress + ' ' + user[0].city + ', ' + user[0].province + ' ' + user[0].postalCode
+      }
     });
     setAddresses(adds);
     setShowMap(true);
