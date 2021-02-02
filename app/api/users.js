@@ -18,6 +18,21 @@ const userById = (req, res) => {
     );
 }
 
+const userByFormId = (req, res) => {
+  const id = req.params.id;
+
+  db.query(
+    "SELECT email, firstName, lastName, streetAddress, city, postalCode, province, phoneNumber FROM users LEFT JOIN form_completion ON form_completion.customer_id = users.id WHERE form_completion.id = ?",
+    id,
+    (err, result) => {
+      if (err) {
+        res.send({ err: err });
+      }
+      res.send(result);
+    }
+  );
+}
+
 const usersByRole = (req, res) => {
   const role = req.params.role;
 
@@ -245,5 +260,6 @@ module.exports = {
   deleteStaff,
   staffById,
   updateStaffById,
-  registerStaff
+  registerStaff,
+  userByFormId
 };

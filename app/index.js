@@ -25,7 +25,8 @@ const {
   updateOrderConfirmDeliverById,
   updateDeliveryDateById,
   getUpdates,
-  getStatistics
+  getStatistics,
+  getSummary
 } = require('./api/orders');
 
 const {
@@ -37,7 +38,8 @@ const {
   deleteStaff,
   staffById,
   updateStaffById,
-  registerStaff
+  registerStaff,
+  userByFormId
 } = require('./api/users');
 
 const {
@@ -112,9 +114,13 @@ app.post("/orders/update/:formid", updateOrderConfirmDeliverById);
 
 app.post("/orders/delivery/update/:formid", updateDeliveryDateById)
 
+app.get("/summary/date/:date", getSummary);
+
 app.get("/user/:id", userById);
 
 app.get("/users/:role", usersByRole);
+
+app.get("/users/form/:id", userByFormId);
 
 app.post("/user/:id", updateUserById);
 

@@ -134,7 +134,7 @@ const CustomerListView = (props) => {
   return (
     <Page
       className={classes.root}
-      title="Customers"
+      title="Orders"
     >
       <NewOrder open={openNewOrder} close={handleClose} getOrders={getOrders} user={context.credentials.user} />
       <Container maxWidth={false}>

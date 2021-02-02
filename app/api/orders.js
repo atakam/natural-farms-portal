@@ -229,6 +229,21 @@ const getStatistics = (req, res) => {
   );
 }
 
+const getSummary = (req, res) => {
+  const date = req.params.date;
+  console.log('SUMMARY CHECK');
+  db.query(
+    "SELECT * FROM form_completion LEFT JOIN orders ON orders.form_id = form_completion.id LEFT JOIN products_details ON products_details.id = orders.product_details_id LEFT JOIN products ON products.id = products_details.product_id LEFT JOIN product_packaging ON product_packaging.id = products_details.packaging_id LEFT JOIN users ON users.id = form_completion.customer_id WHERE form_completion.conditions_firstdeliverydate = ? OR form_completion.conditions_seconddeliverydate = ? OR form_completion.conditions_thirddeliverydate = ?",
+    [date, date, date],
+    (err, result) => {
+      if (err) {
+        res.send({ err: err });
+      }
+      res.send(result);
+    }
+  );
+}
+
 module.exports = {
     ordersByUserRouter,
     orders,
@@ -239,5 +254,6 @@ module.exports = {
     getUpdates,
     updateOrderConfirmDeliverById,
     updateDeliveryDateById,
-    getStatistics
+    getStatistics,
+    getSummary
 };
