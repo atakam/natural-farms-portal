@@ -2,7 +2,7 @@ import React from "react";
 import Axios from 'axios';
 
 function initMap(addresses) {
-    var mymap = L.map('mapid').setView(addresses[0], 13);
+    var mymap = L.map('mapid').setView(addresses[0], 12);
 
 	L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
 		maxZoom: 18,
@@ -30,14 +30,14 @@ class MyFancyComponent extends React.PureComponent {
         const addresses = [];
         const promises = this.state.addresses.map((address) => {
             const params = {
-                access_key: 'd324ff0da1ed4708136227639de090d3',
-                query: address
+                apiKey: 'Csfp8cowhVtB5fn18cfN4_xKblUvJP2Etmdm0mL9Bxo',
+                q: address
             }
-            return Axios.get("https://api.positionstack.com/v1/forward", {
+            return Axios.get("https://geocode.search.hereapi.com/v1/geocode", {
                 params,
             })
             .then((response) => {
-                addresses.push([response.data[0].latitude, response.data[0].longitude]);
+                addresses.push([response.data.items[0].position.lat, response.data.items[0].position.lng]);
                 return response;
             });
         });
