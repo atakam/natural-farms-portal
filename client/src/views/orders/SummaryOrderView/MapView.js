@@ -1,4 +1,5 @@
 import React from "react";
+import Axios from 'axios';
 
 function initMap(addresses) {
     var mymap = L.map('mapid').setView(addresses[0], 13);
@@ -28,15 +29,17 @@ class MyFancyComponent extends React.PureComponent {
     fetchGeocode = async () => {
         const addresses = [];
         const promises = this.state.addresses.map((address) => {
-            fetch('http://api.positionstack.com/v1/forward'
-                +'?access_key=d324ff0da1ed4708136227639de090d3'
-                + '&query=' + address, {
-                headers: {
-                'Content-Type': 'application/json',
-                }
-            }).then((response) => {
-                addresses.push([response.data[0].latitude, response.data[0].longitude]);
+            const params = {
+                access_key: 'd324ff0da1ed4708136227639de090d3',
+                query: address
+            }
+            return Axios.get("https://api.positionstack.com/v1/forward", {
+                params,
             })
+            .then((response) => {
+                addresses.push([response.data[0].latitude, response.data[0].longitude]);
+                return response;
+            });
         });
         Promise.all(promises)
         .then(() => {
@@ -47,7 +50,6 @@ class MyFancyComponent extends React.PureComponent {
 
     componentDidMount() {
         this.fetchGeocode();
-        initMap();
     }
 
     render() {
