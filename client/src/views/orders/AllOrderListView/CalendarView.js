@@ -263,6 +263,7 @@ const CalendarView = ({ className, results, callback, showDate, actions, handleC
                 onDropFromOutside={onDropFromOutside}
                 eventPropGetter={eventStyleGetter}
                 onSelectSlot={handleSelect}
+                endAccessor={({ end }) => new Date(end.getTime() - 1)}
             />
         </Card>
     );
