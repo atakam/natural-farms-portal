@@ -1,5 +1,4 @@
 import React from "react";
-import Axios from 'axios';
 import mbxClient from '@mapbox/mapbox-sdk';
 import mbxGeocodeClient from '@mapbox/mapbox-sdk/services/geocoding';
 
@@ -83,20 +82,6 @@ class MyFancyComponent extends React.PureComponent {
     }
 
     componentDidMount() {
-        const link1 = document.createElement('link');
-        link1.setAttribute('href', 'https://fonts.googleapis.com/css?family=Open+Sans');
-        link1.setAttribute('rel', 'stylesheet');
-        document.head.appendChild(link1);
-
-        const script = document.createElement("script");
-        script.src = "https://api.tiles.mapbox.com/mapbox-gl-js/v2.0.1/mapbox-gl.js";
-        document.head.appendChild(script);
-
-        const link2 = document.createElement('link');
-        link2.setAttribute('href', 'https://api.tiles.mapbox.com/mapbox-gl-js/v2.0.1/mapbox-gl.css');
-        link2.setAttribute('rel', 'stylesheet');
-        document.head.appendChild(link2);
-
         this.fetchGeocode();
     }
 
