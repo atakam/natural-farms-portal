@@ -39,7 +39,7 @@
 }
 
 .marker {
-    background: red;
+    background-image: url('./logo.png');
     background-size: cover;
     width: 20px;
     height: 20px;

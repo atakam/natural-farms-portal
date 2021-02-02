@@ -171,19 +171,6 @@ const NavBar = ({ onMobileClose, openMobile }) => {
         m={2}
         bgcolor="background.dark"
       >
-        <Typography
-          align="center"
-          gutterBottom
-          variant="h4"
-        >
-          Need more?
-        </Typography>
-        <Typography
-          align="center"
-          variant="body2"
-        >
-          Upgrade to PRO version and access 20 more screens
-        </Typography>
         <Box
           display="flex"
           justifyContent="center"
@@ -192,10 +179,11 @@ const NavBar = ({ onMobileClose, openMobile }) => {
           <Button
             color="primary"
             component="a"
-            href="https://react-material-kit.devias.io"
+            href="https://sihone.com"
             variant="contained"
+            target="_blank"
           >
-            See PRO version
+            Powered by Sihone
           </Button>
         </Box>
       </Box>

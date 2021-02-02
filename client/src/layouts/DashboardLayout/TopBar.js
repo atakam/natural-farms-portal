@@ -43,7 +43,7 @@ const TopBar = ({
     >
       <Toolbar>
         <RouterLink to="/">
-          <Logo />
+          <Logo style={{width: '50px'}} />
         </RouterLink>
         <Box flexGrow={1} />
         <Hidden mdDown>

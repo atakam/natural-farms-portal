@@ -1,13 +1,11 @@
 import React, {useState} from 'react';
 import {
-  Box,
   Container,
   Card,
   CardHeader,
   Divider,
   CardContent,
   IconButton,
-  Tooltip
 } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
 import PrintIcon from '@material-ui/icons/Print';
@@ -95,14 +93,18 @@ const SummaryOrderView = ({
                       </IconButton>
                     )
                   }
-                  <IconButton
-                      color="primary"
-                      size="medium"
-                      variant="contained"
-                      onClick={printDiv}
-                  >
-                      <PrintIcon /> 
-                  </IconButton>
+                  {
+                    showMap ? <></> : (
+                      <IconButton
+                          color="primary"
+                          size="medium"
+                          variant="contained"
+                          onClick={printDiv}
+                      >
+                          <PrintIcon /> 
+                      </IconButton>
+                    )
+                  }
                   <IconButton
                       color="primary"
                       size="medium"
