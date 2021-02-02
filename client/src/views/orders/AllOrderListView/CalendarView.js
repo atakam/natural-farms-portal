@@ -133,8 +133,8 @@ const CalendarView = ({ className, results, callback, showDate, actions, handleC
                 id: index,
                 title: '(1) ' + result.firstName + ' ' + result.lastName,
                 allDay: true,
-                start: new Date(result.conditions_firstdeliverydate),
-                end: new Date(result.conditions_firstdeliverydate),
+                start: new Date(result.conditions_firstdeliverydate + ' 06:00 pm'),
+                end: new Date(result.conditions_firstdeliverydate + ' 06:00 pm'),
                 delivery: 1,
                 hexColor: new Date() > new Date(result.conditions_firstdeliverydate) ? '#9e9e9e' : '#009688',
                 objectProp: {
@@ -150,8 +150,8 @@ const CalendarView = ({ className, results, callback, showDate, actions, handleC
                 id: index,
                 title: '(2) ' + result.firstName + ' ' + result.lastName,
                 allDay: true,
-                start: new Date(result.conditions_seconddeliverydate),
-                end: new Date(result.conditions_seconddeliverydate),
+                start: new Date(result.conditions_seconddeliverydate + ' 06:00 pm'),
+                end: new Date(result.conditions_seconddeliverydate + ' 06:00 pm'),
                 delivery: 2,
                 hexColor: new Date() > new Date(result.conditions_seconddeliverydate) ? '#9e9e9e' : '#ff9800',
                 objectProp: {
@@ -168,8 +168,8 @@ const CalendarView = ({ className, results, callback, showDate, actions, handleC
                 id: index,
                 title: '(3) ' + result.firstName + ' ' + result.lastName,
                 allDay: true,
-                start: new Date(result.conditions_thirddeliverydate),
-                end: new Date(result.conditions_thirddeliverydate),
+                start: new Date(result.conditions_thirddeliverydate + ' 06:00 pm'),
+                end: new Date(result.conditions_thirddeliverydate + ' 06:00 pm'),
                 delivery: 3,
                 hexColor: new Date() > new Date(result.conditions_thirddeliverydate) ? '#9e9e9e' : '#ff5722',
                 objectProp: {
@@ -263,7 +263,7 @@ const CalendarView = ({ className, results, callback, showDate, actions, handleC
                 onDropFromOutside={onDropFromOutside}
                 eventPropGetter={eventStyleGetter}
                 onSelectSlot={handleSelect}
-                endAccessor={({ end }) => new Date(end.getTime() - 1)}
+                startAccessor={({ end }) => new Date(end.getTime() - 1)}
             />
         </Card>
     );
