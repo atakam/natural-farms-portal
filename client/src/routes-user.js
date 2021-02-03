@@ -23,6 +23,7 @@ const routes = [
     children: [
       { path: 'orders', element: <MyOrderListView /> },
       { path: 'settings', element: <SettingsView /> },
+      { path: 'logout', element: <LoginView doLogout /> },
       { path: '*', element: <Navigate to="/404" /> }
     ]
   },

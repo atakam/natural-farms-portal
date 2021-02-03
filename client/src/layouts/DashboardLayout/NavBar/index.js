@@ -21,7 +21,8 @@ import {
   Mail as MailIcon,
   Tag as TagIcon,
   PieChart,
-  ShoppingCart
+  ShoppingCart,
+  LogOut as LogOutIcon
 } from 'react-feather';
 import NavItem from './NavItem';
 import AppContext from "src/components/AppContext";
@@ -85,6 +86,12 @@ const items = [
     href: '/app/settings',
     icon: SettingsIcon,
     title: 'Account Settings',
+    role: [1,2,3]
+  },
+  {
+    href: '/app/logout',
+    icon: LogOutIcon,
+    title: 'Logout',
     role: [1,2,3]
   }
 ];

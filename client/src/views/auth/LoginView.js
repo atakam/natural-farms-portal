@@ -1,4 +1,5 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import * as Yup from 'yup';
 import { Formik } from 'formik';
 import {
@@ -18,7 +19,7 @@ import RegisterView from './RegisterView';
 import Password from './Password';
 import AppContext from "../../components/AppContext";
 
-import { signin } from '../../functions/index';
+import { logout, signin } from '../../functions/index';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -29,17 +30,26 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const LoginView = () => {
+const LoginView = ({doLogout}) => {
   const classes = useStyles();
   const [isLogin, setLogin] = useState(true);
   const [message, setLoginStatus] = useState('');
 
   const context = useContext(AppContext);
+  const navigate = useNavigate();
+
+  if (doLogout) {
+    logout() && window.location.replace('/');
+  }
 
   const signUp = () => {
-    //navigate('/register');
     setLogin(false);
   };
+  useEffect(() => {
+    if (context.credentials.loggedIn) {
+      navigate('/', { replace: true });
+    }
+  }, []);
 
   return isLogin ? (
     <Page
@@ -143,6 +153,23 @@ const LoginView = () => {
                     or login with email address
                   </Typography>
                 </Box>
+                <Box
+                  alignItems="center"
+                  display="flex"
+                  ml={-1}
+                >
+                  <Checkbox
+                    checked={values.isStaff}
+                    name="isStaff"
+                    onChange={handleChange}
+                  />
+                  <Typography
+                    color="textSecondary"
+                    variant="body1"
+                  >
+                    Are you a login in as a staff?
+                  </Typography>
+                </Box>
                 <TextField
                   error={Boolean(touched.email && errors.email)}
                   fullWidth
@@ -170,23 +197,6 @@ const LoginView = () => {
                   handleChange={handleChange}
                   fullWidth
                 />
-                <Box
-                  alignItems="center"
-                  display="flex"
-                  ml={-1}
-                >
-                  <Checkbox
-                    checked={values.isStaff}
-                    name="isStaff"
-                    onChange={handleChange}
-                  />
-                  <Typography
-                    color="textSecondary"
-                    variant="body1"
-                  >
-                    Are you a login in as a staff?
-                  </Typography>
-                </Box>
                 <Typography
                     color="error"
                     variant="body1"

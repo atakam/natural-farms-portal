@@ -32,6 +32,7 @@ const routes = [
       { path: 'emailtemplates', element: <EmailTemplateView /> },
       { path: 'dashboard', element: <DashboardView /> },
       { path: 'settings', element: <SettingsView /> },
+      { path: 'logout', element: <LoginView doLogout /> },
       { path: '*', element: <Navigate to="/404" /> }
     ]
   },
