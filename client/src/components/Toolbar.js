@@ -35,7 +35,7 @@ const Toolbar = ({ className, performSearch, buttonProps, calendarButtonProps, c
   let typingTimer;
   const doneTypingInterval = 1500;
 
-  const calendarButton = calendarButtonProps && !calendarView ? (
+  const calendarButton = calendarButtonProps && (!calendarView ? (
     <Box
       display="flex"
       justifyContent="flex-end"
@@ -63,7 +63,7 @@ const Toolbar = ({ className, performSearch, buttonProps, calendarButtonProps, c
         {calendarButtonProps.listLabel}
       </Button>
     </Box>
-  );
+  ));
 
   const button = buttonProps ? (
       <Box

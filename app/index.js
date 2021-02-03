@@ -118,7 +118,7 @@ app.get("/summary/date/:date", getSummary);
 
 app.get("/user/:id", userById);
 
-app.get("/users/:role", usersByRole);
+app.get("/users", usersByRole);
 
 app.get("/users/form/:id", userByFormId);
 

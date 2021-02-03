@@ -4,6 +4,7 @@ import { Formik } from 'formik';
 import {
   Box,
   Button,
+  Checkbox,
   Container,
   Grid,
   TextField,
@@ -55,10 +56,11 @@ const LoginView = () => {
           <Formik
             initialValues={{
               email: '',
-              password: ''
+              password: '',
+              isStaff: false
             }}
             validationSchema={Yup.object().shape({
-              email: Yup.string().email('Must be a valid email').max(255).required('Email is required'),
+              email: Yup.string().max(255).required('Email/Username is required'),
               password: Yup.string().max(255).required('Password is required')
             })}
             onSubmit={(values) => {
@@ -69,9 +71,24 @@ const LoginView = () => {
                 if (response.data.message) {
                   setLoginStatus(response.data.message);
                 } else if (response.data[0]) {
+                  let user = response.data[0];
+                  if (user.username) {
+                    user.firstName = user.name;
+                    user.lastName = '';
+                    user.streetAddress = '';
+                    user.city = '';
+                    user.postalCode = '';
+                    user.province = '';
+                    user.phoneNumber = '';
+                    user.weekAmount = 0;
+                    user.role = user.role === 'admin' ? 1 : 2 ;
+                    user.dateCreated = "01/27/2021";
+                    user.nff = null;
+                    user.sessionid = "";
+                  }
                   context.setCredentials({
                     loggedIn: true,
-                    user: response.data[0]
+                    user
                   });
                 }
               })
@@ -130,14 +147,20 @@ const LoginView = () => {
                   error={Boolean(touched.email && errors.email)}
                   fullWidth
                   helperText={touched.email && errors.email}
-                  label="Email Address"
+                  label={values.isStaff ? "Username / Email" : "Email Address"}
                   margin="normal"
                   name="email"
                   onBlur={handleBlur}
                   onChange={handleChange}
-                  type="email"
+                  type={values.isStaff ? "text" : "email"}
                   value={values.email}
                   variant="outlined"
+                  InputProps={{
+                    autoComplete: 'new-password',
+                    form: {
+                      autoComplete: 'off',
+                    }
+                  }}
                 />
                 <Password
                   touched={touched}
@@ -147,6 +170,23 @@ const LoginView = () => {
                   handleChange={handleChange}
                   fullWidth
                 />
+                <Box
+                  alignItems="center"
+                  display="flex"
+                  ml={-1}
+                >
+                  <Checkbox
+                    checked={values.isStaff}
+                    name="isStaff"
+                    onChange={handleChange}
+                  />
+                  <Typography
+                    color="textSecondary"
+                    variant="body1"
+                  >
+                    Are you a login in as a staff?
+                  </Typography>
+                </Box>
                 <Typography
                     color="error"
                     variant="body1"

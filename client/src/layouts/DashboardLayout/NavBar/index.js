@@ -24,73 +24,67 @@ import {
   ShoppingCart
 } from 'react-feather';
 import NavItem from './NavItem';
-import AppContext from "../../../components/AppContext";
+import AppContext from "src/components/AppContext";
 
 const items = [
   {
     href: '/app/dashboard',
     icon: BarChartIcon,
     title: 'Dashboard',
-    role: [1,2,3]
+    role: [1, 2]
   },
   {
     href: '/app/allorders',
     icon: ShoppingBagIcon,
     title: 'All Orders',
-    role: [1,2,3]
+    role: [1, 2]
   },
   {
     href: '/app/modifiedorders',
     icon: ShoppingCart,
     title: 'Modified Orders',
-    role: [1,2,3]
+    role: [1, 2]
   },
   {
     href: '/app/orders',
     icon: ShoppingBagIcon,
     title: 'My Orders',
-    role: [1,2,3]
+    role: [3]
   },
   {
     href: '/app/products',
     icon: TagIcon,
     title: 'Products',
-    role: [1,2,3]
+    role: [1,2]
   },
   {
     href: '/app/categories',
     icon: PieChart,
     title: 'Categories',
-    role: [1,2,3]
+    role: [1,2]
   },
   {
     href: '/app/customers',
     icon: UsersIcon,
     title: 'Customers',
-    role: [1,2,3]
+    role: [1,2]
   },
   {
     href: '/app/staff',
     icon: UserIcon,
     title: 'Staff',
-    role: [1,2,3]
+    role: [1,2]
   },
   {
     href: '/app/emailtemplates',
     icon: MailIcon,
     title: 'Email Templates',
-    role: [1,2,3]
-  },
-  {
-    href: '/app/account',
-    icon: UserIcon,
-    title: 'Account',
-    role: [1]
+    role: [1,2]
   },
   {
     href: '/app/settings',
     icon: SettingsIcon,
-    title: 'Settings',
+    title: 'Account Settings',
     role: [1,2,3]
   }
 ];
@@ -122,6 +116,7 @@ const NavBar = ({ onMobileClose, openMobile }) => {
     }
   }, [location.pathname]);
 
+  const nff = context.credentials.user.nff ? context.credentials.user.nff : '####'
   const content = (
     <Box
       height="100%"
@@ -145,7 +140,7 @@ const NavBar = ({ onMobileClose, openMobile }) => {
           color="textSecondary"
           variant="body2"
         >
-          {'NFF: ' + context.credentials.user.nff || '####'}
+          {'NFF: ' + nff || '####'}
         </Typography>
       </Box>
       <Divider />

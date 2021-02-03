@@ -64,10 +64,16 @@ const loginGetRouter = (req, res) => {
 const loginPostRouter = (req, res) => {
     const email = req.body.email;
     const password = req.body.password;
+    const isStaff = req.body.isStaff;
+
+    const sql = isStaff ? "SELECT * FROM representative WHERE username = ? OR email = ?"
+      : "SELECT * FROM users WHERE email = ? OR email = ?";
+
+    isStaff ? console.log('STAFF LOGIN') : console.log('CUSTOMER LOGIN');
   
     db.query(
-      "SELECT * FROM users WHERE email = ?;",
-      email,
+      sql,
+      [email, email],
       (err, result) => {
         if (err) {
           res.send({ err: err });
@@ -105,7 +111,7 @@ const today = () => {
     var mm = String(ntoday.getMonth() + 1).padStart(2, '0'); //January is 0!
     var yyyy = ntoday.getFullYear();
   
-    ntoday = mm + '/' + dd + '/' + yyyy;
+    ntoday = yyyy + '-' + mm +'-' + dd;
     return ntoday;
 }
 

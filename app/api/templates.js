@@ -4,7 +4,7 @@ const emailTemplateById = (req, res) => {
     const id = req.params.id;
   
     db.query(
-      "SELECT subject_en, subject_fr, content_en, content_fr FROM email_templates WHERE id = ?",
+      "SELECT name, subject_en, subject_fr, content_en, content_fr FROM email_templates WHERE id = ?",
       id,
       (err, result) => {
         if (err) {
@@ -39,7 +39,7 @@ const updateEmailTemplateById = (req, res) => {
 
 const getEmailTemplates = (req, res) => {
   db.query(
-    "SELECT id, subject_en, subject_fr, content_en, content_fr FROM email_templates",
+    "SELECT id, name, subject_en, subject_fr, content_en, content_fr FROM email_templates",
     (err, result) => {
       if (err) {
         res.send({ err: err });

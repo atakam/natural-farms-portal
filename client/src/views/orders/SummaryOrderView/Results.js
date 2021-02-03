@@ -35,6 +35,7 @@ const Results = ({ className, results, userid, callback, date, isSupplier, ...re
 
         return results.map((customer, index) => {
             const user = customer[0];
+            let count = 1;
             return(
             <div className={index !== 0 ? 'pagebreak' : ''} key={'i' + index} id={'print'+index}>
             <Box key={'n' + index}>
@@ -86,13 +87,13 @@ const Results = ({ className, results, userid, callback, date, isSupplier, ...re
                         
                         totalPurchasePrice = totalPurchasePrice + purchasePrice;
 
-                        return (
+                        return product['quantity' + deliveryNumber] > 0 ? (
                             <TableRow
                                 hover
                                 key={'c' + idx}
                             >
                                 <TableCell>
-                                    {idx + 1}
+                                    {count++}
                                 </TableCell>
                                 <TableCell>
                                     {product.code + ' - ' + product.name_en}
@@ -120,7 +121,8 @@ const Results = ({ className, results, userid, callback, date, isSupplier, ...re
                                     </>
                                 ) : ''}
                             </TableRow>
-                    )})}
+                    ) : <></>
+                })}
                 </TableBody>
                 {isSupplier ? (
                     <TableHead>

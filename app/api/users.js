@@ -7,7 +7,7 @@ const userById = (req, res) => {
     const id = req.params.id;
   
     db.query(
-      "SELECT email, firstName, lastName, password, streetAddress, city, postalCode, province, phoneNumber, weekAmount FROM users WHERE id = ?",
+      "SELECT id, nff, email, firstName, lastName, password, streetAddress, city, postalCode, province, phoneNumber, weekAmount FROM users WHERE id = ?",
       id,
       (err, result) => {
         if (err) {
@@ -22,7 +22,7 @@ const userByFormId = (req, res) => {
   const id = req.params.id;
 
   db.query(
-    "SELECT email, firstName, lastName, streetAddress, city, postalCode, province, phoneNumber FROM users LEFT JOIN form_completion ON form_completion.customer_id = users.id WHERE form_completion.id = ?",
+    "SELECT id, email, firstName, lastName, streetAddress, city, postalCode, province, phoneNumber, role FROM users LEFT JOIN form_completion ON form_completion.customer_id = users.id WHERE form_completion.id = ?",
     id,
     (err, result) => {
       if (err) {
@@ -34,11 +34,9 @@ const userByFormId = (req, res) => {
 }
 
 const usersByRole = (req, res) => {
-  const role = req.params.role;
-
   db.query(
-    "SELECT id, email, firstName, lastName, streetAddress, city, postalCode, province, phoneNumber, weekAmount FROM users WHERE role = ?",
-    role,
+    "SELECT id, email, firstName, lastName, streetAddress, city, postalCode, province, phoneNumber, weekAmount FROM users"
+    ,
     (err, result) => {
       if (err) {
         res.send({ err: err });
@@ -60,7 +58,8 @@ const updateUserById = (req, res) => {
     province,
     phoneNumber,
     weekAmount,
-    password
+    password,
+    nff
   } = req.body;
 
   let user = {
@@ -73,16 +72,22 @@ const updateUserById = (req, res) => {
     province,
     phoneNumber,
     weekAmount,
-    password
+    password,
+    nff
   };
 
   user = clean(user);
+  console.log(user);
 
   if (user.password) {
     bcrypt.hash(password, saltRounds, (err, hash) => {
       if (err) {
         console.log(err);
       }
+      user = {
+        ...user,
+        password: hash
+      };
       db.query(
         "UPDATE users SET ? WHERE id = ?",
         [user, id],

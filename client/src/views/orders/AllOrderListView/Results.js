@@ -267,6 +267,7 @@ const Results = ({ className, results, updates, userid, callback, calendarView, 
           id={objectProp.id}
           updateCallback={updateCallback}
           cancel={handleCloseDialog}
+          isUserProfile
         />
       </Dialog>
       <Dialog

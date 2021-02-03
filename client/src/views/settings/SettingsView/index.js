@@ -25,6 +25,7 @@ const SettingsView = () => {
       <Profile
         title={"Profile"}
         subtitle={"Modify account information"}
+        isUserProfile={false}
       />
     </Page>
   );

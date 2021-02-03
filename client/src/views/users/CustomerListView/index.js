@@ -23,7 +23,7 @@ const CustomerListView = () => {
   const [filteredResults, setFilteredResults] = useState([]);
 
   const getCustomers = async () => {
-    const response = await fetch('/users/:3', {
+    const response = await fetch('/users', {
       headers: {
         'Content-Type': 'application/json',
       }

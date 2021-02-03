@@ -15,7 +15,7 @@ const useStyles = makeStyles(({
   root: {}
 }));
 
-const Profile = ({ className, title, subtitle, id, updateCallback, cancel, isStaff, ...rest }) => {
+const Profile = ({ className, title, subtitle, id, updateCallback, cancel, isStaff, isUserProfile, ...rest }) => {
   const classes = useStyles();
 
   return (
@@ -40,6 +40,7 @@ const Profile = ({ className, title, subtitle, id, updateCallback, cancel, isSta
                 <RegisterView
                   classes={classes}
                   isProfile
+                  isUserProfile={isUserProfile}
                   id={id}
                   updateCallback={updateCallback}
                   cancel={cancel}

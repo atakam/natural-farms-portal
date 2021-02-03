@@ -1,8 +1,8 @@
 import Axios from 'axios';
 
-const signin = ({email, password}, callback) => {
+const signin = ({email, password, isStaff}, callback) => {
     return Axios.post("/login", {
-      email, password,
+      email, password, isStaff
     });
 };
 

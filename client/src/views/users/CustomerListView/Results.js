@@ -112,6 +112,7 @@ const Results = ({ className, results, updates, userid, callback, ...rest }) => 
           id={objectProp.id}
           updateCallback={updateCallback}
           cancel={handleCloseDialog}
+          isUserProfile
         />
       </Dialog>
       <PerfectScrollbar>

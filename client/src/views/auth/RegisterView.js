@@ -17,7 +17,7 @@ import {
 import Page from 'src/components/Page';
 import Password from './Password';
 
-import { register, updateUser } from '../../functions/index';
+import { register, updateUser, updateStaff } from '../../functions/index';
 import AppContext from '../../components/AppContext';
 
 const useStyles = makeStyles((theme) => ({
@@ -35,8 +35,9 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const getProfile = async (id, setResults) => {
-  const response = await fetch('/user/' + id, {
+const getProfile = async (id, setResults, isStaffInProfile) => {
+  const path = isStaffInProfile ? '/staff/' : '/user/';
+  const response = await fetch(path + id, {
     headers: {
       'Content-Type': 'application/json',
     }
@@ -44,30 +45,52 @@ const getProfile = async (id, setResults) => {
   const body = await response.text();
   const result = JSON.parse(body);
   console.log("results", JSON.parse(body));
-  const {
-    email,
-    firstName,
-    lastName,
-    streetAddress,
-    city,
-    postalCode,
-    province,
-    phoneNumber,
-    weekAmount
-  } = result[0];
-  setResults({
-    email,
-    firstName,
-    lastName,
-    password: '',
-    streetAddress,
-    city,
-    postalCode,
-    province,
-    phoneNumber,
-    weekAmount,
-    policy: false
-  });
+
+  if (result[0]) {
+    if (isStaffInProfile) {
+      const {
+        name,
+        email,
+        role,
+        username
+      } = result[0];
+      setResults({
+        email,
+        name,
+        role,
+        password: '',
+        username
+      });
+  
+    } else {
+      const {
+        email,
+        firstName,
+        lastName,
+        streetAddress,
+        city,
+        postalCode,
+        province,
+        phoneNumber,
+        nff,
+        weekAmount
+      } = result[0];
+      setResults({
+        email,
+        firstName,
+        lastName,
+        password: '',
+        streetAddress,
+        city,
+        postalCode,
+        province,
+        phoneNumber,
+        weekAmount,
+        nff,
+        policy: false
+      });
+    }
+  }
 };
 
 const RegisterView = (props) => {
@@ -75,11 +98,14 @@ const RegisterView = (props) => {
   const classes = useStyles();
   const context = useContext(AppContext);
   const [user, setUser] = useState(null);
+  const [enableNFF, toggleNFF] = useState(false);
   // const navigate = useNavigate();
-  const userid = props.id || context.credentials.user.id;
+  const userid = props.id || (context.credentials.user && context.credentials.user.id);
+  const userRole = context.credentials.user && context.credentials.user.role;
+  const isStaffInProfile = props.isProfile && !props.isUserProfile && context.credentials.user && (userRole === 1 || userRole === 2);
 
   useEffect(() => {
-    props.isProfile && getProfile(userid, setUser);
+    props.isProfile && getProfile(userid, setUser, isStaffInProfile);
   }, []);
 
   let provinces = ["Alberta", "British Columbia", "Manitoba", "New Brunswick", "Newfoundland and Labrador", "Northwest Territories", "Nova Scotia", "Nunavut", "Ontario", "Prince Edward Island", "Quebec", "Saskatchewan", "Yukon Territory"];
@@ -116,7 +142,7 @@ const RegisterView = (props) => {
     </Box>
   );
 
-  const termsConditions = props.isProfile ? '' : (
+  const termsConditions = (values, handleChange) => props.isProfile ? '' : (
     <Box
       alignItems="center"
       display="flex"
@@ -197,7 +223,14 @@ const RegisterView = (props) => {
     </Box>
   );
 
-  const initialValues = props.isProfile && user ? user : {
+  const initialValues = props.isProfile && user ? user : (
+    isStaffInProfile ? {
+      email: '',
+      name: '',
+      password: '',
+      username: ''
+    } :
+    {
     email: '',
     firstName: '',
     lastName: '',
@@ -208,13 +241,38 @@ const RegisterView = (props) => {
     province: 'Quebec',
     phoneNumber: '',
     weekAmount: '',
-    policy: false
+    policy: false,
+    nff: ''
+  })
+
+  const updateCredentials = (values) => {
+    console.log(values);
+    values.role = 3;
+    values.id = context.credentials.user.id;
+    if (values.username) {
+      values.firstName = values.name;
+      values.lastName = '';
+      values.streetAddress = '';
+      values.city = '';
+      values.postalCode = '';
+      values.province = '';
+      values.phoneNumber = '';
+      values.weekAmount = 0;
+      values.role = values.role === 'admin' ? 1 : 2 ;
+      values.dateCreated = "01/27/2021";
+      values.nff = null;
+      values.sessionid = "";
+    }
+    context.setCredentials({
+      loggedIn: true,
+      user: values
+    });
   }
 
   return (
     <Page
       className={props.classes || classes.root}
-      title="Register"
+      title={props.isProfile ? "Profile" : "Register"}
     >
       <Box
         display="flex"
@@ -227,6 +285,13 @@ const RegisterView = (props) => {
             enableReinitialize={props.isProfile}
             initialValues={initialValues}
             validationSchema={
+              isStaffInProfile ?
+              Yup.object().shape({
+                email: Yup.string().email('Must be a valid email').max(255).required('Email is required'),
+                name: Yup.string().max(255).required('Full name is required'),
+                username: Yup.string().max(255).required('Username is required'),
+                password: props.isProfile ? null : Yup.string().max(255).required('Password is required')
+              }) :
               Yup.object().shape({
                 email: Yup.string().email('Must be a valid email').max(255).required('Email is required'),
                 firstName: Yup.string().max(255).required('First name is required'),
@@ -244,10 +309,22 @@ const RegisterView = (props) => {
             onSubmit={(values) => {
               console.log(values);
               if (props.isProfile) {
-                updateUser({entries: values, id: userid}).then((response) => {
-                  console.log("UPDATE:", response);
-                  props.updateCallback && props.updateCallback();
-                });
+                if (isStaffInProfile) {
+                  updateStaff({entries: values, id: userid}).then((response) => {
+                    console.log("UPDATE:", response);
+                    alert('Successfully updated staff profile');
+                    updateCredentials(values);
+                    props.updateCallback && props.updateCallback();
+                  });
+                } else {
+                  updateUser({entries: values, id: userid}).then((response) => {
+                    console.log("UPDATE:", response);
+                    alert('Successfully updated profile');
+                    !props.isUserProfile && updateCredentials(values);
+                    props.updateCallback && props.updateCallback();
+                  });
+                }
+                
               } else {
                 register(values, 3, setErrorMessage)
                 .then((response) => {
@@ -270,7 +347,58 @@ const RegisterView = (props) => {
               handleSubmit,
               touched,
               values
-            }) => (
+            }) => ( isStaffInProfile ?
+              <form onSubmit={handleSubmit}>
+                <TextField
+                  error={Boolean(touched.name && errors.name)}
+                  helperText={touched.name && errors.name}
+                  label="Full name"
+                  margin="normal"
+                  name="name"
+                  onBlur={handleBlur}
+                  onChange={handleChange}
+                  value={values.name}
+                  variant="outlined"
+                  className="halfWidth"
+                />
+                <span style={{ padding: '10px' }} />
+                <TextField
+                  error={Boolean(touched.email && errors.email)}
+                  helperText={touched.email && errors.email}
+                  label="Email Address"
+                  margin="normal"
+                  name="email"
+                  onBlur={handleBlur}
+                  onChange={handleChange}
+                  type="email"
+                  value={values.email}
+                  variant="outlined"
+                  className="halfWidth"
+                />
+                <TextField
+                  error={Boolean(touched.username && errors.username)}
+                  helperText={touched.username && errors.username}
+                  label="Username"
+                  margin="normal"
+                  name="username"
+                  onBlur={handleBlur}
+                  onChange={handleChange}
+                  value={values.username}
+                  variant="outlined"
+                  className="halfWidth"
+                  disabled
+                />
+                <span style={{ padding: '10px' }} />
+                <Password
+                  touched={touched}
+                  errors={errors}
+                  values={values}
+                  handleBlur={handleBlur}
+                  handleChange={handleChange}
+                />
+                {submitButton}
+              </form>
+              :
               <form onSubmit={handleSubmit}>
                 {registerTitle}
                 <TextField
@@ -404,13 +532,46 @@ const RegisterView = (props) => {
                 >
                   { amounts }
                 </TextField>
+                <TextField
+                  error={Boolean(touched.nff && errors.nff)}
+                  helperText={touched.nff && errors.nff}
+                  label="NFF"
+                  margin="normal"
+                  name="nff"
+                  onBlur={handleBlur}
+                  onChange={handleChange}
+                  value={values.nff}
+                  variant="outlined"
+                  className="halfWidth"
+                  disabled={!enableNFF}
+                />
+                <Box
+                  alignItems="center"
+                  display="inline"
+                  ml={3}
+                >
+                  <Checkbox
+                    checked={enableNFF}
+                    name="enableNFF"
+                    onChange={() => {
+                      toggleNFF(!enableNFF);
+                    }}
+                  />
+                  <Typography
+                    color="textSecondary"
+                    variant="body1"
+                    display="inline"
+                  >
+                    I know the NFF number
+                  </Typography>
+                </Box>
                 <Typography
                     color="error"
                     variant="body1"
                   >
                     { errorMessage }
                 </Typography>
-                {termsConditions}
+                {termsConditions(values, handleChange)}
                 {Boolean(touched.policy && errors.policy) && (
                   <FormHelperText error>
                     {errors.policy}
