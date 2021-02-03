@@ -7,7 +7,10 @@ const signin = ({email, password, isStaff}, callback) => {
 };
 
 const logout = () => {
-  return Axios.get("/logout");
+  return Axios.get("/logout")
+  .then(() => {
+    window.location.replace('/');
+  });
 };
 
 const register = (entries, role, callback) => {

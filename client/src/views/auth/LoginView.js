@@ -38,9 +38,7 @@ const LoginView = ({doLogout}) => {
   const context = useContext(AppContext);
   const navigate = useNavigate();
 
-  if (doLogout) {
-    logout() && window.location.replace('/');
-  }
+  doLogout && logout();
 
   const signUp = () => {
     setLogin(false);
