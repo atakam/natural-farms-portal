@@ -1,8 +1,9 @@
-const db = require("../../databasePool");
+const ndb = require("../../databasePool");
 
 const emailTemplateById = (req, res) => {
     const id = req.params.id;
   
+    const db = ndb();
     db.query(
       "SELECT name, subject_en, subject_fr, content_en, content_fr FROM email_templates WHERE id = ?",
       id,
@@ -13,6 +14,7 @@ const emailTemplateById = (req, res) => {
         res.send(result);
       }
     );
+    db.end();
 }
 
 const updateEmailTemplateById = (req, res) => {
@@ -25,6 +27,7 @@ const updateEmailTemplateById = (req, res) => {
     subject_en, subject_fr, content_en, content_fr
   };
 
+  const db = ndb();
   db.query(
     "UPDATE email_templates SET ? WHERE id = ?",
     [template, id],
@@ -35,9 +38,11 @@ const updateEmailTemplateById = (req, res) => {
       res.send(result);
     }
   );
+  db.end();
 }
 
 const getEmailTemplates = (req, res) => {
+  const db = ndb();
   db.query(
     "SELECT id, name, subject_en, subject_fr, content_en, content_fr FROM email_templates",
     (err, result) => {
@@ -47,6 +52,7 @@ const getEmailTemplates = (req, res) => {
       res.send(result);
     }
   );
+  db.end();
 }
 
 module.exports = {

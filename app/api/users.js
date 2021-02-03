@@ -1,11 +1,12 @@
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
-const db = require("../../databasePool");
 const { clean } = require('../utils/utils');
+const ndb = require("../../databasePool");
 
 const userById = (req, res) => {
     const id = req.params.id;
   
+    const db = ndb();
     db.query(
       "SELECT id, nff, email, firstName, lastName, password, streetAddress, city, postalCode, province, phoneNumber, weekAmount FROM users WHERE id = ?",
       id,
@@ -16,11 +17,13 @@ const userById = (req, res) => {
         res.send(result);
       }
     );
+    db.end();
 }
 
 const userByFormId = (req, res) => {
   const id = req.params.id;
 
+  const db = ndb();
   db.query(
     "SELECT id, email, firstName, lastName, streetAddress, city, postalCode, province, phoneNumber, role FROM users LEFT JOIN form_completion ON form_completion.customer_id = users.id WHERE form_completion.id = ?",
     id,
@@ -31,9 +34,11 @@ const userByFormId = (req, res) => {
       res.send(result);
     }
   );
+  db.end();
 }
 
 const usersByRole = (req, res) => {
+  const db = ndb();
   db.query(
     "SELECT id, email, firstName, lastName, streetAddress, city, postalCode, province, phoneNumber, weekAmount FROM users"
     ,
@@ -44,6 +49,7 @@ const usersByRole = (req, res) => {
       res.send(result);
     }
   );
+  db.end();
 }
 
 const updateUserById = (req, res) => {
@@ -88,6 +94,7 @@ const updateUserById = (req, res) => {
         ...user,
         password: hash
       };
+      const db = ndb();
       db.query(
         "UPDATE users SET ? WHERE id = ?",
         [user, id],
@@ -98,9 +105,11 @@ const updateUserById = (req, res) => {
           res.send(result);
         }
       );
+      db.end();
     });
   }
   else {
+    const db = ndb();
     db.query(
       "UPDATE users SET ? WHERE id = ?",
       [user, id],
@@ -111,11 +120,13 @@ const updateUserById = (req, res) => {
         res.send(result);
       }
     );
+    db.end();
   }
 }
 
 const deleteUser = (req, res) => {
   const id = req.params.id;
+  const db = ndb();
   db.query(
     "DELETE FROM users WHERE id = ?",
     id,
@@ -126,10 +137,12 @@ const deleteUser = (req, res) => {
       res.send(result);
     }
   );
+  db.end();
 }
 
 const deleteStaff = (req, res) => {
   const id = req.params.id;
+  const db = ndb();
   db.query(
     "DELETE FROM representative WHERE id = ?",
     id,
@@ -140,9 +153,11 @@ const deleteStaff = (req, res) => {
       res.send(result);
     }
   );
+  db.end();
 }
 
 const getStaff = (req, res) => {
+  const db = ndb();
   db.query(
     "SELECT id, username, name, email, role FROM representative",
     (err, result) => {
@@ -152,6 +167,7 @@ const getStaff = (req, res) => {
       res.send(result);
     }
   );
+  db.end();
 }
 
 const updateStaffById = (req, res) => {
@@ -177,6 +193,7 @@ const updateStaffById = (req, res) => {
       if (err) {
         console.log(err);
       }
+      const db = ndb();
       db.query(
         "UPDATE representative SET ? WHERE id = ?",
         [staff, id],
@@ -187,9 +204,11 @@ const updateStaffById = (req, res) => {
           res.send(result);
         }
       );
+      db.end();
     });
   }
   else {
+    const db = ndb();
     db.query(
       "UPDATE representative SET ? WHERE id = ?",
       [staff, id],
@@ -200,12 +219,14 @@ const updateStaffById = (req, res) => {
         res.send(result);
       }
     );
+    db.end();
   }
 }
 
 const staffById = (req, res) => {
   const id = req.params.id;
 
+  const db = ndb();
   db.query(
     "SELECT id, username, name, email, role, password FROM representative WHERE id = ?",
     id,
@@ -216,6 +237,7 @@ const staffById = (req, res) => {
       res.send(result);
     }
   );
+  db.end();
 }
 
 const registerStaff = (req, res) => {
@@ -240,6 +262,7 @@ const registerStaff = (req, res) => {
       console.log(err);
     }
 
+    const db = ndb();
     db.query(
       "INSERT INTO representative SET ?",
       { ...entry, password: hash},
@@ -253,6 +276,7 @@ const registerStaff = (req, res) => {
           }
       }
     );
+    db.end();
   });
 };
 

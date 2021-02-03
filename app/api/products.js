@@ -1,6 +1,7 @@
-const db = require("../../databasePool");
+const ndb = require("../../databasePool");
 
 const getProducts = (req, res) => {
+    const db = ndb();
     db.query(
       "SELECT *, products.id AS product_id, products.name_en AS product_name_en, products.name_fr AS product_name_fr, products_category.name_en AS category_name_en, products_category.name_fr AS category_name_fr, products_category.id AS category FROM products LEFT JOIN products_category ON products.category_id= products_category.id",
       (err, result) => {
@@ -10,6 +11,7 @@ const getProducts = (req, res) => {
         res.send(result);
       }
     );
+    db.end();
 }
 
 const updateProductById = (req, res) => {
@@ -22,6 +24,7 @@ const updateProductById = (req, res) => {
     name_en, name_fr, category_id, image_name, active
   };
 
+  const db = ndb();
   db.query(
     "UPDATE products SET ? WHERE id = ?",
     [product, id],
@@ -32,10 +35,12 @@ const updateProductById = (req, res) => {
       res.send(result);
     }
   );
+  db.end();
 }
 
 const deleteProduct = (req, res) => {
   const id = req.params.id;
+  const db = ndb();
   db.query(
     "DELETE FROM products WHERE id = ?",
     id,
@@ -46,11 +51,13 @@ const deleteProduct = (req, res) => {
       res.send(result);
     }
   );
+  db.end();
 }
 
 const productById = (req, res) => {
   const id = req.params.id;
 
+  const db = ndb();
   db.query(
     "SELECT name_en, name_fr, category_id, active, image_name FROM products WHERE id = ?",
     id,
@@ -61,9 +68,11 @@ const productById = (req, res) => {
       res.send(result);
     }
   );
+  db.end();
 }
 
 const categories = (req, res) => {
+  const db = ndb();
   db.query(
     "SELECT * FROM products_category",
     (err, result) => {
@@ -73,6 +82,7 @@ const categories = (req, res) => {
       res.send(result);
     }
   );
+  db.end();
 }
 
 const createProduct = (req, res) => {
@@ -92,6 +102,7 @@ const createProduct = (req, res) => {
       active
   };
 
+  const db = ndb();
   db.query(
     "INSERT INTO products SET ?",
     entry,
@@ -105,10 +116,12 @@ const createProduct = (req, res) => {
         }
     }
   );
+  db.end();
 };
 
 const packagingByProductId = (req, res) => {
   const id = req.params.id;
+  const db = ndb();
   db.query(
     "SELECT *, products_details.id AS details_id, product_packaging.id AS package_id FROM products_details LEFT JOIN product_packaging ON product_packaging.id = products_details.packaging_id WHERE products_details.product_id = ?",
     id,
@@ -119,6 +132,7 @@ const packagingByProductId = (req, res) => {
       res.send(result);
     }
   );
+  db.end();
 }
 
 const createCategory = (req, res) => {
@@ -134,6 +148,7 @@ const createCategory = (req, res) => {
       slug
   };
 
+  const db = ndb();
   db.query(
     "INSERT INTO products_category SET ?",
     entry,
@@ -147,6 +162,7 @@ const createCategory = (req, res) => {
         }
     }
   );
+  db.end();
 };
 
 const updateCategoryById = (req, res) => {
@@ -159,6 +175,7 @@ const updateCategoryById = (req, res) => {
     name_en, name_fr, slug
   };
 
+  const db = ndb();
   db.query(
     "UPDATE products_category SET ? WHERE id = ?",
     [product, id],
@@ -169,10 +186,12 @@ const updateCategoryById = (req, res) => {
       res.send(result);
     }
   );
+  db.end();
 }
 
 const deleteCategory = (req, res) => {
   const id = req.params.id;
+  const db = ndb();
   db.query(
     "DELETE FROM products_category WHERE id = ?",
     id,
@@ -183,11 +202,13 @@ const deleteCategory = (req, res) => {
       res.send(result);
     }
   );
+  db.end();
 }
 
 const categoryById = (req, res) => {
   const id = req.params.id;
 
+  const db = ndb();
   db.query(
     "SELECT name_en, name_fr, slug FROM products_category WHERE id = ?",
     id,
@@ -198,9 +219,11 @@ const categoryById = (req, res) => {
       res.send(result);
     }
   );
+  db.end();
 }
 
 const getProductDetails = (req, res) => {
+  const db = ndb();
   db.query(
     "SELECT *, products_details.id AS product_details_id FROM products LEFT JOIN products_details ON products_details.product_id = products.id LEFT JOIN product_packaging ON product_packaging.id = products_details.packaging_id",
     (err, result) => {
@@ -210,6 +233,7 @@ const getProductDetails = (req, res) => {
       res.send(result);
     }
   );
+  db.end();
 }
 
 module.exports = {

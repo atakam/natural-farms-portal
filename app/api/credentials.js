@@ -1,6 +1,6 @@
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
-const db = require("../../databasePool");
+const ndb = require("../../databasePool");
 
 const registerRouter = (req, res) => {
     const {
@@ -37,6 +37,7 @@ const registerRouter = (req, res) => {
       console.log(err);
     }
 
+    const db = ndb();
     db.query(
       "INSERT INTO users SET ?",
       { ...entry, password: hash},
@@ -50,6 +51,7 @@ const registerRouter = (req, res) => {
           }
       }
     );
+    db.end();
   });
 };
 
@@ -71,6 +73,7 @@ const loginPostRouter = (req, res) => {
 
     isStaff ? console.log('STAFF LOGIN') : console.log('CUSTOMER LOGIN');
   
+    const db = ndb();
     db.query(
       sql,
       [email, email],
@@ -94,6 +97,7 @@ const loginPostRouter = (req, res) => {
         }
       }
     );
+    db.end();
 }
 
 const logoutRouter = (req, res) => {
