@@ -193,6 +193,10 @@ const updateStaffById = (req, res) => {
       if (err) {
         console.log(err);
       }
+      staff = {
+        ...staff,
+        password: hash
+      };
       const db = ndb();
       db.query(
         "UPDATE representative SET ? WHERE id = ?",
