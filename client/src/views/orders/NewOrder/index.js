@@ -4,6 +4,7 @@ import {
   Dialog
 } from '@material-ui/core';
 import CreateOrder from './CreateOrder';
+import CreateOrderCustomer from './CreateOrderCustomer';
 import AppContext from "src/components/AppContext";
 
 const NewOrder = ({ className, open, close, getOrders, user, ...rest }) => {
@@ -48,6 +49,7 @@ const NewOrder = ({ className, open, close, getOrders, user, ...rest }) => {
             fullWidth
             maxWidth={'xl'}
         >
+          {context.credentials.user.role !== 3 ?
             <CreateOrder
                 title={'Create New Order'}
                 subtitle={""}
@@ -57,7 +59,17 @@ const NewOrder = ({ className, open, close, getOrders, user, ...rest }) => {
                 products={products}
                 customers={customers}
                 currentUser={context.credentials.user}
+            /> :
+            <CreateOrderCustomer
+                title={'Create New Order'}
+                subtitle={""}
+                updateCallback={getOrders}
+                cancel={close}
+                user={user}
+                products={products}
+                currentUser={context.credentials.user}
             />
+          }
         </Dialog>
   );
 };

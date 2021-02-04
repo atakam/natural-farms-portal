@@ -70,8 +70,15 @@ const TermsSelection = ({ className, deliveryDetails, termsDetails, paymentDetai
                     name="name"
                     variant="outlined"
                     style={{width: '33%', paddingRight: '10px'}}
-                    value={customerDetails.signature_address}
-                    disabled
+                    value={details.signature_address}
+                    onChange={(e) => {
+                        const newDetails = {
+                            ...details,
+                            signature_address: e.currentTarget.value,
+                        };
+                        setDetails(newDetails);
+                        setConfirmationDetails(newDetails);
+                    }}
                 />
                 <TextField
                     label="Signature Date"
@@ -158,16 +165,18 @@ const TermsSelection = ({ className, deliveryDetails, termsDetails, paymentDetai
                             paddingRight: '30px'
                         }}
                     >
-                        {!Boolean(customerDetails.name) && '- No user has been selected!'}
-                        {!Boolean(customerDetails.name) && <br />}
+                        {userRole !== 3 && !Boolean(customerDetails.name) && '- No user has been selected!'}
+                        {userRole !== 3 && !Boolean(customerDetails.name) && <br />}
                         {!total_points && '- Total Points is 0. This implies no product was selected!'}
                         {!total_points && <br />}
                         {!Boolean(deliveryDetails.conditions_firstdeliverydate) && '- No delivery date has been chosen!'}
                         {!Boolean(deliveryDetails.conditions_firstdeliverydate) && <br />}
-                        {!Boolean(paymentDetails.price) && '- The price has not been set!'}
-                        {!Boolean(paymentDetails.price) && <br />}
+                        {userRole !== 3 && !Boolean(paymentDetails.price) && '- The price has not been set!'}
+                        {userRole !== 3 && !Boolean(paymentDetails.price) && <br />}
                         {!Boolean(termsDetails.policy) && '- The terms and conditions have not been accpeted!'}
                         {!Boolean(termsDetails.policy) && <br />}
+                        {userRole === 3 && (!Boolean(details.signature_consumer_name) || !Boolean(details.signature_address)) && '- Please sign your name and address above!'}
+                        {userRole === 3 && (!Boolean(details.signature_consumer_name) || !Boolean(details.signature_address)) && <br />}
                 </Typography>
             </Box>
         </PerfectScrollbar>
