@@ -112,6 +112,53 @@ const createOrderDetails = (req, res) => {
     db.end();
 }
 
+const deleteUpdatedOrderDetails = (req, res) => {
+    const formid = req.params.formid;
+    const db = ndb();
+    db.query(
+      "DELETE FROM orders_updates WHERE form_id = ?",
+      formid,
+      (err, result) => {
+        if (err) {
+          res.send({ err: err });
+        }
+        res.send(result)
+      }
+    );
+    db.end();
+}
+
+const updateOrderDetails = (req, res) => {
+  const {
+    form_id,
+    product_details_id,
+    quantity1,
+    quantity2,
+    quantity3
+  } = req.body;
+
+  const orderDetails = {
+    form_id,
+    product_details_id,
+    quantity1,
+    quantity2,
+    quantity3
+  };
+
+  const db = ndb();
+  db.query(
+    "INSERT INTO orders_updates SET ?",
+    orderDetails,
+    (err, result) => {
+      if (err) {
+        res.send({ err });
+      }
+      res.send(result);
+    }
+  );
+  db.end();
+}
+
 const originalOrders = (req, res) => {
   const formid = req.params.formid;
   console.log('FORM ID:', formid);
@@ -210,6 +257,58 @@ const updateOrderConfirmDeliverById = (req, res) => {
     deliver2,
     deliver3
   };
+
+  order = clean(order);
+
+  const db = ndb();
+  db.query(
+    "UPDATE form_completion SET ? WHERE id = ?",
+    [order, formid],
+    (err, result) => {
+      if (err) {
+        res.send({ err: err });
+      }
+      res.send(result);
+    }
+  );
+  db.end();
+}
+
+const updateOrderFormById = (req, res) => {
+  const formid = req.params.formid;
+  const {
+    conditions_firstdeliverydate,
+    conditions_seconddeliverydate,
+    conditions_thirddeliverydate,
+    deposit,
+    price,
+    rebate,
+    signature_address,
+    signature_consumer_name,
+    signature_merchant_name,
+    total,
+    total_points,
+    confirm1,
+    status
+  } = req.body;
+
+  let order = {
+    conditions_firstdeliverydate,
+    conditions_seconddeliverydate,
+    conditions_thirddeliverydate,
+    deposit,
+    price,
+    rebate,
+    signature_address,
+    signature_consumer_name,
+    signature_merchant_name,
+    total,
+    total_points,
+    confirm1,
+    status
+  };
+
+  console.log({order})
 
   order = clean(order);
 
@@ -365,5 +464,8 @@ module.exports = {
     getStatistics,
     getSummary,
     createOrder,
-    createOrderDetails
+    createOrderDetails,
+    updateOrderFormById,
+    deleteUpdatedOrderDetails,
+    updateOrderDetails
 };

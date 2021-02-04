@@ -158,6 +158,23 @@ const insertOrderDetails = (entries) => {
   });
 }
 
+const editOrder = (entries) => {
+  return Axios.post("/orders/update/update/" + entries.form_id, entries).then((response) => {
+    console.log(response);
+    return response;
+  });
+}
+
+const insertUpdatedOrderDetails = (entries) => {
+  return Axios.delete("/orders_details/update/delete/" + entries.form_id).then((response) => {
+    console.log(response);
+    return Axios.post("/orders_details/update/create", entries).then((response2) => {
+      console.log(response2);
+      return response2;
+    });
+  });
+}
+
 export {
   signin,
   register,
@@ -178,5 +195,7 @@ export {
   createCategory,
   createOrder,
   insertOrderDetails,
-  updateFormDeliveryDate
+  updateFormDeliveryDate,
+  editOrder,
+  insertUpdatedOrderDetails
 };

@@ -43,7 +43,7 @@ const PaymentSelection = ({ className, productDetails, paymentDetails, setPaymen
                     label="Total Points"
                     margin="normal"
                     name="name"
-                    value={total_points || 0}
+                    value={details.total_points || total_points || 0}
                     variant="outlined"
                     style={{width: '33%', paddingRight: '10px'}}
                     disabled

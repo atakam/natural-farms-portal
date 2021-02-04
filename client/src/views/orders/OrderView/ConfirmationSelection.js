@@ -8,7 +8,7 @@ import {
   Typography
 } from '@material-ui/core';
 
-const TermsSelection = ({ className, deliveryDetails, termsDetails, paymentDetails, customerDetails, productDetails, confirmationDetails, setConfirmationDetails, results, userRole, ...rest }) => {
+const TermsSelection = ({ className, deliveryDetails, termsDetails, paymentDetails, customerDetails, productDetails, confirmationDetails, setConfirmationDetails, results, userRole, isEdit, ...rest }) => {
     const [details, setDetails] = useState(confirmationDetails);
 
     let pts = Object.values(productDetails);
@@ -112,7 +112,7 @@ const TermsSelection = ({ className, deliveryDetails, termsDetails, paymentDetai
                         {'By typing you full name, you agree to the terms of tis contract'}
                     </Typography>
                     <TextField
-                        label="MERCHANT FULL NAME"
+                        label="SALES REPRESENTATIVE NAME"
                         margin="normal"
                         name="name"
                         variant="outlined"
@@ -133,7 +133,7 @@ const TermsSelection = ({ className, deliveryDetails, termsDetails, paymentDetai
                         name="name"
                         variant="outlined"
                         style={{width: '33%', paddingRight: '10px'}}
-                        value={customerDetails.signature_address}
+                        value={details.signature_address}
                         disabled
                     />
                     <TextField
@@ -167,14 +167,14 @@ const TermsSelection = ({ className, deliveryDetails, termsDetails, paymentDetai
                     >
                         {userRole !== 3 && !Boolean(customerDetails.name) && '- No user has been selected!'}
                         {userRole !== 3 && !Boolean(customerDetails.name) && <br />}
-                        {!total_points && '- Total Points is 0. This implies no product was selected!'}
-                        {!total_points && <br />}
+                        {!isEdit && !total_points && '- Total Points is 0. This implies no product was selected!'}
+                        {!isEdit && !total_points && <br />}
                         {!Boolean(deliveryDetails.conditions_firstdeliverydate) && '- No delivery date has been chosen!'}
                         {!Boolean(deliveryDetails.conditions_firstdeliverydate) && <br />}
                         {userRole !== 3 && !Boolean(paymentDetails.price) && '- The price has not been set!'}
                         {userRole !== 3 && !Boolean(paymentDetails.price) && <br />}
-                        {!Boolean(termsDetails.policy) && '- The terms and conditions have not been accpeted!'}
-                        {!Boolean(termsDetails.policy) && <br />}
+                        {!isEdit && !Boolean(termsDetails.policy) && '- The terms and conditions have not been accpeted!'}
+                        {!isEdit && !Boolean(termsDetails.policy) && <br />}
                         {userRole === 3 && (!Boolean(details.signature_consumer_name) || !Boolean(details.signature_address)) && '- Please sign your name and address above!'}
                         {userRole === 3 && (!Boolean(details.signature_consumer_name) || !Boolean(details.signature_address)) && <br />}
                 </Typography>

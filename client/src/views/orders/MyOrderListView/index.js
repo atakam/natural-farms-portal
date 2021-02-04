@@ -8,7 +8,7 @@ import Page from 'src/components/Page';
 import Results from './Results';
 import Toolbar from 'src/components/Toolbar';
 import AppContext from "src/components/AppContext";
-import NewOrder from "../NewOrder";
+import OrderView from "../OrderView";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -54,7 +54,7 @@ const CustomerListView = () => {
       className={classes.root}
       title="Customers"
     >
-      <NewOrder
+      <OrderView
         open={openNewOrder}
         close={handleClose}
         getOrders={() => getOrders(context.credentials.user.id, setResults)}

@@ -190,7 +190,8 @@ const Results = ({ className, results, ...rest }) => {
                     {
                     customer.status === 1 ?
                     <Typography color="textSecondary">Completed</Typography> :
-                    <Typography color="error">Pending</Typography>
+                    (customer.signature_consumer_name === '' ? <Typography color="error">Signature Required</Typography> :
+                    <Typography color="error">Pending</Typography>)
                     }
                   </TableCell>
                   <TableCell>

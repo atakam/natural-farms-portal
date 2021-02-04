@@ -28,7 +28,10 @@ const {
   getStatistics,
   getSummary,
   createOrder,
-  createOrderDetails
+  updateOrderFormById,
+  createOrderDetails,
+  deleteUpdatedOrderDetails,
+  updateOrderDetails
 } = require('./api/orders');
 
 const {
@@ -112,7 +115,13 @@ app.get("/orderscheck/updated", getUpdates);
 
 app.delete("/orders/delete/:formid", deleteForm);
 
+app.delete("/orders_details/update/delete/:formid", deleteUpdatedOrderDetails);
+
 app.post("/orders/create", createOrder);
+
+app.post("/orders/update/update/:formid", updateOrderFormById);
+
+app.post("/orders_details/update/create", updateOrderDetails);
 
 app.post("/orders_details/create", createOrderDetails);
 

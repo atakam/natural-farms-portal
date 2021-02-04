@@ -9,7 +9,7 @@ import Page from 'src/components/Page';
 import Results from './Results';
 import Toolbar from 'src/components/Toolbar';
 import AppContext from "src/components/AppContext";
-import NewOrder from "../NewOrder";
+import OrderView from "../OrderView";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -136,7 +136,7 @@ const CustomerListView = (props) => {
       className={classes.root}
       title="Orders"
     >
-      <NewOrder open={openNewOrder} close={handleClose} getOrders={getOrders} user={context.credentials.user} />
+      <OrderView open={openNewOrder} close={handleClose} getOrders={getOrders} user={context.credentials.user} updates={updates} />
       <Container maxWidth={false}>
       <Toolbar
         performSearch={performSearch}
@@ -150,7 +150,7 @@ const CustomerListView = (props) => {
         }}
       />
         <Box mt={3}>
-          <Results updates={updates} results={filteredResults} userid={context.credentials.user.id} callback={getOrders} calendarView={calendarView} />
+          <Results updates={updates} results={filteredResults} user={context.credentials.user} callback={getOrders} calendarView={calendarView}/>
         </Box>
       </Container>
     </Page>

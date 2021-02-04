@@ -13,7 +13,6 @@ import TermsSelection from './TermsSelection';
 import ConfirmationSelection from './ConfirmationSelection';
 
 import {createOrder, insertOrderDetails} from 'src/functions'
-import { getPositioningCSS } from 'nprogress';
 
 const CreateOrderCustomer = ({ className, title, subtitle, updateCallback, cancel, products, currentUser, ...rest }) => {
   const [productDetails, setProductDetails] = useState({});

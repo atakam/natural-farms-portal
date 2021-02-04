@@ -35,6 +35,7 @@ import { deleteForm } from '../../../functions/index';
 import Profile from 'src/components/Profile';
 import SingleOrderView from '../SingleOrderView/index';
 import CalendarView from './CalendarView';
+import OrderView from '../OrderView';
 
 const useStyles = makeStyles((theme) => ({
   root: {},
@@ -43,7 +44,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const Results = ({ className, results, updates, userid, callback, calendarView, ...rest }) => {
+const Results = ({ className, results, updates, user, callback, calendarView, ...rest }) => {
   const classes = useStyles();
   const [limit, setLimit] = useState(50);
   const [page, setPage] = useState(0);
@@ -54,6 +55,7 @@ const Results = ({ className, results, updates, userid, callback, calendarView, 
   const [orderDialogOpen, setOrderDialogOpen] = useState(false);
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [objectProp, setObject] = React.useState({formid: '', rid: ''});
+  const [openEditOrder, setOpenEditOrder] = React.useState(false);
 
   const handleClick = (target, obj) => {
     setAnchorEl(target);
@@ -62,6 +64,7 @@ const Results = ({ className, results, updates, userid, callback, calendarView, 
   
   const handleClose = () => {
     setAnchorEl(null);
+    setOpenEditOrder(false);
   };
 
   const handleLimitChange = (event) => {
@@ -146,9 +149,9 @@ const Results = ({ className, results, updates, userid, callback, calendarView, 
     win.focus();
   }
 
-  const goToEditContract = () => {
+  const handleEditContract = () => {
     setAnchorEl(null);
-    openInNewTab(`https://www.portal.naturalfarms.ca/order/adminedit.php?id=${objectProp.formid}&rid=${objectProp.rid}`);
+    setOpenEditOrder(true);
   };
   const goToContract = () => {
     setAnchorEl(null);
@@ -201,11 +204,11 @@ const Results = ({ className, results, updates, userid, callback, calendarView, 
         </ListItemIcon>
         Edit Profile
       </MenuItem>
-      <MenuItem onClick={() => goToEditContract()}>
+      <MenuItem onClick={() => handleEditContract()}>
         <ListItemIcon>
           <AssignmentLateIcon fontSize="small" />
         </ListItemIcon>
-        Edit Contract
+        Edit Order
       </MenuItem>
       {objectProp.isEdited &&
         <MenuItem onClick={() => viewOrders(false)}>
@@ -253,6 +256,15 @@ const Results = ({ className, results, updates, userid, callback, calendarView, 
       className={clsx(classes.root, className)}
       {...rest}
     >
+      <OrderView
+        open={openEditOrder}
+        close={handleClose}
+        getOrders={callback}
+        user={user}
+        updates={updates}
+        selectedForm={objectProp}
+        isEdit
+      />
       <AppDialog
         open={dialogOpen}
         handleClose={handleCloseDialog}
@@ -384,17 +396,20 @@ const Results = ({ className, results, updates, userid, callback, calendarView, 
                         aria-controls="simple-menu"
                         aria-haspopup="true"
                         onClick={(e) => handleClick(e.currentTarget, {
+                          ...customer,
                           formid: customer.formid,
                           rid: customer.representative_id,
                           email: customer.email,
                           phoneNumber: customer.phoneNumber,
                           name: customer.firstName + ' ' + customer.lastName,
+                          nff: customer.nff,
                           id: customer.uid,
-                          isEdited: edited(customer) !== '-'
+                          isEdited: edited(customer) !== '-',
+                          isEditAllowed: customer.signature_consumer_name !== '' && customer.signature_merchant_name !== ''
                         })}
                         color="secondary"
                       >
-                        Action List
+                        Actions
                       </Button>
                     </TableCell>
                   </TableRow>
@@ -425,7 +440,7 @@ const Results = ({ className, results, updates, userid, callback, calendarView, 
           resendEmail,
           goToContract,
           viewOrders,
-          goToEditContract,
+          handleEditContract,
           editProfile,
           setObject
         }}

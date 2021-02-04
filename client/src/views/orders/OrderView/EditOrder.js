@@ -1,5 +1,4 @@
 import React, {useState} from 'react';
-import clsx from 'clsx';
 import {
   Box,
   Button,
@@ -7,40 +6,43 @@ import {
 } from '@material-ui/core';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import Tabs from 'src/components/Tabs';
-import CustomerSelection from './CustomerSelection';
 import ProductSelection from './ProductSelection';
 import DeliveryDateSelection from './DeliveryDateSelection';
 import PaymentSelection from './PaymentSelection';
-import TermsSelection from './TermsSelection';
-import ConfirmationSelection from './ConfirmationSelection';
+import ConfirmationSelection from './edit/EditConfirmationSelection';
 
-import {createOrder, insertOrderDetails} from 'src/functions'
-import { getPositioningCSS } from 'nprogress';
+import {editOrder, insertUpdatedOrderDetails} from 'src/functions';
 
-const CreateOrder = ({ className, title, subtitle, updateCallback, cancel, products, customers, currentUser, ...rest }) => {
-  const [customerDetails, setCustomerDetails] = useState({});
+const EditOrder = ({ className, title, subtitle, updateCallback, cancel, products, currentUser, selectedForm, order, ...rest }) => {
   const [productDetails, setProductDetails] = useState({});
-  const [deliveryDetails, setDeliveryDetails] = useState({});
+  const [deliveryDetails, setDeliveryDetails] = useState({
+    conditions_firstdeliverydate: selectedForm.conditions_firstdeliverydate,
+    conditions_seconddeliverydate: selectedForm.conditions_seconddeliverydate,
+    conditions_thirddeliverydate: selectedForm.conditions_thirddeliverydate
+  });
   const [paymentDetails, setPaymentDetails] = useState({
-    price: 0, rebate: 0, deposit: 0, total: 0
+    price: selectedForm.price,
+    rebate: selectedForm.rebate,
+    deposit: selectedForm.deposit,
+    total: selectedForm.total,
+    total_points: selectedForm.total_points
   });
-  const [termsDetails, setTermsDetails] = useState({policy: false});
   const [confirmationDetails, setConfirmationDetails] = useState({
-    signature_consumer_name: '',
-    signature_merchant_name: ''
+    signature_consumer_name: selectedForm.signature_consumer_name,
+    signature_merchant_name: selectedForm.signature_merchant_name,
+    signature_address: selectedForm.signature_address,
+    signature_date: selectedForm.signature_date
   });
+
+  const customerDetails = {
+    name: selectedForm.name,
+    nff: selectedForm.nff,
+    form_id: selectedForm.formid
+  };
 
   const [tabValue, setTabValue] = useState(0);
 
   const tabs = [
-      {
-          label: 'SELECT USER',
-          content: <CustomerSelection
-                      results={customers}
-                      customerDetails={customerDetails}
-                      setCustomerDetails={setCustomerDetails}
-                   />
-      },
       {
         label: 'SELECT PRODUCTS',
         content: <ProductSelection
@@ -65,38 +67,29 @@ const CreateOrder = ({ className, title, subtitle, updateCallback, cancel, produ
                 />
       },
       {
-        label: 'TERMS & CONDITIONS',
-        content: <TermsSelection
-                    termsDetails={termsDetails}
-                    setTermsDetails={setTermsDetails}
-                />
-      },
-      {
         label: 'CONFIRMATION',
         content: <ConfirmationSelection
+                    customerDetails={customerDetails}
                     confirmationDetails={confirmationDetails}
                     setConfirmationDetails={setConfirmationDetails}
                     productDetails={productDetails}
-                    customerDetails={customerDetails}
                     deliveryDetails={deliveryDetails}
                     paymentDetails={paymentDetails}
-                    termsDetails={termsDetails}
                     userRole={currentUser.role}
+                    isEdit
                  />
       }
   ];
 
+  if (!selectedForm.isEditAllowed) {
+    tabs.splice(0, 1);
+  } else {
+    tabs.splice(tabs.length - 1, 1);
+  }
+
   const showPrevious = tabValue > 0;
   const showNext = tabValue + 1 < tabs.length;
   const isLast = tabValue === tabs.length -1;
-
-  let disableNext = false;
-  if (tabValue === 0) {
-    disableNext = !customerDetails.nff;
-  }
-  if (tabValue === 4) {
-    disableNext = !termsDetails.policy;
-  }
 
   const getTotalPoints = () => {
     let pts = Object.values(productDetails);
@@ -109,23 +102,27 @@ const CreateOrder = ({ className, title, subtitle, updateCallback, cancel, produ
   }
 
   const submit = () => {
-    const total_points = getTotalPoints();
+    const edited_points = selectedForm.isEditAllowed ? {
+      edited_points: getTotalPoints()
+    } : {};
+    const confirmAndComplete = !selectedForm.isEditAllowed ? {
+      confirm: 1,
+      status: 1
+    } : {};
     const entries = {
       ...customerDetails,
       ...deliveryDetails,
       ...paymentDetails,
-      ...termsDetails,
       ...confirmationDetails,
-      total_points,
-      signature_date: getDateString(new Date()),
-      representative_id: currentUser.id
+      ...edited_points,
+      ...confirmAndComplete
     };
 
-    createOrder(entries)
+    editOrder(entries)
     .then((entry) => {
-      if (!entry.data.err) {
+      if (entry.data.affectedRows && entry.data.affectedRows > 0) {
         Object.keys(productDetails).forEach((key) => {
-          insertOrderDetails({
+          insertUpdatedOrderDetails({
             form_id: entry.data.insertId,
             product_details_id: key,
             quantity1: productDetails[key][1],
@@ -135,29 +132,19 @@ const CreateOrder = ({ className, title, subtitle, updateCallback, cancel, produ
             console.log(response);
           });
         });
-        alert('Successfully created order!');
+        alert('Successfully updated order!');
         updateCallback();
         cancel();
       } else {
-        alert('Error while creating order!');
+        alert('Error while updating order!');
       }
     });
   }
 
-  const getDateString = (d) => {
-    const dd = String(d.getDate()).padStart(2, '0');
-    const mm = String(d.getMonth() + 1).padStart(2, '0'); //January is 0!
-    const yyyy = d.getFullYear();
-
-    return yyyy + '-' + mm +'-' + dd;
-  }
-
   const showSubmit = isLast
-    && Boolean(getTotalPoints())
-    && Boolean(customerDetails.name)
     && Boolean(deliveryDetails.conditions_firstdeliverydate)
     && Boolean(paymentDetails.price)
-    && Boolean(termsDetails.policy);
+    && Boolean(confirmationDetails.signature_merchant_name);
 
   return (
       <>
@@ -184,7 +171,6 @@ const CreateOrder = ({ className, title, subtitle, updateCallback, cancel, produ
                   color="primary"
                   onClick={()=>{setTabValue(tabValue+1)}}
                   variant="contained"
-                  disabled={disableNext}
               >
                   Next
               </Button>}
@@ -200,4 +186,4 @@ const CreateOrder = ({ className, title, subtitle, updateCallback, cancel, produ
   );
 }
 
-export default CreateOrder;
+export default EditOrder;

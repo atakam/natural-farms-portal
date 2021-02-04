@@ -138,7 +138,7 @@ const Results = ({ className, results, updates, userid, callback, ...rest }) => 
                       })}
                       color="secondary"
                     >
-                      Action List
+                      Actions
                     </Button>
                     <Menu
                       id="simple-menu"

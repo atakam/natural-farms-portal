@@ -37,7 +37,7 @@ const CustomerSelection = ({ className, deliveryDetails, setDeliveryDetails, ...
                         setDetails(newDetails);
                         setDeliveryDetails(newDetails);
                     }}
-                    value={details.conditions_firstdeliverydate || new Date()}
+                    value={(details.conditions_firstdeliverydate && details.conditions_firstdeliverydate.split('T')[0]) || new Date()}
                     variant="outlined"
                     type="date"
                     style={{width: '33%', paddingRight: '10px'}}
@@ -55,7 +55,7 @@ const CustomerSelection = ({ className, deliveryDetails, setDeliveryDetails, ...
                         setDetails(newDetails);
                         setDeliveryDetails(newDetails);
                     }}
-                    value={details.conditions_seconddeliverydate || new Date()}
+                    value={(details.conditions_seconddeliverydate && details.conditions_seconddeliverydate.split('T')[0]) || new Date()}
                     variant="outlined"
                     type="date"
                     style={{width: '33%', paddingRight: '10px'}}
@@ -73,7 +73,7 @@ const CustomerSelection = ({ className, deliveryDetails, setDeliveryDetails, ...
                         setDetails(newDetails);
                         setDeliveryDetails(newDetails);
                     }}
-                    value={details.conditions_thirddeliverydate || new Date()}
+                    value={(details.conditions_thirddeliverydate && details.conditions_thirddeliverydate.split('T')[0]) || new Date()}
                     variant="outlined"
                     type="date"
                     style={{width: '33%'}}
