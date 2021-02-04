@@ -1,4 +1,5 @@
-import React from 'react';
+import React, {useEffect} from 'react';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
@@ -46,18 +47,24 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function SimpleTabs({tabs}) {
+export default function SimpleTabs({tabs, className, appBarColor, tabValue, setTabValue, displayText, ...rest}) {
   const classes = useStyles();
   const [value, setValue] = React.useState(0);
 
   const handleChange = (event, newValue) => {
+    setTabValue && setTabValue(newValue);
     setValue(newValue);
   };
 
+  useEffect(() => {
+    tabValue && setValue(tabValue);
+  }, [tabValue]);
+
   return (
-    <div className={classes.root}>
-      <AppBar position="static">
-        <Tabs value={value} onChange={handleChange} aria-label="simple tabs example">
+    <div className={clsx(classes.root, className)}>
+      <AppBar position="static" color={appBarColor}>
+        {displayText}
+        <Tabs value={value} onChange={handleChange} aria-label="simple tabs example" {...rest}>
             {
                 tabs.map((tab, index) => (
                     <Tab key={index} label={tab.label} {...a11yProps(index)} />
@@ -67,7 +74,7 @@ export default function SimpleTabs({tabs}) {
       </AppBar>
       {
         tabs.map((tab, index) => (
-            <TabPanel value={value} index={index} key={index}>
+            <TabPanel value={value} index={index} key={index} className='tabContent'>
                 {tab.actions}
                 {tab.content}
             </TabPanel>

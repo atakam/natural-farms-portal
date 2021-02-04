@@ -258,7 +258,7 @@ const Results = ({ className, results, userid, callback, ...rest }) => {
     >
       <PerfectScrollbar>
         <Box minWidth={1050}>
-          <Tabs value={2} tabs={tabs} />
+          <Tabs tabs={tabs} />
         </Box>
       </PerfectScrollbar>
     </Card>

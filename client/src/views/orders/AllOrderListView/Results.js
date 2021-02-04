@@ -96,22 +96,29 @@ const Results = ({ className, results, updates, userid, callback, calendarView, 
   };
 
   const status = (customer) => {
-    if ((customer.confirm3 === 1 && customer.deliver3 === 0)) return {color: 'textPrimary', message: 'Confirm (3)'};
-    else if ((customer.confirm2 === 1 && customer.deliver2 === 0)) return {color: 'textPrimary', message: 'Confirm (2)'};
-    else if ((customer.confirm1 === 1 && customer.deliver1 === 0)) return {color: 'textPrimary', message: 'Confirm (1)'};
+    let returnValue = {color: 'error', message: 'Unkwon'};
+    if ((customer.confirm3 === 1 && customer.deliver3 === 0)) returnValue = {color: 'textPrimary', message: 'Confirm (3)'};
+    else if ((customer.confirm2 === 1 && customer.deliver2 === 0)) returnValue = {color: 'textPrimary', message: 'Confirm (2)'};
+    else if ((customer.confirm1 === 1 && customer.deliver1 === 0)) returnValue = {color: 'textPrimary', message: 'Confirm (1)'};
     
-    else if ((customer.confirm1 === 0 && customer.deliver1 === 0)) return {color: 'textSecondary', message: 'Not Confirm (1)'};
+    else if ((customer.confirm1 === 0 && customer.deliver1 === 0)) returnValue = {color: 'textSecondary', message: 'Not Confirm (1)'};
     else if ((customer.confirm1 === 1 && customer.deliver1 === 1) && 
-    (customer.confirm2 === 0 && customer.deliver2 === 0)) return {color: 'textSecondary', message: 'Not Confirm (2)'};
+    (customer.confirm2 === 0 && customer.deliver2 === 0)) returnValue = {color: 'textSecondary', message: 'Not Confirm (2)'};
     else if ((customer.confirm1 === 1 && customer.deliver1 === 1) && 
     (customer.confirm2 === 1 && customer.deliver2 === 1) &&
-    (customer.confirm3 === 0 && customer.deliver3 === 0)) return {color: 'textSecondary', message: 'Not Confirm (3)'};
+    (customer.confirm3 === 0 && customer.deliver3 === 0)) returnValue = {color: 'textSecondary', message: 'Not Confirm (3)'};
 
     else if ((customer.confirm1 === 1 && customer.deliver1 === 1) && 
     (customer.confirm2 === 1 && customer.deliver1 === 1) &&
-    (customer.confirm3 === 1 && customer.deliver1 === 1)) return {color: 'error', message: 'Expired'};
+    (customer.confirm3 === 1 && customer.deliver1 === 1)) returnValue = {color: 'error', message: 'Expired'};
 
-    else return {color: 'error', message: 'Unkwon'};
+    if (customer.signature_consumer_name === '') {
+      returnValue = {color: 'error', message: 'Customer Signature'};
+    } else if (customer.signature_merchant_name === '') {
+      returnValue = {color: 'error', message: 'Sales Signature'};
+    }
+
+    return returnValue;
   };
 
   const edited = (customer) => {

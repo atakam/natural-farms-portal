@@ -1,15 +1,20 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useContext} from 'react';
 import PropTypes from 'prop-types';
 import {
   Dialog
 } from '@material-ui/core';
 import CreateOrder from './CreateOrder';
+import AppContext from "src/components/AppContext";
 
 const NewOrder = ({ className, open, close, getOrders, user, ...rest }) => {
-    const [results, setResults] = useState([]);
+    const [products, setProducts] = useState([]);
+    const [customers, setCustomers] = useState([]);
+
+    const context = useContext(AppContext);
 
     useEffect(() => {
         getProductDetails();
+        getCustomers();
     }, []);
 
     const getProductDetails = async () => {
@@ -21,7 +26,19 @@ const NewOrder = ({ className, open, close, getOrders, user, ...rest }) => {
         const body = await response.text();
         const result = JSON.parse(body);
         console.log("results", JSON.parse(body));
-        setResults(result);
+        setProducts(result);
+    };
+
+    const getCustomers = async () => {
+        const response = await fetch('/users', {
+          headers: {
+            'Content-Type': 'application/json',
+          }
+        });
+        const body = await response.text();
+        const result = JSON.parse(body);
+        console.log("results", JSON.parse(body));
+        setCustomers(result);
     };
     return (
         <Dialog
@@ -29,7 +46,7 @@ const NewOrder = ({ className, open, close, getOrders, user, ...rest }) => {
             onClose={close}
             aria-labelledby="draggable-dialog-title"
             fullWidth
-            maxWidth={'lg'}
+            maxWidth={'xl'}
         >
             <CreateOrder
                 title={'Create New Order'}
@@ -37,7 +54,9 @@ const NewOrder = ({ className, open, close, getOrders, user, ...rest }) => {
                 updateCallback={getOrders}
                 cancel={close}
                 user={user}
-                results={results}
+                products={products}
+                customers={customers}
+                currentUser={context.credentials.user}
             />
         </Dialog>
   );

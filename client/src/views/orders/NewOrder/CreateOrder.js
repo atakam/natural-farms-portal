@@ -1,167 +1,203 @@
 import React, {useState} from 'react';
-import PropTypes from 'prop-types';
-import { Formik } from 'formik';
-import PerfectScrollbar from 'react-perfect-scrollbar';
+import clsx from 'clsx';
 import {
   Box,
-  Card,
-  CardContent,
-  CardHeader,
-  Divider,
-  Container,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableRow,
-  TextField
+  Button,
+  Divider
 } from '@material-ui/core';
+import PerfectScrollbar from 'react-perfect-scrollbar';
+import Tabs from 'src/components/Tabs';
+import CustomerSelection from './CustomerSelection';
+import ProductSelection from './ProductSelection';
+import DeliveryDateSelection from './DeliveryDateSelection';
+import PaymentSelection from './PaymentSelection';
+import TermsSelection from './TermsSelection';
+import ConfirmationSelection from './ConfirmationSelection';
 
-const CreateOrder = ({ className, title, subtitle, id, updateCallback, cancel, results, ...rest }) => {
-  let points = {};
-  const updatePoints = (pid, point) => {
-    const v1 = document.getElementsByName('quantity_' + pid + '_1')[0].value;
-    const v2 = document.getElementsByName('quantity_' + pid + '_2')[0].value;
-    const v3 = document.getElementsByName('quantity_' + pid + '_3')[0].value;
-    points[pid] = (Number(v1) + Number(v2) + Number(v3)) * point;
+import {createOrder, insertOrderDetails} from 'src/functions'
+import { getPositioningCSS } from 'nprogress';
+
+const CreateOrder = ({ className, title, subtitle, updateCallback, cancel, products, customers, currentUser, ...rest }) => {
+  const [customerDetails, setCustomerDetails] = useState({});
+  const [productDetails, setProductDetails] = useState({});
+  const [deliveryDetails, setDeliveryDetails] = useState({});
+  const [paymentDetails, setPaymentDetails] = useState({
+    price: 0, rebate: 0, deposit: 0, total: 0
+  });
+  const [termsDetails, setTermsDetails] = useState({policy: false});
+  const [confirmationDetails, setConfirmationDetails] = useState({
+    signature_consumer_name: '',
+    signature_merchant_name: ''
+  });
+
+  const [tabValue, setTabValue] = useState(0);
+
+  const tabs = [
+      {
+          label: 'SELECT USER',
+          content: <CustomerSelection
+                      results={customers}
+                      customerDetails={customerDetails}
+                      setCustomerDetails={setCustomerDetails}
+                   />
+      },
+      {
+        label: 'SELECT PRODUCTS',
+        content: <ProductSelection
+                      results={products}
+                      productDetails={productDetails}
+                      setProductDetails={setProductDetails}
+                  />
+      },
+      {
+        label: 'DELIVERY DATES',
+        content: <DeliveryDateSelection
+                    deliveryDetails={deliveryDetails}
+                    setDeliveryDetails={setDeliveryDetails}
+                />
+      },
+      {
+        label: 'CONTRACT DETAILS',
+        content: <PaymentSelection
+                    productDetails={productDetails}
+                    paymentDetails={paymentDetails}
+                    setPaymentDetails={setPaymentDetails}
+                />
+      },
+      {
+        label: 'TERMS & CONDITIONS',
+        content: <TermsSelection
+                    termsDetails={termsDetails}
+                    setTermsDetails={setTermsDetails}
+                />
+      },
+      {
+        label: 'CONFIRMATION',
+        content: <ConfirmationSelection
+                    confirmationDetails={confirmationDetails}
+                    setConfirmationDetails={setConfirmationDetails}
+                    productDetails={productDetails}
+                    customerDetails={customerDetails}
+                    deliveryDetails={deliveryDetails}
+                    paymentDetails={paymentDetails}
+                    termsDetails={termsDetails}
+                    userRole={currentUser.role}
+                 />
+      }
+  ];
+
+  const showPrevious = tabValue > 0;
+  const showNext = tabValue + 1 < tabs.length;
+  const isLast = tabValue === tabs.length -1;
+
+  let disableNext = false;
+  if (tabValue === 0) {
+    disableNext = !customerDetails.nff;
   }
-  
-  const getPoints = (pid) => {
-    return points[pid] || 0;
+  if (tabValue === 4) {
+    disableNext = !termsDetails.policy;
   }
+
+  const getTotalPoints = () => {
+    let pts = Object.values(productDetails);
+    pts = pts.reduce((r, a) => {
+        r[a.points] = [...r[a.points] || [], a];
+        return r;
+    }, {});
+    pts = Object.keys(pts);
+    return (pts.reduce((a, b) => Number(a) + Number(b), 0));
+  }
+
+  const submit = () => {
+    const total_points = getTotalPoints();
+    const entries = {
+      ...customerDetails,
+      ...deliveryDetails,
+      ...paymentDetails,
+      ...termsDetails,
+      ...confirmationDetails,
+      total_points,
+      signature_date: getDateString(new Date()),
+      representative_id: currentUser.id
+    };
+
+    createOrder(entries)
+    .then((entry) => {
+      if (!entry.data.err) {
+        Object.keys(productDetails).forEach((key) => {
+          insertOrderDetails({
+            form_id: entry.data.insertId,
+            product_details_id: key,
+            quantity1: productDetails[key][1],
+            quantity2: productDetails[key][2],
+            quantity3: productDetails[key][3]
+          }).then((response) => {
+            console.log(response);
+          });
+        });
+        alert('Successfully created order!');
+        updateCallback();
+        cancel();
+      } else {
+        alert('Error while creating order!');
+      }
+    });
+  }
+
+  const getDateString = (d) => {
+    const dd = String(d.getDate()).padStart(2, '0');
+    const mm = String(d.getMonth() + 1).padStart(2, '0'); //January is 0!
+    const yyyy = d.getFullYear();
+
+    return yyyy + '-' + mm +'-' + dd;
+  }
+
+  const showSubmit = isLast
+    && Boolean(getTotalPoints())
+    && Boolean(customerDetails.name)
+    && Boolean(deliveryDetails.conditions_firstdeliverydate)
+    && Boolean(paymentDetails.price)
+    && Boolean(termsDetails.policy);
 
   return (
-    <Container maxWidth="xl">
-      <Card>
-          <CardHeader
-            subheader={subtitle}
-            title={title}
-          />
+      <>
+          <PerfectScrollbar>
+            <Box minWidth={1050} className='create-tabs'>
+              <Tabs tabs={tabs} setTabValue={setTabValue} tabValue={tabValue} />
+            </Box>
+          </PerfectScrollbar>
           <Divider />
-          <CardContent>
-          <Formik
-            initialValues={{}}
-            onSubmit={(values) => {
-              console.log(values);
-            }}
+          <Box
+              className='footer'
+              display="flex"
+              justifyContent="flex-end"
+              p={2}
           >
-            {({
-              errors,
-              handleBlur,
-              handleChange,
-              handleSubmit,
-              isSubmitting,
-              touched,
-              values
-            }) => (
-              <form onSubmit={handleSubmit}>
-                <PerfectScrollbar>
-                  <Box minWidth={1050}>
-                    <Table>
-                      <TableHead>
-                        <TableRow>
-                          <TableCell>
-                            Product Name
-                          </TableCell>
-                          <TableCell>
-                            Code
-                          </TableCell>
-                          <TableCell>
-                            Size
-                          </TableCell>
-                          <TableCell>
-                            1st Delivery
-                          </TableCell>
-                          <TableCell>
-                            2nd Delivery
-                          </TableCell>
-                          <TableCell>
-                            3rd Delivery
-                          </TableCell>
-                          <TableCell>
-                            Points
-                          </TableCell>
-                        </TableRow>
-                      </TableHead>
-                      <TableBody>
-                        {results.map((product, index) => (
-                          <TableRow
-                            hover
-                            key={index}
-                          >
-                            <TableCell>
-                              {product.name_en + ' / ' + product.name_fr}
-                            </TableCell>
-                            <TableCell>
-                              {product.code}
-                            </TableCell>
-                            <TableCell>
-                              {product.type + ' / ' + product.quantity}
-                            </TableCell>
-                            <TableCell>
-                              <TextField
-                                margin="normal"
-                                name={'quantity_' + product.product_details_id + '_1'}
-                                onBlur={handleBlur}
-                                onChange={(e) => {
-                                  updatePoints(product.product_details_id, product.point);
-                                  handleChange(e);
-                                }}
-                                type="number"
-                                value={values['quantity_' + product.product_details_id + '_1'] || 0}
-                                variant="outlined"
-                                InputProps={{ inputProps: { min: 0 } }}
-                              />
-                            </TableCell>
-                            <TableCell>
-                              <TextField
-                                margin="normal"
-                                name={'quantity_' + product.product_details_id + '_2'}
-                                onBlur={handleBlur}
-                                onChange={(e) => {
-                                  updatePoints(product.product_details_id, product.point);
-                                  handleChange(e);
-                                }}
-                                type="number"
-                                value={values['quantity_' + product.product_details_id + '_2'] || 0}
-                                variant="outlined"
-                                InputProps={{ inputProps: { min: 0 } }}
-                              />
-                            </TableCell>
-                            <TableCell>
-                              <TextField
-                                margin="normal"
-                                name={'quantity_' + product.product_details_id + '_3'}
-                                onBlur={handleBlur}
-                                onChange={(e) => {
-                                  updatePoints(product.product_details_id, product.point);
-                                  handleChange(e);
-                                }}
-                                type="number"
-                                value={values['quantity_' + product.product_details_id + '_3'] || 0}
-                                variant="outlined"
-                                InputProps={{ inputProps: { min: 0 } }}
-                              />
-                            </TableCell>
-                            <TableCell>
-                              {getPoints(product.product_details_id)}
-                            </TableCell>
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
-                  </Box>
-                </PerfectScrollbar>
-              </form>)}
-          </Formik>
-        </CardContent>
-      </Card>
-    </Container>
+              {showPrevious && <Button
+                  variant="contained"
+                  onClick={()=>{setTabValue(tabValue-1)}}
+                  style={{marginRight: '10px'}}
+              >
+                  Previous
+              </Button>}
+              {showNext && !isLast && <Button
+                  color="primary"
+                  onClick={()=>{setTabValue(tabValue+1)}}
+                  variant="contained"
+                  disabled={disableNext}
+              >
+                  Next
+              </Button>}
+              {showSubmit && <Button
+                  color="primary"
+                  onClick={submit}
+                  variant="contained"
+              >
+                  Submit
+              </Button>}
+          </Box>
+      </>
   );
-};
-
-CreateOrder.propTypes = {
-  className: PropTypes.string
-};
+}
 
 export default CreateOrder;

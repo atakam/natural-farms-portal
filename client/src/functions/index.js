@@ -144,6 +144,20 @@ const updateFormDeliveryDate = ({formid, delivery, date}) => {
   });
 }
 
+const createOrder = (entries) => {
+  return Axios.post("/orders/create", entries).then((response) => {
+    console.log(response);
+    return response;
+  });
+}
+
+const insertOrderDetails = (entries) => {
+  return Axios.post("/orders_details/create", entries).then((response) => {
+    console.log(response);
+    return response;
+  });
+}
+
 export {
   signin,
   register,
@@ -162,5 +176,7 @@ export {
   deleteCategory,
   updateCategory,
   createCategory,
+  createOrder,
+  insertOrderDetails,
   updateFormDeliveryDate
 };

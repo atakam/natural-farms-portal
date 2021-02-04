@@ -26,7 +26,9 @@ const {
   updateDeliveryDateById,
   getUpdates,
   getStatistics,
-  getSummary
+  getSummary,
+  createOrder,
+  createOrderDetails
 } = require('./api/orders');
 
 const {
@@ -109,6 +111,10 @@ app.get("/orders/updated/:formid", updatedOrders);
 app.get("/orderscheck/updated", getUpdates);
 
 app.delete("/orders/delete/:formid", deleteForm);
+
+app.post("/orders/create", createOrder);
+
+app.post("/orders_details/create", createOrderDetails);
 
 app.post("/orders/update/:formid", updateOrderConfirmDeliverById);
 

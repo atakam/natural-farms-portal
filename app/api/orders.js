@@ -20,7 +20,7 @@ const ordersByUserRouter = (req, res) => {
 const orders = (req, res) => {
   const db = ndb();
   db.query(
-    "SELECT *, form_completion.id AS formid, users.id AS uid, representative.name AS repName FROM form_completion LEFT JOIN users ON users.id = form_completion.customer_id LEFT JOIN representative ON representative.id = form_completion.representative_id WHERE form_completion.customer_id = users.id",
+    "SELECT *, form_completion.id AS formid, users.id AS uid, representative.name AS repName FROM form_completion LEFT JOIN users ON users.id = form_completion.customer_id LEFT JOIN representative ON representative.id = form_completion.representative_id WHERE form_completion.customer_id = users.id ORDER BY form_completion.id DESC",
     (err, result) => {
       if (err) {
         res.send({ err: err });
@@ -29,6 +29,87 @@ const orders = (req, res) => {
     }
   );
   db.end();
+}
+
+const createOrder = (req, res) => {
+  const {
+      conditions_firstdeliverydate,
+      conditions_seconddeliverydate,
+      conditions_thirddeliverydate,
+      deposit,
+      price,
+      rebate,
+      signature_address,
+      signature_consumer_name,
+      signature_merchant_name,
+      signature_date,
+      total,
+      total_points,
+      customer_id,
+      representative_id
+    } = req.body;
+
+    const newOrders = {
+      conditions_firstdeliverydate,
+      conditions_seconddeliverydate,
+      conditions_thirddeliverydate,
+      deposit,
+      price,
+      rebate,
+      signature_address,
+      signature_consumer_name,
+      signature_merchant_name,
+      signature_date,
+      total,
+      total_points,
+      customer_id,
+      representative_id,
+      confirm1: 0
+    };
+
+    const db = ndb();
+    db.query(
+      "INSERT INTO form_completion SET ?",
+      newOrders,
+      (err, result) => {
+        if (err) {
+          res.send({ err: err });
+        }
+        res.send(result);
+      }
+    );
+    db.end();
+}
+
+const createOrderDetails = (req, res) => {
+  const {
+      form_id,
+      product_details_id,
+      quantity1,
+      quantity2,
+      quantity3
+    } = req.body;
+
+    const orderDetails = {
+      form_id,
+      product_details_id,
+      quantity1,
+      quantity2,
+      quantity3
+    };
+
+    const db = ndb();
+    db.query(
+      "INSERT INTO orders SET ?",
+      orderDetails,
+      (err, result) => {
+        if (err) {
+          res.send({ err: err });
+        }
+        res.send(result);
+      }
+    );
+    db.end();
 }
 
 const originalOrders = (req, res) => {
@@ -282,5 +363,7 @@ module.exports = {
     updateOrderConfirmDeliverById,
     updateDeliveryDateById,
     getStatistics,
-    getSummary
+    getSummary,
+    createOrder,
+    createOrderDetails
 };

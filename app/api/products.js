@@ -225,7 +225,7 @@ const categoryById = (req, res) => {
 const getProductDetails = (req, res) => {
   const db = ndb();
   db.query(
-    "SELECT *, products_details.id AS product_details_id FROM products LEFT JOIN products_details ON products_details.product_id = products.id LEFT JOIN product_packaging ON product_packaging.id = products_details.packaging_id",
+    "SELECT *, products.name_en AS name_en, products.name_fr AS name_fr, products_details.id AS product_details_id, products_category.name_en AS category_name_en, products_category.name_fr AS category_name_fr FROM products LEFT JOIN products_details ON products_details.product_id = products.id LEFT JOIN product_packaging ON product_packaging.id = products_details.packaging_id LEFT JOIN products_category ON products_category.id = products.category_id",
     (err, result) => {
       if (err) {
         res.send({ err: err });

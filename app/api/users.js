@@ -40,7 +40,7 @@ const userByFormId = (req, res) => {
 const usersByRole = (req, res) => {
   const db = ndb();
   db.query(
-    "SELECT id, email, firstName, lastName, streetAddress, city, postalCode, province, phoneNumber, weekAmount FROM users"
+    "SELECT id, nff, email, firstName, lastName, streetAddress, city, postalCode, province, phoneNumber, weekAmount FROM users"
     ,
     (err, result) => {
       if (err) {

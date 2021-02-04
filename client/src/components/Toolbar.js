@@ -26,7 +26,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const Toolbar = ({ className, performSearch, buttonProps, calendarButtonProps, calendarView, ...rest }) => {
+const Toolbar = ({ className, performSearch, buttonProps, calendarButtonProps, calendarView, textDisplay, ...rest }) => {
   const classes = useStyles();
   const [searchValue, setSearchValue] = useState('');
   const handleChange = (event) => {
@@ -126,6 +126,7 @@ const Toolbar = ({ className, performSearch, buttonProps, calendarButtonProps, c
                 disabled={!performSearch}
               />
             </Box>
+            {textDisplay}
           </CardContent>
         </Card>
       </Box>
