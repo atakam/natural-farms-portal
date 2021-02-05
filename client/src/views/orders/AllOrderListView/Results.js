@@ -161,10 +161,6 @@ const Results = ({ className, results, updates, user, callback, calendarView, ..
     setAnchorEl(null);
     openInNewTab(`https://www.portal.naturalfarms.ca/order/print.php?id=${objectProp.formid}&email=${objectProp.email}&phone=${objectProp.phoneNumber}&lang=fr&password=(your%20password)&name=${objectProp.name}`);
   };
-  const goToVerify = () => {
-    setAnchorEl(null);
-    openInNewTab(`https://www.portal.naturalfarms.ca/order/edit.php?id=${objectProp.formid}&edit=yes&uid=${objectProp.id}`);
-  };
   const deleteOrder = () => {
     setAnchorEl(null);
     setDialogOpen(true);
@@ -204,12 +200,12 @@ const Results = ({ className, results, updates, user, callback, calendarView, ..
         </ListItemIcon>
         Edit Profile
       </MenuItem>
-      <MenuItem onClick={() => handleEditContract()}>
+      {!calendarView && <MenuItem onClick={() => handleEditContract()}>
         <ListItemIcon>
           <AssignmentLateIcon fontSize="small" />
         </ListItemIcon>
         Edit Order
-      </MenuItem>
+      </MenuItem>}
       {objectProp.isEdited &&
         <MenuItem onClick={() => viewOrders(false)}>
           <ListItemIcon>
@@ -230,24 +226,18 @@ const Results = ({ className, results, updates, user, callback, calendarView, ..
         </ListItemIcon>
         View Contract
       </MenuItem>
-      <MenuItem onClick={() => resendEmail()}>
+      {!calendarView && <MenuItem onClick={() => resendEmail()}>
         <ListItemIcon>
           <EmailIcon fontSize="small" />
         </ListItemIcon>
         Resend Contract Email
-      </MenuItem>
-      <MenuItem onClick={() => goToVerify()}>
-        <ListItemIcon>
-          <VerifiedUserIcon fontSize="small" />
-        </ListItemIcon>
-        Verify Changes
-      </MenuItem>
-      <MenuItem onClick={deleteOrder}>
+      </MenuItem>}
+      {!calendarView && <MenuItem onClick={deleteOrder}>
         <ListItemIcon>
           <DeleteIcon fontSize="small" />
         </ListItemIcon>
         Delete
-      </MenuItem>
+      </MenuItem>}
     </Menu>
   )
 
@@ -434,16 +424,6 @@ const Results = ({ className, results, updates, user, callback, calendarView, ..
         results={results}
         callback={callback}
         showDate={new Date()}
-        actions={{
-          goToVerify,
-          deleteOrder,
-          resendEmail,
-          goToContract,
-          viewOrders,
-          handleEditContract,
-          editProfile,
-          setObject
-        }}
         handleClick={handleClick}
       /> }
       {menuItems}

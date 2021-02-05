@@ -31,7 +31,7 @@ const Results = ({ className, results, userid, callback, ...rest }) => {
   const classes = useStyles();
 
   const delivery = (number) => {
-      let totalPrice = 0;
+      let totalPoints = 0;
       let totalPurchasePrice = 0;
       return (
         <Table>
@@ -56,17 +56,17 @@ const Results = ({ className, results, userid, callback, ...rest }) => {
                     Total Points
                 </TableCell>
                 <TableCell>
-                    Supplier Price
+                    Supplier Total
                 </TableCell>
                 </TableRow>
             </TableHead>
             <TableBody>
                 {results.map((product, index) => {
-                    let price = product.point * product.quantity1;
-                    if (number === 2) price = product.point * product.quantity2;
-                    if (number === 3) price = product.point * product.quantity3;
+                    let delpoints = product.point * product.quantity1;
+                    if (number === 2) delpoints = product.point * product.quantity2;
+                    if (number === 3) delpoints = product.point * product.quantity3;
         
-                    totalPrice = totalPrice + price;
+                    totalPoints = totalPoints + delpoints;
                     
                     let purchasePrice = product.purchase_price * product.quantity1;
                     if (number === 2) purchasePrice = product.purchase_price * product.quantity2;
@@ -88,23 +88,20 @@ const Results = ({ className, results, userid, callback, ...rest }) => {
                         <TableCell>
                         {product.type + ' ' + product.quantity}
                         </TableCell>
-                        <TableCell
-                        style={{textAlign:'center'}}
-                        >
+                        <TableCell style={{textAlign:'center'}}>
                         {product.point}
                         </TableCell>
+                        <TableCell style={{textAlign:'center'}}
+                        >
+                        {number === 2 ? product.quantity2 : (number === 3 ? product.quantity3 : product.quantity1)}
+                        </TableCell>
                         <TableCell
                         style={{textAlign:'center'}}
                         >
-                        {product.quantity1}
+                        {delpoints}
                         </TableCell>
                         <TableCell
-                        style={{textAlign:'right'}}
-                        >
-                        {'$ ' + price.toFixed(2)}
-                        </TableCell>
-                        <TableCell
-                        style={{textAlign:'right'}}
+                        style={{textAlign:'center'}}
                         >
                         {'$ ' + purchasePrice.toFixed(2)}
                         </TableCell>
@@ -126,12 +123,12 @@ const Results = ({ className, results, userid, callback, ...rest }) => {
                     <TableCell />
                     <TableCell />
                     <TableCell
-                    style={{textAlign:'right'}}
+                    style={{textAlign:'center'}}
                     >
-                    {'$ ' + totalPrice.toFixed(2)}
+                    {totalPoints}
                     </TableCell>
                     <TableCell
-                    style={{textAlign:'right'}}
+                    style={{textAlign:'center'}}
                     >
                     {'$ ' + totalPurchasePrice.toFixed(2)}
                     </TableCell>

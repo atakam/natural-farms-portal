@@ -33,7 +33,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const CalendarView = ({ className, results, callback, showDate, actions, handleClick, ...rest }) => {
+const CalendarView = ({ className, results, callback, showDate, handleClick, ...rest }) => {
     const classes = useStyles();
     const [draggedEvent, setDraggedEvent] = useState(null);
     const [defaultDate, setDefaultDate] = useState(showDate);

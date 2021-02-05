@@ -199,17 +199,20 @@ const ProductSelection = ({ className, productDetails, setProductDetails, result
                 textColor="primary"
                 appBarColor="default"
                 displayText={
-                    <Typography
-                        color="textSecondary"
-                        variant="h3"
-                        style={{
-                            float: 'right',
-                            textAlign: 'right',
-                            paddingRight: '30px'
-                        }}
-                    >
-                        {'Total Points: ' + total_points}
-                    </Typography>}
+                    <>
+                        <Typography
+                            color="textSecondary"
+                            variant="h3"
+                            style={{
+                                position: 'absolute',
+                                right: '0',
+                                paddingRight: '30px'
+                            }}
+                        >
+                            {'Total Points: ' + total_points}
+                        </Typography>
+                    </>
+                    }
             />
         </Box>
     </PerfectScrollbar>

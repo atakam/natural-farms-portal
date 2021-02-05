@@ -13,7 +13,7 @@ import {
 } from '@material-ui/core';
 import Tabs from 'src/components/Tabs';
 
-const ProductSelection = ({ className, productDetails, setProductDetails, results, selectedForm, ...rest }) => {
+const ProductSelection = ({ className, productDetails, setProductDetails, paymentDetails, results, selectedForm, ...rest }) => {
     const [details, setDetails] = useState(productDetails);
     const [points, setPoints] = useState({});
     const [total_points, setTotalPoints] = useState(0);
@@ -200,17 +200,32 @@ const ProductSelection = ({ className, productDetails, setProductDetails, result
                 textColor="primary"
                 appBarColor="default"
                 displayText={
-                    <Typography
-                        color="textSecondary"
-                        variant="h3"
-                        style={{
-                            float: 'right',
-                            textAlign: 'right',
-                            paddingRight: '30px'
-                        }}
-                    >
-                        {'Total Points: ' + total_points}
-                    </Typography>}
+                    <>
+                        <Typography
+                            color="textSecondary"
+                            variant="h3"
+                            style={{
+                                position: 'absolute',
+                                right: '0',
+                                paddingRight: '30px'
+                            }}
+                        >
+                            {'Total Points: ' + total_points}
+                        </Typography>
+                        <Typography
+                            color="textSecondary"
+                            variant="h5"
+                            style={{
+                                position: 'absolute',
+                                right: '0',
+                                paddingRight: '30px',
+                                paddingTop: '20px'
+                            }}
+                        >
+                            {'Original Points: ' + paymentDetails.points_to_compare}
+                        </Typography>
+                    </>
+                    }
             />
         </Box>
     </PerfectScrollbar>

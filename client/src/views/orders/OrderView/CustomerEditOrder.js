@@ -84,6 +84,7 @@ const EditOrder = ({ className, title, subtitle, updateCallback, cancel, product
                       productDetails={productDetails}
                       setProductDetails={setProductDetails}
                       selectedForm={selectedForm}
+                      paymentDetails={paymentDetails}
                   />
       },
       {
