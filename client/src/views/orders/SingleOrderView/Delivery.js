@@ -27,7 +27,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const Results = ({ className, results, userid, callback, ...rest }) => {
+const Results = ({ className, results, userid, callback, isCustomer, ...rest }) => {
   const classes = useStyles();
 
   const delivery = (number) => {
@@ -55,9 +55,9 @@ const Results = ({ className, results, userid, callback, ...rest }) => {
                 <TableCell>
                     Total Points
                 </TableCell>
-                <TableCell>
+                {!isCustomer && <TableCell>
                     Supplier Total
-                </TableCell>
+                </TableCell>}
                 </TableRow>
             </TableHead>
             <TableBody>
@@ -100,11 +100,11 @@ const Results = ({ className, results, userid, callback, ...rest }) => {
                         >
                         {delpoints}
                         </TableCell>
-                        <TableCell
+                        {!isCustomer && <TableCell
                         style={{textAlign:'center'}}
                         >
                         {'$ ' + purchasePrice.toFixed(2)}
-                        </TableCell>
+                        </TableCell>}
                     </TableRow>
                     );
                 })}
@@ -127,11 +127,11 @@ const Results = ({ className, results, userid, callback, ...rest }) => {
                     >
                     {totalPoints}
                     </TableCell>
-                    <TableCell
+                    {!isCustomer && <TableCell
                     style={{textAlign:'center'}}
                     >
                     {'$ ' + totalPurchasePrice.toFixed(2)}
-                    </TableCell>
+                    </TableCell>}
                 </TableRow>
             </TableHead>
             </Table>
@@ -255,7 +255,7 @@ const Results = ({ className, results, userid, callback, ...rest }) => {
     >
       <PerfectScrollbar>
         <Box minWidth={1050}>
-          <Tabs tabs={tabs} />
+          <Tabs tabs={tabs} isCustomer/>
         </Box>
       </PerfectScrollbar>
     </Card>

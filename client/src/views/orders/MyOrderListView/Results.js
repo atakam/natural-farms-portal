@@ -4,11 +4,11 @@ import PropTypes from 'prop-types';
 import moment from 'moment';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import {
-  Avatar,
   Box,
   IconButton,
   Card,
   Checkbox,
+  Dialog,
   Table,
   TableBody,
   TableCell,
@@ -23,7 +23,9 @@ import DescriptionIcon from '@material-ui/icons/Description';
 import InsertDriveFileIcon from '@material-ui/icons/InsertDriveFile';
 import GetAppIcon from '@material-ui/icons/GetApp';
 import EditIcon from '@material-ui/icons/Edit';
+import ShoppingBasketIcon from '@material-ui/icons/ShoppingBasket';
 import OrderView from '../OrderView';
+import SingleOrderView from '../SingleOrderView/index';
 
 const useStyles = makeStyles((theme) => ({
   root: {},
@@ -39,6 +41,7 @@ const Results = ({ className, results, updates, callback, user, ...rest }) => {
   const [page, setPage] = useState(0);
   const [openEditOrder, setOpenEditOrder] = React.useState(false);
   const [objectProp, setObject] = React.useState({});
+  const [orderDialogOpen, setOrderDialogOpen] = useState(false);
 
   const handleSelectAll = (event) => {
     let newSelectedCustomerIds;
@@ -92,8 +95,13 @@ const Results = ({ className, results, updates, callback, user, ...rest }) => {
     win.focus();
   }
 
-  const goToView = ({formid, userid}) => {
-    openInNewTab(`https://www.portal.naturalfarms.ca/order/contract.php?id=${formid}&uid=${userid}&edited=yes`);
+  const handleCloseDialog = () => {
+    setOrderDialogOpen(false);
+  }
+
+  const viewOrder = (object) => {
+    setOrderDialogOpen(true);
+    setObject(object);
   };
   const goToOriginal = ({formid, userid}) => {
     openInNewTab(`https://www.portal.naturalfarms.ca/order/contract.php?id=${formid}&uid=${userid}&edited=yes`);
@@ -114,6 +122,23 @@ const Results = ({ className, results, updates, callback, user, ...rest }) => {
       className={clsx(classes.root, className)}
       {...rest}
     >
+      <Dialog
+        open={orderDialogOpen}
+        onClose={handleCloseDialog}
+        aria-labelledby="draggable-dialog-title"
+        fullWidth
+        maxWidth={'lg'}
+      >
+        <SingleOrderView
+          title={objectProp.name}
+          subtitle={"ORDER DETAILS"}
+          id={objectProp.formid}
+          updateCallback={callback}
+          cancel={handleCloseDialog}
+          original={!objectProp.isEdited}
+          isCustomer
+        />
+      </Dialog>
       <OrderView
         open={openEditOrder}
         close={handleClose}
@@ -210,14 +235,18 @@ const Results = ({ className, results, updates, callback, user, ...rest }) => {
                     }
                   </TableCell>
                   <TableCell>
-                    <Tooltip title="View Contract">
+                    <Tooltip title="View my Order">
                       <IconButton
                         color="primary"
                         size="medium"
                         variant="contained"
-                        onClick={() => goToView({formid: customer.formid, userid: customer.customer_id})}
+                        onClick={() => viewOrder({
+                          formid: customer.formid,
+                          name: customer.firstName + ' ' + customer.lastName,
+                          isEdited: updates.includes(customer.formid)
+                        })}
                       >
-                        <DescriptionIcon />
+                        <ShoppingBasketIcon />
                       </IconButton>
                     </Tooltip>
                     <Tooltip title="View Original">
@@ -247,7 +276,7 @@ const Results = ({ className, results, updates, callback, user, ...rest }) => {
                         color="primary"
                         size="medium"
                         variant="contained"
-                        onClick={(e) => modify({
+                        onClick={() => modify({
                           ...customer,
                           formid: customer.formid,
                           rid: customer.representative_id,

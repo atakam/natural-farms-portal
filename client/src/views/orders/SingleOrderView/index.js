@@ -18,7 +18,8 @@ const CustomerListView = ({
     id,
     updateCallback,
     cancel,
-    original
+    original,
+    isCustomer
 }) => {
   const [results, setResults] = useState([]);
 
@@ -48,7 +49,7 @@ const CustomerListView = ({
 
   useEffect(() => {
     original ? getOrders() : getUpdatedOrders();
-  }, []);
+  }, [original]);
 
   return (
     <Container maxWidth="lg">
@@ -74,7 +75,7 @@ const CustomerListView = ({
             </CardHeader>
             <Divider />
             <CardContent>
-                <Delivery results={results} callback={updateCallback} />
+                <Delivery results={results} callback={updateCallback} isCustomer />
             </CardContent>
       </Card>
     </Container>

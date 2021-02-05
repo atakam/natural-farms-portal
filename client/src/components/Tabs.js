@@ -47,7 +47,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function SimpleTabs({tabs, className, appBarColor, tabValue, setTabValue, displayText, ...rest}) {
+export default function SimpleTabs({tabs, className, appBarColor, tabValue, setTabValue, displayText, isCustomer, ...rest}) {
   const classes = useStyles();
   const [value, setValue] = React.useState(0);
 
@@ -75,7 +75,7 @@ export default function SimpleTabs({tabs, className, appBarColor, tabValue, setT
       {
         tabs.map((tab, index) => (
             <TabPanel value={value} index={index} key={index} className='tabContent'>
-                {tab.actions}
+                {!isCustomer && tab.actions}
                 {tab.content}
             </TabPanel>
         ))
