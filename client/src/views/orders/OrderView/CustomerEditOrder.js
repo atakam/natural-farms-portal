@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   Box,
   Button,
@@ -10,26 +10,37 @@ import ProductSelection from './edit/EditProductSelection';
 import DeliveryDateSelection from './DeliveryDateSelection';
 import PaymentSelection from './PaymentSelection';
 import ConfirmationSelection from './edit/EditConfirmationSelection';
+import TermsSelection from './TermsSelection';
 
 import {editOrder, insertUpdatedOrderDetails} from 'src/functions';
 
 const EditOrder = ({ className, title, subtitle, updateCallback, cancel, products, currentUser, selectedForm, order, ...rest }) => {
-  let defaultProductDetails = {};
-  if (selectedForm.isEditAllowed) {
-    order.forEach((o) => {
-      defaultProductDetails =  {
-        ...defaultProductDetails,
-        [o.product_details_id]: {
-          1: o.quantity1,
-          2: o.quantity2,
-          3: o.quantity3,
-          points: (o.quantity1 + o.quantity2 + o.quantity3) * o.point
-        }
-      };
-    });
+  
+
+  const getDefaultProductDetails = () => {
+    let defaultProductDetails = {};
+    if (selectedForm.isEditAllowed) {
+      order.forEach((o) => {
+        defaultProductDetails =  {
+          ...defaultProductDetails,
+          [o.product_details_id]: {
+            1: o.quantity1,
+            2: o.quantity2,
+            3: o.quantity3,
+            points: (o.quantity1 + o.quantity2 + o.quantity3) * o.point
+          }
+        };
+      });
+    }
+    return defaultProductDetails;
   }
   
-  const [productDetails, setProductDetails] = useState(defaultProductDetails);
+
+  useEffect(() => {
+    setProductDetails(getDefaultProductDetails());
+  }, [order]);
+  
+  const [productDetails, setProductDetails] = useState(getDefaultProductDetails());
   const [deliveryDetails, setDeliveryDetails] = useState({
     conditions_firstdeliverydate: selectedForm.conditions_firstdeliverydate,
     conditions_seconddeliverydate: selectedForm.conditions_seconddeliverydate,
@@ -63,6 +74,7 @@ const EditOrder = ({ className, title, subtitle, updateCallback, cancel, product
   };
 
   const [tabValue, setTabValue] = useState(0);
+  const [termsDetails, setTermsDetails] = useState({policy: false});
 
   const tabs = [
       {
@@ -79,6 +91,7 @@ const EditOrder = ({ className, title, subtitle, updateCallback, cancel, product
         content: <DeliveryDateSelection
                     deliveryDetails={deliveryDetails}
                     setDeliveryDetails={setDeliveryDetails}
+                    isCustomer
                 />
       },
       {
@@ -88,6 +101,14 @@ const EditOrder = ({ className, title, subtitle, updateCallback, cancel, product
                     paymentDetails={paymentDetails}
                     setPaymentDetails={setPaymentDetails}
                     isEditAllowed={selectedForm.isEditAllowed}
+                    isCustomer
+                />
+      },
+      {
+        label: 'TERMS & CONDITIONS',
+        content: <TermsSelection
+                    termsDetails={termsDetails}
+                    setTermsDetails={setTermsDetails}
                 />
       },
       {
@@ -99,8 +120,10 @@ const EditOrder = ({ className, title, subtitle, updateCallback, cancel, product
                     productDetails={productDetails}
                     deliveryDetails={deliveryDetails}
                     paymentDetails={paymentDetails}
+                    termsDetails={termsDetails}
                     userRole={currentUser.role}
                     isEdit
+                    isCustomer
                  />
       }
   ];
@@ -108,12 +131,18 @@ const EditOrder = ({ className, title, subtitle, updateCallback, cancel, product
   if (!selectedForm.isEditAllowed) {
     tabs.splice(0, 1);
   } else {
+    tabs.splice(3, 1);
     tabs.splice(tabs.length - 1, 1);
   }
 
   const showPrevious = tabValue > 0;
   const showNext = tabValue + 1 < tabs.length;
   const isLast = tabValue === tabs.length -1;
+
+  let disableNext = false;
+  if (tabValue === 2) {
+    disableNext = !selectedForm.isEditAllowed && !termsDetails.policy;
+  }
 
   const getTotalPoints = () => {
     let pts = Object.values(productDetails);
@@ -129,10 +158,12 @@ const EditOrder = ({ className, title, subtitle, updateCallback, cancel, product
     const edited_points = selectedForm.isEditAllowed ? {
       edited_points: getTotalPoints()
     } : {};
-    const confirmAndComplete = !selectedForm.isEditAllowed ? {
+    const confirmAndComplete = selectedForm.isEditAllowed ? {
+      status: 0
+    } : {
       confirm: 1,
       status: 1
-    } : {};
+    };
     const entries = {
       ...customerDetails,
       ...deliveryDetails,
@@ -168,7 +199,8 @@ const EditOrder = ({ className, title, subtitle, updateCallback, cancel, product
   const showSubmit = isLast
     && Boolean(deliveryDetails.conditions_firstdeliverydate)
     && Boolean(paymentDetails.price)
-    && Boolean(confirmationDetails.signature_merchant_name);
+    && (!selectedForm.isEditAllowed ? Boolean(termsDetails.policy) : true)
+    && Boolean(confirmationDetails.signature_consumer_name);
 
   return (
       <>
@@ -195,6 +227,7 @@ const EditOrder = ({ className, title, subtitle, updateCallback, cancel, product
                   color="primary"
                   onClick={()=>{setTabValue(tabValue+1)}}
                   variant="contained"
+                  disabled={disableNext}
               >
                   Next
               </Button>}
@@ -203,7 +236,7 @@ const EditOrder = ({ className, title, subtitle, updateCallback, cancel, product
                   onClick={submit}
                   variant="contained"
               >
-                  Submit & Approve
+                  Submit
               </Button>}
           </Box>
       </>

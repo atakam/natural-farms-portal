@@ -8,7 +8,7 @@ import {
   Typography
 } from '@material-ui/core';
 
-const TermsSelection = ({ className, deliveryDetails, paymentDetails, customerDetails, productDetails, confirmationDetails, setConfirmationDetails, results, userRole, isEdit, ...rest }) => {
+const TermsSelection = ({ className, deliveryDetails, paymentDetails, customerDetails, productDetails, confirmationDetails, setConfirmationDetails, termsDetails,results, userRole, isEdit, isCustomer, ...rest }) => {
     const [details, setDetails] = useState(confirmationDetails);
 
     // let pts = Object.values(productDetails);
@@ -172,6 +172,9 @@ const TermsSelection = ({ className, deliveryDetails, paymentDetails, customerDe
                         {userRole !== 3 && !Boolean(paymentDetails.price) && '- The price has not been set!'}
                         {userRole !== 3 && !Boolean(paymentDetails.price) && <br />}
                         {!Boolean(details.signature_merchant_name) && '- Please sign your name (sales representative)!'}
+                        {isCustomer && !Boolean(termsDetails.policy) && '- The terms and conditions have not been accpeted!'}
+                        {isCustomer && !Boolean(termsDetails.policy) && <br/>}
+                        {isCustomer && !Boolean(details.signature_consumer_name) && '- Please sign your name!'}
                 </Typography>
             </Box>
         </PerfectScrollbar>

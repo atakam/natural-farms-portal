@@ -6,7 +6,7 @@ import {
   TextField
 } from '@material-ui/core';
 
-const CustomerSelection = ({ className, deliveryDetails, setDeliveryDetails, ...rest }) => {
+const CustomerSelection = ({ className, deliveryDetails, setDeliveryDetails, isCustomer, ...rest }) => {
     const [details, setDetails] = useState(deliveryDetails);
 
     const getDateString = (d) => {
@@ -41,6 +41,7 @@ const CustomerSelection = ({ className, deliveryDetails, setDeliveryDetails, ...
                     variant="outlined"
                     type="date"
                     style={{width: '33%', paddingRight: '10px'}}
+                    disabled={isCustomer}
                 />
                 <TextField
                     label="Second Delivery Date"
@@ -59,6 +60,7 @@ const CustomerSelection = ({ className, deliveryDetails, setDeliveryDetails, ...
                     variant="outlined"
                     type="date"
                     style={{width: '33%', paddingRight: '10px'}}
+                    disabled={isCustomer}
                 />
                 <TextField
                     label="Third Delivery Date"
@@ -77,6 +79,7 @@ const CustomerSelection = ({ className, deliveryDetails, setDeliveryDetails, ...
                     variant="outlined"
                     type="date"
                     style={{width: '33%'}}
+                    disabled={isCustomer}
                 />
             </Box>
         </PerfectScrollbar>

@@ -19,11 +19,11 @@ import {
   Typography,
   makeStyles
 } from '@material-ui/core';
-import getInitials from 'src/utils/getInitials';
 import DescriptionIcon from '@material-ui/icons/Description';
 import InsertDriveFileIcon from '@material-ui/icons/InsertDriveFile';
 import GetAppIcon from '@material-ui/icons/GetApp';
 import EditIcon from '@material-ui/icons/Edit';
+import OrderView from '../OrderView';
 
 const useStyles = makeStyles((theme) => ({
   root: {},
@@ -32,11 +32,13 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const Results = ({ className, results, ...rest }) => {
+const Results = ({ className, results, updates, callback, user, ...rest }) => {
   const classes = useStyles();
   const [selectedCustomerIds, setSelectedCustomerIds] = useState([]);
   const [limit, setLimit] = useState(10);
   const [page, setPage] = useState(0);
+  const [openEditOrder, setOpenEditOrder] = React.useState(false);
+  const [objectProp, setObject] = React.useState({});
 
   const handleSelectAll = (event) => {
     let newSelectedCustomerIds;
@@ -99,8 +101,12 @@ const Results = ({ className, results, ...rest }) => {
   const goToDownload = ({formid, userid}) => {
     openInNewTab(`https://www.portal.naturalfarms.ca/order/contracts/NFCT_${formid}.pdf`);
   };
-  const goToModify = ({formid, userid}) => {
-    openInNewTab(`https://www.portal.naturalfarms.ca/order/edit.php?id=${formid}&edit=yes&uid=${userid}`);
+  const modify = (obj) => {
+    setOpenEditOrder(true);
+    setObject(obj);
+  };
+  const handleClose = () => {
+    setOpenEditOrder(false);
   };
 
   return (
@@ -108,6 +114,15 @@ const Results = ({ className, results, ...rest }) => {
       className={clsx(classes.root, className)}
       {...rest}
     >
+      <OrderView
+        open={openEditOrder}
+        close={handleClose}
+        getOrders={callback}
+        user={user}
+        updates={updates}
+        selectedForm={objectProp}
+        isEdit
+      />
       <PerfectScrollbar>
         <Box minWidth={1050}>
           <Table>
@@ -175,10 +190,10 @@ const Results = ({ className, results, ...rest }) => {
                     </Box>
                   </TableCell>
                   <TableCell>
-                    {customer.total_points}
+                      {customer.edited_points > 0 ? customer.edited_points : customer.total_points}
                   </TableCell>
                   <TableCell>
-                    {customer.price}
+                    $ {customer.edited_price > 0 ? customer.edited_price : customer.price}
                   </TableCell>
                   <TableCell>
                     {delivery(customer)}
@@ -225,16 +240,29 @@ const Results = ({ className, results, ...rest }) => {
                         <GetAppIcon />
                       </IconButton>
                     </Tooltip>
+                    {
+                    (customer.status === 1 || (customer.status === 0 && customer.signature_consumer_name === '')) &&
                     <Tooltip title="Modify Order">
                       <IconButton
                         color="primary"
                         size="medium"
                         variant="contained"
-                        onClick={() => goToModify({formid: customer.formid, userid: customer.customer_id})}
+                        onClick={(e) => modify({
+                          ...customer,
+                          formid: customer.formid,
+                          rid: customer.representative_id,
+                          email: customer.email,
+                          phoneNumber: customer.phoneNumber,
+                          name: customer.firstName + ' ' + customer.lastName,
+                          nff: customer.nff,
+                          id: customer.uid,
+                          isEdited: updates.includes(customer.formid),
+                          isEditAllowed: customer.signature_consumer_name !== '' && customer.signature_merchant_name !== ''
+                        })}
                       >
                         <EditIcon /> 
                       </IconButton>
-                    </Tooltip>
+                    </Tooltip>}
                   </TableCell>
                 </TableRow>
               ))}

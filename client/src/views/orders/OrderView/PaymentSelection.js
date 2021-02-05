@@ -8,7 +8,7 @@ import {
   Typography
 } from '@material-ui/core';
 
-const PaymentSelection = ({ className, productDetails, paymentDetails, setPaymentDetails, isEditAllowed, ...rest }) => {
+const PaymentSelection = ({ className, productDetails, paymentDetails, setPaymentDetails, isEditAllowed, isCustomer, ...rest }) => {
     const [details, setDetails] = useState(paymentDetails);
 
     let pts = Object.values(productDetails);
@@ -46,12 +46,12 @@ const PaymentSelection = ({ className, productDetails, paymentDetails, setPaymen
                     {'Order Details'}
                 </Typography>
                 <TextField
-                    error={isEditAllowed && (total_points !== details.total_points)}
-                    helperText={isEditAllowed && ((total_points > details.total_points ? 'Points greater than original' : (total_points < details.total_points ? 'Points less than original' : '')) + ' (' + details.total_points + ')')}
+                    error={isEditAllowed && (total_points !== details.points_to_compare)}
+                    helperText={isEditAllowed && ((details.points_to_compare > total_points ? 'Points less than original' : (details.points_to_compare < total_points ? 'Points greater than original' : '')) + ' (' + details.points_to_compare + ')')}
                     label="Total Points"
                     margin="normal"
                     name="name"
-                    value={isEditAllowed ? total_points || 0 : (details.edited_points > -1 ? details.edited_points : details.total_points || 0)}
+                    value={isEditAllowed ? total_points || 0 : (details.total_points || 0)}
                     variant="outlined"
                     style={{width: '33%', paddingRight: '10px'}}
                     disabled
@@ -76,6 +76,7 @@ const PaymentSelection = ({ className, productDetails, paymentDetails, setPaymen
                         setPaymentDetails(newDetails);
                     }}
                     value={!isEditAllowed ? (details.price || 0) : (details.edited_price > -1 ? details.edited_price : (details.price || 0))}
+                    disabled={isCustomer}
                 />
                 <TextField
                     label="Rebate ($)"
@@ -97,6 +98,7 @@ const PaymentSelection = ({ className, productDetails, paymentDetails, setPaymen
                         setPaymentDetails(newDetails);
                     }}
                     value={!isEditAllowed ? (details.rebate || 0) : (details.edited_rebate > -1 ? details.edited_rebate : (details.rebate || 0))}
+                    disabled={isCustomer}
                 />
                 <TextField
                     label="Deposit ($)"
@@ -118,6 +120,7 @@ const PaymentSelection = ({ className, productDetails, paymentDetails, setPaymen
                         setPaymentDetails(newDetails);
                     }}
                     value={!isEditAllowed ? (details.deposit || 0) : (details.edited_deposit > -1 ? details.edited_deposit : (details.deposit || 0))}
+                    disabled={isCustomer}
                 />
                 <TextField
                     label="Balance ($)"
@@ -156,6 +159,7 @@ const PaymentSelection = ({ className, productDetails, paymentDetails, setPaymen
                     variant="outlined"
                     type="select"
                     style={{width: '33%', paddingRight: '10px'}}
+                    disabled={isCustomer}
                 />
                 <TextField
                     label="How many instalments?"
@@ -174,6 +178,7 @@ const PaymentSelection = ({ className, productDetails, paymentDetails, setPaymen
                     variant="outlined"
                     type="number"
                     style={{width: '33%', paddingRight: '10px'}}
+                    disabled={isCustomer}
                 />
                 <TextField
                     label="Withdrawal Amount"
@@ -192,6 +197,7 @@ const PaymentSelection = ({ className, productDetails, paymentDetails, setPaymen
                     variant="outlined"
                     type="number"
                     style={{width: '33%', paddingRight: '10px'}}
+                    disabled={isCustomer}
                 />
 
                 <TextField
@@ -211,6 +217,7 @@ const PaymentSelection = ({ className, productDetails, paymentDetails, setPaymen
                     variant="outlined"
                     type="date"
                     style={{width: '33%', paddingRight: '10px'}}
+                    disabled={isCustomer}
                 />
 
                 <TextField
@@ -230,6 +237,7 @@ const PaymentSelection = ({ className, productDetails, paymentDetails, setPaymen
                     variant="outlined"
                     type="number"
                     style={{width: '33%', paddingRight: '10px'}}
+                    disabled={isCustomer}
                 />
 
                 <TextField
@@ -249,6 +257,7 @@ const PaymentSelection = ({ className, productDetails, paymentDetails, setPaymen
                     variant="outlined"
                     type="date"
                     style={{width: '33%'}}
+                    disabled={isCustomer}
                 />
             </Box>
         </PerfectScrollbar>

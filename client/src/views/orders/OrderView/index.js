@@ -6,6 +6,7 @@ import {
 import CreateOrder from './CreateOrder';
 import CreateOrderCustomer from './CreateOrderCustomer';
 import EditOrder from './EditOrder';
+import CustomerEditOrder from './CustomerEditOrder';
 import AppContext from "src/components/AppContext";
 
 const OrderView = ({ className, open, close, getOrders, user, isEdit, formId, updates, selectedForm, ...rest }) => {
@@ -19,7 +20,7 @@ const OrderView = ({ className, open, close, getOrders, user, isEdit, formId, up
         getProductDetails();
         getCustomers();
         selectedForm && selectedForm.isEditAllowed && getOrdersByFormId();
-    }, [selectedForm, isEdit]);
+    }, [selectedForm]);
 
     const getOrdersByFormId = async () => {
       const url = selectedForm.isEdited ? '/orders_details/update/' : '/orders_details/';
@@ -30,7 +31,7 @@ const OrderView = ({ className, open, close, getOrders, user, isEdit, formId, up
       });
       const body = await response.text();
       const result = JSON.parse(body);
-      console.log("results", JSON.parse(body));
+      console.log("form results", JSON.parse(body));
       setOrder(result);
   }
 
@@ -78,7 +79,17 @@ const OrderView = ({ className, open, close, getOrders, user, isEdit, formId, up
                 currentUser={context.credentials.user}
                 selectedForm={selectedForm}
               /> :
-            <></>
+            <CustomerEditOrder
+              title={'Edit Order'}
+              subtitle={""}
+              updateCallback={getOrders}
+              cancel={close}
+              user={user}
+              products={products}
+              order={order}
+              currentUser={context.credentials.user}
+              selectedForm={selectedForm}
+            />
           ) : (
             context.credentials.user.role !== 3 ?
               <CreateOrder

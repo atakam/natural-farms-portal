@@ -58,6 +58,9 @@ const ProductSelection = ({ className, productDetails, setProductDetails, result
                             Code
                             </TableCell>
                             <TableCell>
+                            Point Value
+                            </TableCell>
+                            <TableCell>
                             Size
                             </TableCell>
                             <TableCell>
@@ -83,8 +86,11 @@ const ProductSelection = ({ className, productDetails, setProductDetails, result
                             <TableCell>
                                 {product.name_en + ' / ' + product.name_fr}
                             </TableCell>
-                            <TableCell>
+                            <TableCell style={{textAlign: 'center'}}>
                                 {product.code}
+                            </TableCell>
+                            <TableCell style={{textAlign: 'center'}}>
+                                {product.point}
                             </TableCell>
                             <TableCell>
                                 {product.type + ' / ' + product.quantity}

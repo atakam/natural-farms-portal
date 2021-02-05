@@ -26,6 +26,7 @@ const ProductSelection = ({ className, productDetails, setProductDetails, result
         }, {});
         pts = Object.keys(pts);
         setTotalPoints(pts.reduce((a, b) => Number(a) + Number(b), 0));
+        setDetails(productDetails);
     }, [productDetails]);
 
     results = results.reduce((r, a) => {
@@ -58,6 +59,9 @@ const ProductSelection = ({ className, productDetails, setProductDetails, result
                             Code
                             </TableCell>
                             <TableCell>
+                            Point Value
+                            </TableCell>
+                            <TableCell>
                             Size
                             </TableCell>
                             <TableCell>
@@ -83,8 +87,11 @@ const ProductSelection = ({ className, productDetails, setProductDetails, result
                             <TableCell>
                                 {product.name_en + ' / ' + product.name_fr}
                             </TableCell>
-                            <TableCell>
+                            <TableCell style={{textAlign: 'center'}}>
                                 {product.code}
+                            </TableCell>
+                            <TableCell style={{textAlign: 'center'}}>
+                                {product.point}
                             </TableCell>
                             <TableCell>
                                 {product.type + ' / ' + product.quantity}
