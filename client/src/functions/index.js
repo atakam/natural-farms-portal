@@ -183,6 +183,14 @@ const setSalesRep = (entries) => {
   });
 }
 
+const resetOrder = (entries) => {
+  return Axios.post("/orders/reset/" + entries.formid).then((response) => {
+    console.log(response);
+    entries.callback && entries.callback();
+    return response;
+  });
+}
+
 export {
   signin,
   register,
@@ -206,5 +214,6 @@ export {
   updateFormDeliveryDate,
   editOrder,
   insertUpdatedOrderDetails,
-  setSalesRep
+  setSalesRep,
+  resetOrder
 };

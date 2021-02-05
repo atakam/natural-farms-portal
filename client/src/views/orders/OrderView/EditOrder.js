@@ -11,7 +11,8 @@ import DeliveryDateSelection from './DeliveryDateSelection';
 import PaymentSelection from './PaymentSelection';
 import ConfirmationSelection from './edit/EditConfirmationSelection';
 
-import {editOrder, insertUpdatedOrderDetails} from 'src/functions';
+import AppDialog from 'src/components/AppDialog';
+import {editOrder, insertUpdatedOrderDetails, resetOrder} from 'src/functions';
 
 const EditOrder = ({ className, title, subtitle, updateCallback, cancel, products, currentUser, selectedForm, order, ...rest }) => {
   let defaultProductDetails = {};
@@ -63,6 +64,17 @@ const EditOrder = ({ className, title, subtitle, updateCallback, cancel, product
   };
 
   const [tabValue, setTabValue] = useState(0);
+  const [resetDialog, openResetDialog] = useState(false);
+
+  const handleCloseDialog = () => {
+    openResetDialog(false);
+  }
+
+  const resetCallback = () => {
+    openResetDialog(false);
+    cancel();
+    updateCallback();
+  }
 
   const tabs = [
       {
@@ -175,6 +187,14 @@ const EditOrder = ({ className, title, subtitle, updateCallback, cancel, product
 
   return (
       <>
+          <AppDialog
+            open={resetDialog}
+            handleClose={handleCloseDialog}
+            handleConfirm={() => resetOrder({formid: selectedForm.formid, callback: resetCallback})}
+            title='Confirm Reset (Hope you know what you are doing)'
+            content={'Are you sure you want to reset this order from '+selectedForm.name+'?'}
+            subcontent={'This action is irreversible!'}
+          />
           <PerfectScrollbar>
             <Box minWidth={1050} className='create-tabs'>
               <Tabs tabs={tabs} setTabValue={setTabValue} tabValue={tabValue} />
@@ -187,6 +207,20 @@ const EditOrder = ({ className, title, subtitle, updateCallback, cancel, product
               justifyContent="flex-end"
               p={2}
           >
+            {selectedForm.isEdited &&
+              <Button
+                variant="contained"
+                color="secondary"
+                style={{
+                  position: 'absolute',
+                  left: '0',
+                  marginLeft: '20px'
+                }}
+                onClick={() => openResetDialog(true)}
+              >
+                RESET ORDER
+              </Button>
+            }
               {showPrevious && <Button
                   variant="contained"
                   onClick={()=>{setTabValue(tabValue-1)}}

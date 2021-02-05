@@ -397,6 +397,41 @@ const updateOrderFormById = (req, res) => {
   db.end();
 }
 
+const resetOrder = (req, res) => {
+  const formid = req.params.formid;
+  const order = {
+    status: 1,
+    edited_deposit: -1,
+    edited_price: -1,
+    edited_rebate:-1,
+    edited_points: -1
+  }
+
+  const db = ndb();
+  db.query(
+    "UPDATE form_completion SET ? WHERE id = ?",
+    [order, formid],
+    (err, result) => {
+      if (err) {
+        res.send({ err: err });
+      }
+      const db2 = ndb();
+      db2.query(
+        "DELETE FROM orders_updates WHERE form_id = ?",
+        formid,
+        (err2, result2) => {
+          if (err2) {
+            res.send({ err: err2 });
+          }
+          res.send({result, result2});
+        }
+      );
+      db2.end();
+    }
+  );
+  db.end();
+}
+
 const updateDeliveryDateById = (req, res) => {
   const formid = req.params.formid;
   const {
@@ -541,5 +576,6 @@ module.exports = {
     updateOrderDetails,
     getOrderDetailsByFormId,
     getUpdateDetailsByFormId,
-    updateOrderSalesRepById
+    updateOrderSalesRepById,
+    resetOrder
 };

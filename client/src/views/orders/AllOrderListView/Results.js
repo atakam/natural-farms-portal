@@ -474,7 +474,7 @@ const Results = ({ className, results, updates, user, callback, calendarView, ..
                           isEdited: edited(customer) !== '-',
                           isEditAllowed: customer.signature_consumer_name !== '' && customer.signature_merchant_name !== ''
                         })}
-                        color="secondary"
+                        color="primary"
                       >
                         Actions
                       </Button>

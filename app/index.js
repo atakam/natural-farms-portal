@@ -34,7 +34,8 @@ const {
   updateOrderDetails,
   getOrderDetailsByFormId,
   getUpdateDetailsByFormId,
-  updateOrderSalesRepById
+  updateOrderSalesRepById,
+  resetOrder
 } = require('./api/orders');
 
 const {
@@ -135,6 +136,8 @@ app.post("/orders_details/create", createOrderDetails);
 app.post("/orders/update/:formid", updateOrderConfirmDeliverById);
 
 app.post("/orders/staff/:formid", updateOrderSalesRepById);
+
+app.post("/orders/reset/:formid", resetOrder);
 
 app.post("/orders/delivery/update/:formid", updateDeliveryDateById)
 
