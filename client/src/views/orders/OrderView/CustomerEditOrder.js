@@ -58,7 +58,7 @@ const EditOrder = ({ className, title, subtitle, updateCallback, cancel, product
     edited_rebate: selectedForm.edited_rebate,
     edited_deposit: selectedForm.edited_deposit,
     edited_total: selectedForm.edited_total,
-    points_to_compare: selectedForm.edited_points > 0 ? selectedForm.edited_points : selectedForm.total_points
+    points_to_compare: selectedForm.total_points
   });
   const [confirmationDetails, setConfirmationDetails] = useState({
     signature_consumer_name: selectedForm.signature_consumer_name,

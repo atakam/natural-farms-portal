@@ -126,14 +126,14 @@ const Results = ({ className, results, updates, user, callback, calendarView, ..
 
   const edited = (customer) => {
     if (updates.includes(customer.formid)) {
-      if (customer.edited_status === 1) return (
+      if (customer.status === 1) return (
         <Chip
           color="primary"
           label='Approved'
           size="small"
         />
       );
-      else if (customer.edited === 1) return (
+      else return (
         <Chip
           color="secondary"
           label='Pending'
