@@ -175,6 +175,14 @@ const insertUpdatedOrderDetails = (entries) => {
   });
 }
 
+const setSalesRep = (entries) => {
+  return Axios.post("/orders/staff/" + entries.form_id, entries).then((response) => {
+    console.log(response);
+    entries.callback && entries.callback();
+    return response;
+  });
+}
+
 export {
   signin,
   register,
@@ -197,5 +205,6 @@ export {
   insertOrderDetails,
   updateFormDeliveryDate,
   editOrder,
-  insertUpdatedOrderDetails
+  insertUpdatedOrderDetails,
+  setSalesRep
 };

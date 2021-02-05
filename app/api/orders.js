@@ -313,6 +313,30 @@ const updateOrderConfirmDeliverById = (req, res) => {
   db.end();
 }
 
+const updateOrderSalesRepById = (req, res) => {
+  const formid = req.params.formid;
+  const {
+    representative_id
+  } = req.body;
+
+  let order = {
+    representative_id
+  };
+
+  const db = ndb();
+  db.query(
+    "UPDATE form_completion SET ? WHERE id = ?",
+    [order, formid],
+    (err, result) => {
+      if (err) {
+        res.send({ err: err });
+      }
+      res.send(result);
+    }
+  );
+  db.end();
+}
+
 const updateOrderFormById = (req, res) => {
   const formid = req.params.formid;
   const {
@@ -516,5 +540,6 @@ module.exports = {
     deleteUpdatedOrderDetails,
     updateOrderDetails,
     getOrderDetailsByFormId,
-    getUpdateDetailsByFormId
+    getUpdateDetailsByFormId,
+    updateOrderSalesRepById
 };

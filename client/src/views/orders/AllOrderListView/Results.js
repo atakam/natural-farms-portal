@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import moment from 'moment';
@@ -10,6 +10,7 @@ import {
   Chip,
   Card,
   Dialog,
+  IconButton,
   ListItemIcon,
   Menu,
   MenuItem,
@@ -19,16 +20,17 @@ import {
   TableHead,
   TablePagination,
   TableRow,
+  TextField,
   Typography,
   makeStyles
 } from '@material-ui/core';
 import EditIcon from '@material-ui/icons/Edit';
+import CloseIcon from '@material-ui/icons/Close';
 import DeleteIcon from '@material-ui/icons/Delete';
 import EmailIcon from '@material-ui/icons/Email';
 import LocalMallIcon from '@material-ui/icons/LocalMall';
 import AssignmentIcon from '@material-ui/icons/Assignment';
 import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
-import VerifiedUserIcon from '@material-ui/icons/VerifiedUser';
 import AssignmentLateIcon from '@material-ui/icons/AssignmentLate';
 import AppDialog from '../../../components/AppDialog';
 import { deleteForm } from '../../../functions/index';
@@ -36,6 +38,7 @@ import Profile from 'src/components/Profile';
 import SingleOrderView from '../SingleOrderView/index';
 import CalendarView from './CalendarView';
 import OrderView from '../OrderView';
+import {setSalesRep} from 'src/functions';
 
 const useStyles = makeStyles((theme) => ({
   root: {},
@@ -54,8 +57,27 @@ const Results = ({ className, results, updates, user, callback, calendarView, ..
   const [profileDialogOpen, setProfileDialogOpen] = useState(false);
   const [orderDialogOpen, setOrderDialogOpen] = useState(false);
   const [anchorEl, setAnchorEl] = React.useState(null);
+  const [showSalesList, setShowSalesList] = useState({});
+  const [salesList, setSalesList] = useState([]);
   const [objectProp, setObject] = React.useState({formid: '', rid: ''});
   const [openEditOrder, setOpenEditOrder] = React.useState(false);
+
+  useEffect(() => {
+    getSalesRep();
+  }, [results]);
+
+  const getSalesRep = async () => {
+    const response = await fetch('/staff', {
+      headers: {
+        'Content-Type': 'application/json',
+      }
+    });
+
+    const body = await response.text();
+    const result = JSON.parse(body);
+    console.log("results", JSON.parse(body));
+    setSalesList(result);
+  };
 
   const handleClick = (target, obj) => {
     setAnchorEl(target);
@@ -181,6 +203,33 @@ const Results = ({ className, results, updates, user, callback, calendarView, ..
     setProfileName(objectProp.name);
     setOriginal(isOriginal);
   }
+
+  const handleSalesList = (formId) => {
+    setShowSalesList({
+      form_id: formId
+    })
+  }
+
+  const handleCloseList = () => {
+    setShowSalesList({})
+  }
+
+  const salesListOpions = salesList.map((option) => (
+    <MenuItem
+      key={option.id}
+      value={option.id}
+      onClick={() => setSalesRep({
+        form_id: showSalesList.form_id,
+        representative_id: option.id,
+        callback: () => {
+          handleCloseList();
+          callback();
+        }
+      })}
+    >
+      {option.name}
+    </MenuItem>
+  ));
 
   const menuItems = (
     <Menu
@@ -371,7 +420,35 @@ const Results = ({ className, results, updates, user, callback, calendarView, ..
                       {delivery(customer)}
                     </TableCell>
                     <TableCell>
-                      {customer.repName}
+                      {showSalesList.form_id === customer.formid ?
+                      <>
+                        <TextField
+                          label="Sales Rep"
+                          value={customer.representative_id}
+                          variant="outlined"
+                          select
+                        >
+                          { salesListOpions }
+                        </TextField>
+                        <IconButton
+                          color="inherit"
+                          style={{width: '20px', height: '20px'}}
+                          onClick={() => {handleCloseList()}}
+                        >
+                          <CloseIcon style={{width: '15px', height: '15px'}} />
+                        </IconButton>
+                      </>:
+                      <>
+                        {customer.repName}
+                        <IconButton
+                          color="inherit"
+                          style={{width: '20px', height: '20px'}}
+                          onClick={() => {handleSalesList(customer.formid)}}
+                        >
+                          <EditIcon style={{width: '15px', height: '15px'}} />
+                        </IconButton>
+                      </>
+                      }
                     </TableCell>
                     <TableCell>
                       {edited(customer)}
