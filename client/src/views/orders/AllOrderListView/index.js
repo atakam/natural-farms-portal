@@ -3,6 +3,8 @@ import moment from 'moment';
 import {
   Box,
   Container,
+  MenuItem,
+  TextField,
   makeStyles
 } from '@material-ui/core';
 import Page from 'src/components/Page';
@@ -27,6 +29,7 @@ const CustomerListView = (props) => {
   const [openNewOrder, setOpenNewOrder] = useState(false);
   const [filteredResults, setFilteredResults] = useState([]);
   const [calendarView, setCalendarView] = useState(false);
+  const [filterValue, setFilterValue] = useState('all');
   const context = useContext(AppContext);
 
   const getOrders = async (isModified) => {
@@ -72,10 +75,17 @@ const CustomerListView = (props) => {
 
   const edited = (customer) => {
     if (updates.includes(customer.formid)) {
-      if (customer.edited_status === 1) return 'Approved';
-      else if (customer.edited === 1) return 'Pending';
+      if (customer.status === 1) return 'Approved';
+      else return 'Pending';
     }
     else return '-';
+  };
+
+  const isPending = (customer) => {
+    if (updates.includes(customer.formid)) {
+      return customer.status === 0;
+    }
+    else return false;
   };
 
   const status = (customer) => {
@@ -104,6 +114,19 @@ const CustomerListView = (props) => {
     else return "No Delivery";
   };
 
+  const isUpcoming = (customer, numberOfDays) => {
+    let nextDate = null;
+    if (customer.deliver1 === 0) nextDate = new Date(customer.conditions_firstdeliverydate);
+    else if (customer.deliver2 === 0) nextDate = new Date(customer.conditions_seconddeliverydate);
+    else if (customer.deliver3 === 0) nextDate = new Date(customer.conditions_thirddeliverydate);
+    if (nextDate) {
+      const date = new Date();
+      date.setDate(date.getDate() + numberOfDays);
+      return nextDate > date;
+    }
+    return false
+  }
+
   const performSearch = (value) => {
     const filter = value.toUpperCase();
 
@@ -123,6 +146,24 @@ const CustomerListView = (props) => {
     setFilteredResults(newResults);
   };
 
+  const showNeedsAttention = () => {
+    const newResults = results.filter((el) => {
+      return isPending(el);
+    });
+    setFilteredResults(newResults);
+  };
+
+  const showAll = () => {
+    setFilteredResults(results);
+  }
+
+  const showUpcomingDelivery = (numberOfDays) => {
+    const newResults = results.filter((el) => {
+      return isUpcoming(el, numberOfDays);
+    });
+    setFilteredResults(newResults);
+  }
+
   const newOrder = () => {
     setOpenNewOrder(true);
   }
@@ -130,6 +171,35 @@ const CustomerListView = (props) => {
   const handleClose = () => {
     setOpenNewOrder(false);
   }
+
+  const handleFilter = (event) => {
+    setFilterValue(event.target.value);
+  }
+
+  let filters = [
+    {
+      label: 'Show All',
+      value: 'all',
+      action: showAll
+    },
+    {
+      label: 'Modified Pending Orders',
+      value: 'pending',
+      action: showNeedsAttention
+    },
+    {
+      label: 'Delivery in 7 days',
+      value: 'upcoming',
+      action: () => showUpcomingDelivery(7)
+    }
+  ];
+
+  filters = 
+  filters.map((option) => (
+        <MenuItem key={option.value} value={option.value} onClick={option.action}>
+          {option.label}
+        </MenuItem>
+      ));
 
   return (
     <Page
@@ -148,6 +218,19 @@ const CustomerListView = (props) => {
           listLabel: 'LIST VIEW',
           listAction: () => setCalendarView(false)
         }}
+        rightComponent={
+          <TextField
+            label="Filter"
+            margin="normal"
+            onChange={handleFilter}
+            value={filterValue}
+            variant="outlined"
+            style={{float: 'right'}}
+            select
+          >
+            { filters }
+          </TextField>
+        }
       />
         <Box mt={3}>
           <Results updates={updates} results={filteredResults} user={context.credentials.user} callback={getOrders} calendarView={calendarView}/>

@@ -26,7 +26,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const Toolbar = ({ className, performSearch, buttonProps, calendarButtonProps, calendarView, textDisplay, ...rest }) => {
+const Toolbar = ({ className, performSearch, buttonProps, calendarButtonProps, calendarView, rightComponent, ...rest }) => {
   const classes = useStyles();
   const [searchValue, setSearchValue] = useState('');
   const handleChange = (event) => {
@@ -98,9 +98,9 @@ const Toolbar = ({ className, performSearch, buttonProps, calendarButtonProps, c
       <Box mt={3}>
         <Card>
           <CardContent>
-            <Box maxWidth={500}>
+            <Box>
               <TextField
-                fullWidth
+                className="halfWidth"
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
@@ -122,11 +122,13 @@ const Toolbar = ({ className, performSearch, buttonProps, calendarButtonProps, c
                 value={searchValue}
                 onChange={handleChange}
                 placeholder="Search"
+                label="Search"
                 variant="outlined"
                 disabled={!performSearch}
+                margin="normal"
               />
+              {rightComponent}
             </Box>
-            {textDisplay}
           </CardContent>
         </Card>
       </Box>

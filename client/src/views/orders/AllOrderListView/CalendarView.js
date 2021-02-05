@@ -128,10 +128,13 @@ const CalendarView = ({ className, results, callback, showDate, handleClick, ...
     );
 
     let events = results.map((result, index) => {
+        const confirm1 = result.confirm1 ? '(C) ' : '';
+        const confirm2 = result.confirm2 ? '(C) ' : '';
+        const confirm3 = result.confirm3 ? '(C) ' : '';
         return [
             {
                 id: index,
-                title: '(1) ' + result.firstName + ' ' + result.lastName,
+                title: '(1) ' + confirm1 + result.firstName + ' ' + result.lastName,
                 allDay: true,
                 start: new Date(result.conditions_firstdeliverydate.split('T')[0] + ' 06:00 pm'),
                 end: new Date(result.conditions_firstdeliverydate.split('T')[0] + ' 06:00 pm'),
@@ -148,7 +151,7 @@ const CalendarView = ({ className, results, callback, showDate, handleClick, ...
             },
             {
                 id: index,
-                title: '(2) ' + result.firstName + ' ' + result.lastName,
+                title: '(2) ' + confirm2 + result.firstName + ' ' + result.lastName,
                 allDay: true,
                 start: new Date(result.conditions_seconddeliverydate.split('T')[0] + ' 06:00 pm'),
                 end: new Date(result.conditions_seconddeliverydate.split('T')[0] + ' 06:00 pm'),
@@ -166,7 +169,7 @@ const CalendarView = ({ className, results, callback, showDate, handleClick, ...
             ,
             {
                 id: index,
-                title: '(3) ' + result.firstName + ' ' + result.lastName,
+                title: '(3) ' + confirm3 + result.firstName + ' ' + result.lastName,
                 allDay: true,
                 start: new Date(result.conditions_thirddeliverydate.split('T')[0] + ' 06:00 pm'),
                 end: new Date(result.conditions_thirddeliverydate.split('T')[0] + ' 06:00 pm'),

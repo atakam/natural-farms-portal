@@ -42,7 +42,7 @@ const CustomerSelection = ({ className, customerDetails, setCustomerDetails, res
     return (
         <PerfectScrollbar style={{marginTop: '-80px'}}>
             <Box minWidth={1050}>
-            <Toolbar performSearch={performSearch} textDisplay={selectedUser} />
+            <Toolbar performSearch={performSearch} rightComponent={selectedUser} />
             <Table>
                 <TableHead>
                     <TableRow>
