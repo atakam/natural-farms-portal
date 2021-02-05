@@ -89,22 +89,17 @@ const CustomerListView = (props) => {
   };
 
   const status = (customer) => {
-    if ((customer.confirm3 === 1 && customer.deliver3 === 0)) return 'Confirm (3)';
-    else if ((customer.confirm2 === 1 && customer.deliver2 === 0)) return 'Confirm (2)';
-    else if ((customer.confirm1 === 1 && customer.deliver1 === 0)) return 'Confirm (1)';
-    
-    else if ((customer.confirm1 === 0 && customer.deliver1 === 0)) return 'Not Confirm (1)';
-    else if ((customer.confirm1 === 1 && customer.deliver1 === 1) && 
-    (customer.confirm2 === 0 && customer.deliver2 === 0)) return 'Not Confirm (2)';
-    else if ((customer.confirm1 === 1 && customer.deliver1 === 1) && 
-    (customer.confirm2 === 1 && customer.deliver2 === 1) &&
-    (customer.confirm3 === 0 && customer.deliver3 === 0)) return 'Not Confirm (3)';
-
-    else if ((customer.confirm1 === 1 && customer.deliver1 === 1) && 
-    (customer.confirm2 === 1 && customer.deliver1 === 1) &&
-    (customer.confirm3 === 1 && customer.deliver1 === 1)) return 'Expired';
-
-    else return 'Unkwon';
+    if (customer.signature_consumer_name === '') {
+      return 'Customer Signature';
+    } else if (customer.signature_merchant_name === '') {
+      return'Sales Signature';
+    } else if (customer.deliver3 === 1) return 'Expired';
+    else if (customer.confirm3 === 1) return 'Confirm (3)';
+    else if (customer.deliver2 === 1) return 'Not Confirm (3)';
+    else if (customer.confirm2 === 1) return 'Confirm (2)';
+    else if (customer.deliver1 === 1) return 'Not Confirm (2)';
+    else if (customer.confirm1 === 1) return 'Confirm (1)';
+    else return 'Not Confirm (1)';
   };
 
   const delivery = (customer) => {

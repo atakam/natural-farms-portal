@@ -121,27 +121,17 @@ const Results = ({ className, results, updates, user, callback, calendarView, ..
   };
 
   const status = (customer) => {
-    let returnValue = {color: 'error', message: 'Unkwon'};
-    if ((customer.confirm3 === 1 && customer.deliver3 === 0)) returnValue = {color: 'textPrimary', message: 'Confirm (3)'};
-    else if ((customer.confirm2 === 1 && customer.deliver2 === 0)) returnValue = {color: 'textPrimary', message: 'Confirm (2)'};
-    else if ((customer.confirm1 === 1 && customer.deliver1 === 0)) returnValue = {color: 'textPrimary', message: 'Confirm (1)'};
-    
-    else if ((customer.confirm1 === 0 && customer.deliver1 === 0)) returnValue = {color: 'textSecondary', message: 'Not Confirm (1)'};
-    else if ((customer.confirm1 === 1 && customer.deliver1 === 1) && 
-    (customer.confirm2 === 0 && customer.deliver2 === 0)) returnValue = {color: 'textSecondary', message: 'Not Confirm (2)'};
-    else if ((customer.confirm1 === 1 && customer.deliver1 === 1) && 
-    (customer.confirm2 === 1 && customer.deliver2 === 1) &&
-    (customer.confirm3 === 0 && customer.deliver3 === 0)) returnValue = {color: 'textSecondary', message: 'Not Confirm (3)'};
-
-    else if ((customer.confirm1 === 1 && customer.deliver1 === 1) && 
-    (customer.confirm2 === 1 && customer.deliver1 === 1) &&
-    (customer.confirm3 === 1 && customer.deliver1 === 1)) returnValue = {color: 'error', message: 'Expired'};
-
+    let returnValue = {color: 'error', message: 'Not Confirm (1)'};
     if (customer.signature_consumer_name === '') {
       returnValue = {color: 'error', message: 'Customer Signature'};
     } else if (customer.signature_merchant_name === '') {
       returnValue = {color: 'error', message: 'Sales Signature'};
-    }
+    } else if (customer.deliver3 === 1) returnValue = {color: 'error', message: 'Expired'};
+    else if (customer.confirm3 === 1) returnValue = {color: 'textPrimary', message: 'Confirm (3)'};
+    else if (customer.deliver2 === 1) returnValue = {color: 'error', message: 'Not Confirm (3)'};
+    else if (customer.confirm2 === 1) returnValue = {color: 'textPrimary', message: 'Confirm (2)'};
+    else if (customer.deliver1 === 1) returnValue = {color: 'error', message: 'Not Confirm (2)'};
+    else if (customer.confirm1 === 1) returnValue = {color: 'textPrimary', message: 'Confirm (1)'};
 
     return returnValue;
   };
