@@ -19,11 +19,11 @@ const OrderView = ({ className, open, close, getOrders, user, isEdit, formId, up
         getProductDetails();
         getCustomers();
         selectedForm && selectedForm.isEditAllowed && getOrdersByFormId();
-    }, []);
+    }, [selectedForm, isEdit]);
 
     const getOrdersByFormId = async () => {
-      const url = selectedForm.isEdited ? '/orders/updated/' : '/orders/original/';
-      const response = await fetch(url, selectedForm.id, {
+      const url = selectedForm.isEdited ? '/orders_details/update/' : '/orders_details/';
+      const response = await fetch(url + selectedForm.formid, {
         headers: {
           'Content-Type': 'application/json',
         }
@@ -31,8 +31,8 @@ const OrderView = ({ className, open, close, getOrders, user, isEdit, formId, up
       const body = await response.text();
       const result = JSON.parse(body);
       console.log("results", JSON.parse(body));
-      setOrder(result[0]);
-    }
+      setOrder(result);
+  }
 
     const getProductDetails = async () => {
         const response = await fetch('/productdetails', {

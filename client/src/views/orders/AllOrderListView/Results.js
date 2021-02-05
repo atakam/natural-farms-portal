@@ -316,19 +316,19 @@ const Results = ({ className, results, updates, user, callback, calendarView, ..
                     NFF
                   </TableCell>
                   <TableCell>
-                    Name
+                    Customer Name
                   </TableCell>
                   <TableCell>
                     Date
                   </TableCell>
                   <TableCell>
-                    Total Points
+                    T. Points
                   </TableCell>
                   <TableCell>
-                    Total Price
+                    T. Price
                   </TableCell>
                   <TableCell>
-                    Next Delivery
+                    Delivery
                   </TableCell>
                   <TableCell>
                     Sales Rep
@@ -372,10 +372,10 @@ const Results = ({ className, results, updates, user, callback, calendarView, ..
                       </Box>
                     </TableCell>
                     <TableCell>
-                      {customer.total_points}
+                      {customer.edited_points > 0 ? customer.edited_points : customer.total_points}
                     </TableCell>
                     <TableCell>
-                      {customer.price}
+                      $ {customer.edited_price > 0 ? customer.edited_price : customer.price}
                     </TableCell>
                     <TableCell>
                       {delivery(customer)}

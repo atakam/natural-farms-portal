@@ -64,7 +64,12 @@ const createOrder = (req, res) => {
       total_points,
       customer_id,
       representative_id,
-      confirm1: 0
+      confirm1: 0,
+      edited_points: -1,
+      edited_price: -1,
+      edited_rebate: -1,
+      edited_deposit: -1,
+      edited_total: -1
     };
 
     const db = ndb();
@@ -145,6 +150,8 @@ const updateOrderDetails = (req, res) => {
     quantity3
   };
 
+  console.log('orders being updates');
+
   const db = ndb();
   db.query(
     "INSERT INTO orders_updates SET ?",
@@ -222,6 +229,38 @@ const getUpdates = (req, res) => {
   db.end();
 }
 
+const getOrderDetailsByFormId = (req, res) => {
+  const formid = req.params.formid;
+  const db = ndb();
+  db.query(
+    "SELECT * FROM orders LEFT JOIN products_details ON products_details.id = orders.product_details_id WHERE form_id = ?",
+    formid,
+    (err, result) => {
+      if (err) {
+        res.send({ err: err });
+      }
+      res.send(result);
+    }
+  );
+  db.end();
+}
+
+const getUpdateDetailsByFormId = (req, res) => {
+  const formid = req.params.formid;
+  const db = ndb();
+  db.query(
+    "SELECT * FROM orders_updates LEFT JOIN products_details ON products_details.id = orders_updates.product_details_id WHERE form_id = ?",
+    formid,
+    (err, result) => {
+      if (err) {
+        res.send({ err: err });
+      }
+      res.send(result);
+    }
+  );
+  db.end();
+}
+
 const deleteForm = (req, res) => {
   const formid = req.params.formid;
   const db = ndb();
@@ -289,7 +328,11 @@ const updateOrderFormById = (req, res) => {
     total,
     total_points,
     confirm1,
-    status
+    status,
+    edited_deposit,
+    edited_price,
+    edited_rebate,
+    edited_points
   } = req.body;
 
   let order = {
@@ -305,7 +348,11 @@ const updateOrderFormById = (req, res) => {
     total,
     total_points,
     confirm1,
-    status
+    status,
+    edited_deposit,
+    edited_price,
+    edited_rebate,
+    edited_points
   };
 
   console.log({order})
@@ -467,5 +514,7 @@ module.exports = {
     createOrderDetails,
     updateOrderFormById,
     deleteUpdatedOrderDetails,
-    updateOrderDetails
+    updateOrderDetails,
+    getOrderDetailsByFormId,
+    getUpdateDetailsByFormId
 };

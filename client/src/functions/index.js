@@ -167,9 +167,9 @@ const editOrder = (entries) => {
 
 const insertUpdatedOrderDetails = (entries) => {
   return Axios.delete("/orders_details/update/delete/" + entries.form_id).then((response) => {
-    console.log(response);
+    console.log({deleted: response});
     return Axios.post("/orders_details/update/create", entries).then((response2) => {
-      console.log(response2);
+      console.log({updated: response2});
       return response2;
     });
   });

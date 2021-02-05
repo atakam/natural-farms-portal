@@ -8,7 +8,7 @@ import {
   Typography
 } from '@material-ui/core';
 
-const PaymentSelection = ({ className, productDetails, paymentDetails, setPaymentDetails, ...rest }) => {
+const PaymentSelection = ({ className, productDetails, paymentDetails, setPaymentDetails, isEditAllowed, ...rest }) => {
     const [details, setDetails] = useState(paymentDetails);
 
     let pts = Object.values(productDetails);
@@ -27,6 +27,12 @@ const PaymentSelection = ({ className, productDetails, paymentDetails, setPaymen
         return yyyy + '-' + mm +'-' + dd;
     }
 
+    const editedPrice = details.edited_price > -1 ? details.edited_price : details.price;
+    const editedRebate = details.edited_rebate > -1 ? details.edited_rebate : details.rebate;
+    const editedDeposit = details.edited_deposit > -1 ? details.edited_deposit : details.deposit;
+    const balance = !isEditAllowed ? details.price - details.rebate - details.deposit
+        : editedPrice - editedRebate - editedDeposit;
+
     return (
         <PerfectScrollbar>
             <Box minWidth={1050}>
@@ -40,10 +46,12 @@ const PaymentSelection = ({ className, productDetails, paymentDetails, setPaymen
                     {'Order Details'}
                 </Typography>
                 <TextField
+                    error={isEditAllowed && (total_points !== details.total_points)}
+                    helperText={isEditAllowed && ((total_points > details.total_points ? 'Points greater than original' : (total_points < details.total_points ? 'Points less than original' : '')) + ' (' + details.total_points + ')')}
                     label="Total Points"
                     margin="normal"
                     name="name"
-                    value={details.total_points || total_points || 0}
+                    value={isEditAllowed ? total_points || 0 : (details.edited_points > -1 ? details.edited_points : details.total_points || 0)}
                     variant="outlined"
                     style={{width: '33%', paddingRight: '10px'}}
                     disabled
@@ -56,15 +64,18 @@ const PaymentSelection = ({ className, productDetails, paymentDetails, setPaymen
                     style={{width: '33%', paddingRight: '10px'}}
                     onChange={(e) => {
                         const value = Number(e.currentTarget.value);
-                        const newDetails = {
+                        let newDetails = {
                             ...details,
-                            price: value,
-                            total: value - details.rebate - details.deposit
+                            price: value
+                        };
+                        if (isEditAllowed) newDetails = {
+                            ...details,
+                            edited_price: value
                         };
                         setDetails(newDetails);
                         setPaymentDetails(newDetails);
                     }}
-                    value={details.price || 0}
+                    value={!isEditAllowed ? (details.price || 0) : (details.edited_price > -1 ? details.edited_price : (details.price || 0))}
                 />
                 <TextField
                     label="Rebate ($)"
@@ -74,15 +85,18 @@ const PaymentSelection = ({ className, productDetails, paymentDetails, setPaymen
                     style={{width: '33%', paddingRight: '10px'}}
                     onChange={(e) => {
                         const value = Number(e.currentTarget.value);
-                        const newDetails = {
+                        let newDetails = {
                             ...details,
-                            rebate: value,
-                            total: details.price - details.deposit - value
+                            rebate: value
+                        };
+                        if (isEditAllowed) newDetails = {
+                            ...details,
+                            edited_rebate: value
                         };
                         setDetails(newDetails);
                         setPaymentDetails(newDetails);
                     }}
-                    value={details.rebate || 0}
+                    value={!isEditAllowed ? (details.rebate || 0) : (details.edited_rebate > -1 ? details.edited_rebate : (details.rebate || 0))}
                 />
                 <TextField
                     label="Deposit ($)"
@@ -92,21 +106,24 @@ const PaymentSelection = ({ className, productDetails, paymentDetails, setPaymen
                     style={{width: '33%', paddingRight: '10px'}}
                     onChange={(e) => {
                         const value = Number(e.currentTarget.value);
-                        const newDetails = {
+                        let newDetails = {
                             ...details,
-                            deposit: value,
-                            total: details.price - details.rebate - value
+                            deposit: value
+                        };
+                        if (isEditAllowed) newDetails = {
+                            ...details,
+                            edited_deposit: value
                         };
                         setDetails(newDetails);
                         setPaymentDetails(newDetails);
                     }}
-                    value={details.deposit || 0}
+                    value={!isEditAllowed ? (details.deposit || 0) : (details.edited_deposit > -1 ? details.edited_deposit : (details.deposit || 0))}
                 />
                 <TextField
                     label="Balance ($)"
                     margin="normal"
                     name="name"
-                    value={details.total || 0}
+                    value={balance}
                     variant="outlined"
                     style={{width: '33%', paddingRight: '10px'}}
                     disabled

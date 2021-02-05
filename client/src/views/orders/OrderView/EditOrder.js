@@ -6,7 +6,7 @@ import {
 } from '@material-ui/core';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import Tabs from 'src/components/Tabs';
-import ProductSelection from './ProductSelection';
+import ProductSelection from './edit/EditProductSelection';
 import DeliveryDateSelection from './DeliveryDateSelection';
 import PaymentSelection from './PaymentSelection';
 import ConfirmationSelection from './edit/EditConfirmationSelection';
@@ -14,7 +14,22 @@ import ConfirmationSelection from './edit/EditConfirmationSelection';
 import {editOrder, insertUpdatedOrderDetails} from 'src/functions';
 
 const EditOrder = ({ className, title, subtitle, updateCallback, cancel, products, currentUser, selectedForm, order, ...rest }) => {
-  const [productDetails, setProductDetails] = useState({});
+  let defaultProductDetails = {};
+  if (selectedForm.isEditAllowed) {
+    order.forEach((o) => {
+      defaultProductDetails =  {
+        ...defaultProductDetails,
+        [o.product_details_id]: {
+          1: o.quantity1,
+          2: o.quantity2,
+          3: o.quantity3,
+          points: (o.quantity1 + o.quantity2 + o.quantity3) * o.point
+        }
+      };
+    });
+  }
+  
+  const [productDetails, setProductDetails] = useState(defaultProductDetails);
   const [deliveryDetails, setDeliveryDetails] = useState({
     conditions_firstdeliverydate: selectedForm.conditions_firstdeliverydate,
     conditions_seconddeliverydate: selectedForm.conditions_seconddeliverydate,
@@ -25,7 +40,13 @@ const EditOrder = ({ className, title, subtitle, updateCallback, cancel, product
     rebate: selectedForm.rebate,
     deposit: selectedForm.deposit,
     total: selectedForm.total,
-    total_points: selectedForm.total_points
+    total_points: selectedForm.total_points,
+
+    edited_points: selectedForm.edited_points,
+    edited_price: selectedForm.edited_price,
+    edited_rebate: selectedForm.edited_rebate,
+    edited_deposit: selectedForm.edited_deposit,
+    edited_total: selectedForm.edited_total
   });
   const [confirmationDetails, setConfirmationDetails] = useState({
     signature_consumer_name: selectedForm.signature_consumer_name,
@@ -49,6 +70,7 @@ const EditOrder = ({ className, title, subtitle, updateCallback, cancel, product
                       results={products}
                       productDetails={productDetails}
                       setProductDetails={setProductDetails}
+                      selectedForm={selectedForm}
                   />
       },
       {
@@ -64,6 +86,7 @@ const EditOrder = ({ className, title, subtitle, updateCallback, cancel, product
                     productDetails={productDetails}
                     paymentDetails={paymentDetails}
                     setPaymentDetails={setPaymentDetails}
+                    isEditAllowed={selectedForm.isEditAllowed}
                 />
       },
       {
@@ -123,7 +146,7 @@ const EditOrder = ({ className, title, subtitle, updateCallback, cancel, product
       if (entry.data.affectedRows && entry.data.affectedRows > 0) {
         Object.keys(productDetails).forEach((key) => {
           insertUpdatedOrderDetails({
-            form_id: entry.data.insertId,
+            form_id: entries.form_id,
             product_details_id: key,
             quantity1: productDetails[key][1],
             quantity2: productDetails[key][2],
