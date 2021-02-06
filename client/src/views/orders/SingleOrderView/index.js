@@ -57,11 +57,8 @@ const CustomerListView = ({
             <CardHeader
                 subheader={subtitle}
                 title={title}
-            >
-                <Box 
-                    p={2}
-                    >
-                    <Tooltip title="Modify Order">
+                action={
+                    <Tooltip title="Close">
                         <IconButton
                             color="primary"
                             size="medium"
@@ -71,8 +68,8 @@ const CustomerListView = ({
                             <CloseIcon /> 
                         </IconButton>
                     </Tooltip>
-                </Box>
-            </CardHeader>
+                }
+            />
             <Divider />
             <CardContent>
                 <Delivery results={results} callback={updateCallback} isCustomer />

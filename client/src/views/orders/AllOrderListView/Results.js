@@ -37,6 +37,7 @@ import Profile from 'src/components/Profile';
 import SingleOrderView from '../SingleOrderView/index';
 import CalendarView from './CalendarView';
 import OrderView from '../OrderView';
+import ContractView from '../ContractView';
 import {setSalesRep} from 'src/functions';
 
 const useStyles = makeStyles((theme) => ({
@@ -60,6 +61,7 @@ const Results = ({ className, results, updates, user, callback, calendarView, ..
   const [salesList, setSalesList] = useState([]);
   const [objectProp, setObject] = React.useState({formid: '', rid: ''});
   const [openEditOrder, setOpenEditOrder] = React.useState(false);
+  const [contractDialogOpen, setContractDialogOpen] = useState(false);
 
   useEffect(() => {
     getSalesRep();
@@ -97,11 +99,13 @@ const Results = ({ className, results, updates, user, callback, calendarView, ..
   };
 
   const handleCloseDialog = () => {
+    setAnchorEl(null);
     setDialogOpen(false);
     setProfileDialogOpen(false);
     setOrderDialogOpen(false);
     setProfileName('');
     setOriginal(false);
+    setContractDialogOpen(false);
   }
 
   const handleConfirmDelete = () => {
@@ -155,6 +159,11 @@ const Results = ({ className, results, updates, user, callback, calendarView, ..
     else return '-';
   };
 
+  const viewContract = () => {
+    setAnchorEl(null);
+    setContractDialogOpen(true);
+  };
+
   const openInNewTab = (url) => {
     var win = window.open(url, '_blank');
     win.focus();
@@ -163,10 +172,6 @@ const Results = ({ className, results, updates, user, callback, calendarView, ..
   const handleEditContract = () => {
     setAnchorEl(null);
     setOpenEditOrder(true);
-  };
-  const goToContract = () => {
-    setAnchorEl(null);
-    openInNewTab(`https://www.portal.naturalfarms.ca/order/contract.php?id=${objectProp.formid}&rid=${objectProp.rid}`);
   };
   const resendEmail = () => {
     setAnchorEl(null);
@@ -258,7 +263,7 @@ const Results = ({ className, results, updates, user, callback, calendarView, ..
         </ListItemIcon>
         {objectProp.isEdited ? 'View Original Order' : 'View Order'}
       </MenuItem>
-      <MenuItem onClick={() => goToContract()}>
+      <MenuItem onClick={viewContract}>
         <ListItemIcon>
           <AssignmentIcon fontSize="small" />
         </ListItemIcon>
@@ -284,6 +289,18 @@ const Results = ({ className, results, updates, user, callback, calendarView, ..
       className={clsx(classes.root, className)}
       {...rest}
     >
+      <Dialog
+        open={contractDialogOpen}
+        onClose={handleCloseDialog}
+        aria-labelledby="draggable-dialog-title"
+        fullWidth
+        maxWidth={'lg'}
+      >
+        <ContractView
+          cancel={handleCloseDialog}
+          objectProp={objectProp}
+        />
+      </Dialog>
       <OrderView
         open={openEditOrder}
         close={handleClose}

@@ -19,13 +19,12 @@ import {
   Typography,
   makeStyles
 } from '@material-ui/core';
-import DescriptionIcon from '@material-ui/icons/Description';
 import InsertDriveFileIcon from '@material-ui/icons/InsertDriveFile';
-import GetAppIcon from '@material-ui/icons/GetApp';
 import EditIcon from '@material-ui/icons/Edit';
 import ShoppingBasketIcon from '@material-ui/icons/ShoppingBasket';
 import OrderView from '../OrderView';
-import SingleOrderView from '../SingleOrderView/index';
+import SingleOrderView from '../SingleOrderView';
+import ContractView from '../ContractView';
 
 const useStyles = makeStyles((theme) => ({
   root: {},
@@ -42,6 +41,7 @@ const Results = ({ className, results, updates, callback, user, ...rest }) => {
   const [openEditOrder, setOpenEditOrder] = React.useState(false);
   const [objectProp, setObject] = React.useState({});
   const [orderDialogOpen, setOrderDialogOpen] = useState(false);
+  const [contractDialogOpen, setContractDialogOpen] = useState(false);
 
   const handleSelectAll = (event) => {
     let newSelectedCustomerIds;
@@ -90,24 +90,18 @@ const Results = ({ className, results, updates, callback, user, ...rest }) => {
     else return "No Delivery";
   };
 
-  const openInNewTab = (url) => {
-    var win = window.open(url, '_blank');
-    win.focus();
-  }
-
   const handleCloseDialog = () => {
     setOrderDialogOpen(false);
+    setContractDialogOpen(false);
   }
 
   const viewOrder = (object) => {
     setOrderDialogOpen(true);
     setObject(object);
   };
-  const goToOriginal = ({formid, userid}) => {
-    openInNewTab(`https://www.portal.naturalfarms.ca/order/contract.php?id=${formid}&uid=${userid}&edited=yes`);
-  };
-  const goToDownload = ({formid, userid}) => {
-    openInNewTab(`https://www.portal.naturalfarms.ca/order/contracts/NFCT_${formid}.pdf`);
+  const viewContract = (object) => {
+    setContractDialogOpen(true);
+    setObject(object);
   };
   const modify = (obj) => {
     setOpenEditOrder(true);
@@ -137,6 +131,18 @@ const Results = ({ className, results, updates, callback, user, ...rest }) => {
           cancel={handleCloseDialog}
           original={!objectProp.isEdited}
           isCustomer
+        />
+      </Dialog>
+      <Dialog
+        open={contractDialogOpen}
+        onClose={handleCloseDialog}
+        aria-labelledby="draggable-dialog-title"
+        fullWidth
+        maxWidth={'lg'}
+      >
+        <ContractView
+          cancel={handleCloseDialog}
+          objectProp={objectProp}
         />
       </Dialog>
       <OrderView
@@ -249,24 +255,17 @@ const Results = ({ className, results, updates, callback, user, ...rest }) => {
                         <ShoppingBasketIcon />
                       </IconButton>
                     </Tooltip>
-                    <Tooltip title="View Original">
+                    <Tooltip title="View Contract">
                       <IconButton
                         color="primary"
                         size="medium"
                         variant="contained"
-                        onClick={() => goToOriginal({formid: customer.formid, userid: customer.customer_id})}
+                        onClick={() => viewContract({
+                          ...customer,
+                          name: customer.firstName + ' ' + customer.lastName
+                        })}
                       >
                         <InsertDriveFileIcon />
-                      </IconButton>
-                    </Tooltip>
-                    <Tooltip title="Download">
-                      <IconButton
-                        color="primary"
-                        size="medium"
-                        variant="contained"
-                        onClick={() => goToDownload({formid: customer.formid, userid: customer.customer_id})}
-                      >
-                        <GetAppIcon />
                       </IconButton>
                     </Tooltip>
                     {
