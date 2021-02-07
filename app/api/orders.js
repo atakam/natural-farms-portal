@@ -1,5 +1,6 @@
 const { clean } = require('../utils/utils');
 const ndb = require("../../databasePool");
+const { sendEmail } = require('./email');
 
 const ordersByUserRouter = (req, res) => {
     const id = req.params.id;
@@ -303,7 +304,8 @@ const updateOrderConfirmDeliverById = (req, res) => {
     confirm3,
     deliver1,
     deliver2,
-    deliver3
+    deliver3,
+    shouldSendEmail
   } = req.body;
 
   let order = {
@@ -325,6 +327,7 @@ const updateOrderConfirmDeliverById = (req, res) => {
       if (err) {
         res.send({ err: err });
       }
+      shouldSendEmail && sendEmail(req);
       res.send(result);
     }
   );

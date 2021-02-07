@@ -19,7 +19,8 @@ const CustomerListView = ({
     updateCallback,
     cancel,
     original,
-    isCustomer
+    isCustomer,
+    emailProps
 }) => {
   const [results, setResults] = useState([]);
 
@@ -72,7 +73,7 @@ const CustomerListView = ({
             />
             <Divider />
             <CardContent>
-                <Delivery results={results} callback={updateCallback} isCustomer />
+                <Delivery results={results} callback={updateCallback} isCustomer={isCustomer} emailProps={emailProps} />
             </CardContent>
       </Card>
     </Container>

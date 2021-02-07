@@ -27,7 +27,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const Results = ({ className, results, userid, callback, isCustomer, ...rest }) => {
+const Results = ({ className, results, userid, callback, isCustomer, emailProps, ...rest }) => {
   const classes = useStyles();
 
   const delivery = (number) => {
@@ -156,7 +156,20 @@ const Results = ({ className, results, userid, callback, isCustomer, ...rest }) 
                     ['confirm' + number]: values['confirm' + number] ? 1 : 0,
                     ['deliver' + number]: values['deliver' + number] ? 1 : 0
                 };
-                updateOrder({entries: values, formid: results[0].form_id});
+                const confirmStr = values['confirm' + number] ? 'Confirmed' : 'Not Confirmed';
+                const deliverStr = values['confirm' + number] ? (values['deliver' + number] ? ' - Delivered' : ' - Not Delivered') : '';
+                const deliveryDate = emailProps['delivery' + number];
+                const shouldSendEmail = values['sendEmail' + number];
+                updateOrder({
+                    entries: {
+                        ...values,
+                        ...emailProps,
+                        deliveryNumber: number,
+                        deliveryStatus: confirmStr + deliverStr,
+                        deliveryDate,
+                        shouldSendEmail
+                    },
+                    formid: results[0].form_id});
                 callback();
                 console.log(values);
             }}
@@ -208,7 +221,7 @@ const Results = ({ className, results, userid, callback, isCustomer, ...rest }) 
                     variant="body1"
                     style={{display: 'inline-block'}}
                 >
-                    {'Send confirmation email to customer'}
+                    {'Send confirmation email'}
                 </Typography>
                 
                 <Box
@@ -255,7 +268,7 @@ const Results = ({ className, results, userid, callback, isCustomer, ...rest }) 
     >
       <PerfectScrollbar>
         <Box minWidth={1050}>
-          <Tabs tabs={tabs} isCustomer/>
+          <Tabs tabs={tabs} isCustomer={isCustomer}/>
         </Box>
       </PerfectScrollbar>
     </Card>

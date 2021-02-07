@@ -38,7 +38,7 @@ import SingleOrderView from '../SingleOrderView/index';
 import CalendarView from './CalendarView';
 import OrderView from '../OrderView';
 import ContractView from '../ContractView';
-import {setSalesRep} from 'src/functions';
+import {setSalesRep, sendEmail} from 'src/functions';
 
 const useStyles = makeStyles((theme) => ({
   root: {},
@@ -170,6 +170,16 @@ const Results = ({ className, results, updates, user, callback, calendarView, ..
   };
   const resendEmail = () => {
     setAnchorEl(null);
+    sendEmail({
+      id: 1,
+      formid: objectProp.formid,
+      name: objectProp.name,
+      email: objectProp.userEmail,
+      phoneNumber: objectProp.phoneNumber,
+      nff: objectProp.nff
+    }).then((response) => {
+      alert(response.data.message);
+    })
   };
   const deleteOrder = () => {
     setAnchorEl(null);
@@ -342,6 +352,16 @@ const Results = ({ className, results, updates, user, callback, calendarView, ..
           updateCallback={updateCallback}
           cancel={handleCloseDialog}
           original={original}
+          emailProps={{
+            id: 5, // email template id
+            email: objectProp.userEmail,
+            name: objectProp.name,
+            nff: objectProp.nff,
+            phoneNumber: objectProp.phoneNumber,
+            delivery1: objectProp.conditions_firstdeliverydate,
+            delivery2: objectProp.conditions_seconddeliverydate,
+            delivery3: objectProp.conditions_thirddeliverydate
+          }}
         />
       </Dialog>
       {!calendarView ? 

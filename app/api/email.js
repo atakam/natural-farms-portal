@@ -1,9 +1,8 @@
 const ndb = require("../../databasePool");
 const transporter = require("../../emailserver");
 
-
 const sendEmail = (req, res) => {
-    const id = req.params.id;
+    let id = req.params.id;
     const {
       formid,
       name,
@@ -14,21 +13,46 @@ const sendEmail = (req, res) => {
       repEmail,
       phoneNumber,
       nff,
-      isCustomer
+      isCustomer,
+
+      deliveryDate,
+      deliveryNumber,
+      deliveryStatus
     } = req.body;
+    id = id == undefined ? req.body.id : id;
+
+    console.log({
+      id,
+      formid,
+      name,
+      email,
+      language,
+      hostname,
+      repName,
+      repEmail,
+      phoneNumber,
+      nff,
+      isCustomer,
+
+      deliveryDate,
+      deliveryNumber,
+      deliveryStatus
+    })
 
     let subject_en;
     let subject_fr;
     let content_en;
     let content_fr;
     let staff_id;
+    let sendStaff = true;
+    let staffPrePendContent = '';
   
     const db = ndb();
     db.query(
       "SELECT id, name, subject_en, subject_fr, content_en, content_fr FROM email_templates ORDER BY id ASC",
       (err, result) => {
         if (err) {
-          res.send({ err: err });
+          res && res.send({ err: err });
         }
         if (id == 1) {
           subject_en = result[0].subject_en;
@@ -36,6 +60,7 @@ const sendEmail = (req, res) => {
           content_en = result[0].content_en;
           content_fr = result[0].content_fr;
           staff_id = 1;
+          if (!repName) sendStaff = false;
         }
         else if (id == 3) {
           subject_en = result[2].subject_en;
@@ -44,6 +69,15 @@ const sendEmail = (req, res) => {
           content_fr = result[2].content_fr;
           staff_id = 3;
         }
+        else if (id == 5) {
+          subject_en = result[4].subject_en;
+          subject_fr = result[4].subject_fr;
+          content_en = result[4].content_en;
+          content_fr = result[4].content_fr;
+          staff_id = 4;
+          staffPrePendContent='<h4>This is just a copy what the customer received</h4><br>';
+          sendStaff = false;
+        }
 
         if (content_en && content_fr && subject_en && subject_fr) {
           email && (content_en = content_en.replace(/{customer_email}/g, email));
@@ -51,12 +85,20 @@ const sendEmail = (req, res) => {
           formid && (content_en = content_en.replace(/{formid}/g, formid));
           hostname && (content_en = content_en.replace(/{host_name}/g, hostname));
           nff && (content_en = content_en.replace(/{nff}/g, nff));
+
+          deliveryNumber && (content_en = content_en.replace(/{delivery_number}/g, deliveryNumber));
+          deliveryDate && (content_en = content_en.replace(/{delivery_date}/g, deliveryDate.split('T')[0]));
+          deliveryStatus && (content_en = content_en.replace(/{delivery_status}/g, deliveryStatus));
   
           email && (content_fr = content_fr.replace(/{customer_email}/g, email));
           name && (content_fr = content_fr.replace(/{customer_name}/g, name));
           formid && (content_fr = content_fr.replace(/{formid}/g, formid));
           hostname && (content_fr = content_fr.replace(/{host_name}/g, hostname));
           nff && (content_fr = content_fr.replace(/{nff}/g, nff));
+          
+          deliveryNumber && (content_fr = content_fr.replace(/{delivery_number}/g, deliveryNumber));
+          deliveryDate && (content_fr = content_fr.replace(/{delivery_date}/g, deliveryDate.split('T')[0]));
+          deliveryStatus && (content_fr = content_fr.replace(/{delivery_status}/g, deliveryStatus));
   
           if (language === 'en') {
               // send mail with defined transport object
@@ -79,26 +121,30 @@ const sendEmail = (req, res) => {
           }
   
           // SEND TO STAFF
-          subject_en = isCustomer ? result[staff_id].subject_en + ' - Needs Attention - From Customer' : result[staff_id].subject_en;
-          content_en = result[staff_id].content_en;
-  
-          email && (content_en = content_en.replace(/{customer_email}/g, email));
-          phoneNumber && (content_en = content_en.replace(/{customer_phone}/g, phoneNumber));
-          name && (content_en = content_en.replace(/{customer_name}/g, name));
-          formid && (content_en = content_en.replace(/{formid}/g, formid));
-          hostname && (content_en = content_en.replace(/{host_name}/g, hostname));
-          repName && (content_en = content_en.replace(/{sales_rep_name}/g, repName));
-          nff && (content_en = content_en.replace(/{nff}/g, nff));
-  
-          // send mail with defined transport object
-          transporter.sendMail({
-            from: '"Natural Farms Portal" <no_reply@portal.naturalfarms.ca>', // sender address
-            to: repEmail, // list of receivers
-            //cc: "admin@naturalfarms.ca",
-            subject: subject_en, // Subject line
-            text: content_en.replace(/<[^>]*>/g, '') + '\n' + content_en.replace(/<[^>]*>/g, ''), // plain text body
-            html: template({subject: subject_en, content_en}).english, // html body
-          }).then((info) => console.log("Message sent: %s", info.messageId));
+          if (sendStaff) {
+            subject_en = isCustomer ? result[staff_id].subject_en + ' - Needs Attention - From Customer' : result[staff_id].subject_en;
+            content_en = staffPrePendContent + result[staff_id].content_en;
+    
+            email && (content_en = content_en.replace(/{customer_email}/g, email));
+            phoneNumber && (content_en = content_en.replace(/{customer_phone}/g, phoneNumber));
+            name && (content_en = content_en.replace(/{customer_name}/g, name));
+            formid && (content_en = content_en.replace(/{formid}/g, formid));
+            hostname && (content_en = content_en.replace(/{host_name}/g, hostname));
+            repName && (content_en = content_en.replace(/{sales_rep_name}/g, repName));
+            nff && (content_en = content_en.replace(/{nff}/g, nff));
+    
+            // send mail with defined transport object
+            transporter.sendMail({
+              from: '"Natural Farms Portal" <no_reply@portal.naturalfarms.ca>', // sender address
+              to: repEmail, // list of receivers
+              //cc: "admin@naturalfarms.ca",
+              subject: subject_en, // Subject line
+              text: content_en.replace(/<[^>]*>/g, '') + '\n' + content_en.replace(/<[^>]*>/g, ''), // plain text body
+              html: template({subject: subject_en, content_en}).english, // html body
+            }).then((info) => console.log("Message sent: %s", info.messageId));
+
+            res && res.send({message: 'Successfully sent!'});
+          }
         }
       }
     );
