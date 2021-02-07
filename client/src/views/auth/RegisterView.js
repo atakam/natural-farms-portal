@@ -184,6 +184,7 @@ const RegisterView = (props) => {
       Have an account?
       {' '}
       <Link
+        href="#"
         onClick={() => props.setLogin(true)}
         variant="h6"
       >

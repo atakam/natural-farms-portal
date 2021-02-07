@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import PropTypes from 'prop-types';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import {
@@ -11,14 +11,21 @@ import {
 
 const PaymentSelection = ({ className, productDetails, paymentDetails, setPaymentDetails, isEditAllowed, isCustomer, ...rest }) => {
     const [details, setDetails] = useState(paymentDetails);
+    const [total_points, setTotalPoints] = useState(0);
 
-    let pts = Object.values(productDetails);
-    pts = pts.reduce((r, a) => {
-        r[a.points] = [...r[a.points] || [], a];
-        return r;
-    }, {});
-    pts = Object.keys(pts);
-    const total_points = (pts.reduce((a, b) => Number(a) + Number(b), 0));
+    useEffect(() => {
+        updateTotalPoints();
+    }, [productDetails])
+
+    const updateTotalPoints = () => {
+        let pts = Object.values(productDetails);
+        pts = pts.reduce((r, a) => {
+            r[a.points] = [...r[a.points] || [], a];
+            return r;
+        }, {});
+        pts = Object.keys(pts);
+        setTotalPoints(pts.reduce((a, b) => Number(a) + Number(b), 0));
+    }
 
     const getDateString = (d) => {
         const dd = String(d.getDate()).padStart(2, '0');
@@ -73,7 +80,7 @@ const PaymentSelection = ({ className, productDetails, paymentDetails, setPaymen
                     label="Total Points"
                     margin="normal"
                     name="name"
-                    value={isEditAllowed ? total_points || 0 : (details.total_points || 0)}
+                    value={total_points}
                     variant="outlined"
                     style={{width: '33%', paddingRight: '10px'}}
                     disabled

@@ -8,6 +8,7 @@ import {
   Checkbox,
   Container,
   Grid,
+  Link,
   TextField,
   Typography,
   makeStyles
@@ -19,7 +20,7 @@ import RegisterView from './RegisterView';
 import Password from './Password';
 import AppContext from "../../components/AppContext";
 
-import { logout, signin } from '../../functions/index';
+import { logout, signin, forgotPassword } from '../../functions/index';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -33,7 +34,9 @@ const useStyles = makeStyles((theme) => ({
 const LoginView = ({doLogout}) => {
   const classes = useStyles();
   const [isLogin, setLogin] = useState(true);
+  const [isForgotPassword, setForgotPassword] = useState(false);
   const [message, setLoginStatus] = useState('');
+  const [isSuccess, setLoginStatusSuccess] = useState(false);
 
   const context = useContext(AppContext);
   const navigate = useNavigate();
@@ -42,6 +45,7 @@ const LoginView = ({doLogout}) => {
 
   const signUp = () => {
     setLogin(false);
+    setForgotPassword(false);
   };
   useEffect(() => {
     if (context.credentials.loggedIn) {
@@ -49,10 +53,19 @@ const LoginView = ({doLogout}) => {
     }
   }, []);
 
+  const initialValues = isForgotPassword ? {
+    email: '',
+    isStaff: false
+  } : {
+    email: '',
+    password: '',
+    isStaff: false
+  }
+
   return isLogin ? (
     <Page
       className={classes.root}
-      title="Login"
+      title={isForgotPassword ? "Forgot Password" : "Login"}
     >
       <Box
         display="flex"
@@ -62,46 +75,52 @@ const LoginView = ({doLogout}) => {
       >
         <Container maxWidth="sm">
           <Formik
-            initialValues={{
-              email: '',
-              password: '',
-              isStaff: false
-            }}
+            initialValues={initialValues}
             validationSchema={Yup.object().shape({
               email: Yup.string().max(255).required('Email/Username is required'),
-              password: Yup.string().max(255).required('Password is required')
+              password: !isForgotPassword && Yup.string().max(255).required('Password is required')
             })}
             onSubmit={(values) => {
               console.log(values);
-              signin(values)
-              .then((response) => {
-                console.log(response);
-                if (response.data.message) {
-                  setLoginStatus(response.data.message);
-                } else if (response.data[0]) {
-                  let user = response.data[0];
-                  if (user.username) {
-                    user.firstName = user.name;
-                    user.lastName = '';
-                    user.streetAddress = '';
-                    user.city = '';
-                    user.sector = '';
-                    user.postalCode = '';
-                    user.province = '';
-                    user.phoneNumber = '';
-                    user.weekAmount = 0;
-                    user.role = user.role === 'admin' ? 1 : 2 ;
-                    user.dateCreated = "01/27/2021";
-                    user.nff = null;
-                    user.sessionid = "";
+              if (isForgotPassword) {
+                forgotPassword(values)
+                .then((response) => {
+                  console.log(response);
+                  if (response.data.message) {
+                    setLoginStatus(response.data.message);
+                    setLoginStatusSuccess(response.data.status);
                   }
-                  context.setCredentials({
-                    loggedIn: true,
-                    user
-                  });
-                }
-              })
-              //navigate('/app/dashboard', { replace: true });
+                });
+              } else {
+                signin(values)
+                .then((response) => {
+                  console.log(response);
+                  if (response.data.message) {
+                    setLoginStatus(response.data.message);
+                  } else if (response.data[0]) {
+                    let user = response.data[0];
+                    if (user.username) {
+                      user.firstName = user.name;
+                      user.lastName = '';
+                      user.streetAddress = '';
+                      user.city = '';
+                      user.sector = '';
+                      user.postalCode = '';
+                      user.province = '';
+                      user.phoneNumber = '';
+                      user.weekAmount = 0;
+                      user.role = user.role === 'admin' ? 1 : 2 ;
+                      user.dateCreated = "01/27/2021";
+                      user.nff = null;
+                      user.sessionid = "";
+                    }
+                    context.setCredentials({
+                      loggedIn: true,
+                      user
+                    });
+                  }
+                })
+              }
             }}
           >
             {({
@@ -188,16 +207,18 @@ const LoginView = ({doLogout}) => {
                     }
                   }}
                 />
-                <Password
-                  touched={touched}
-                  errors={errors}
-                  values={values}
-                  handleBlur={handleBlur}
-                  handleChange={handleChange}
-                  fullWidth
-                />
+                {!isForgotPassword &&
+                  <Password
+                    touched={touched}
+                    errors={errors}
+                    values={values}
+                    handleBlur={handleBlur}
+                    handleChange={handleChange}
+                    fullWidth
+                  />
+                }
                 <Typography
-                    color="error"
+                    color={isSuccess ? "secondary" : "error"}
                     variant="body1"
                   >
                     { message }
@@ -210,8 +231,21 @@ const LoginView = ({doLogout}) => {
                     type="submit"
                     variant="contained"
                   >
-                    Sign in now
+                    {isForgotPassword ? 'Request password' : 'Sign in now'}
                   </Button>
+                  <Typography
+                    color="textSecondary"
+                    variant="body1"
+                    style={{marginTop: '10px'}}
+                  >
+                    <Link
+                      href="#"
+                      onClick={isForgotPassword ? () => setForgotPassword(false) : () => setForgotPassword(true)}
+                      variant="h5"
+                    >
+                      {isForgotPassword ? 'Back to login' : 'Forgot you password?'}
+                    </Link>
+                  </Typography>
                 </Box>
               </form>
             )}

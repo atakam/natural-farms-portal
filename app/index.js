@@ -12,7 +12,8 @@ const {
     registerRouter,
     loginGetRouter,
     loginPostRouter,
-    logoutRouter
+    logoutRouter,
+    forgotPassword
 } = require('./api/credentials');
 
 const {
@@ -109,6 +110,8 @@ app.get("/login", loginGetRouter);
 app.get("/logout", logoutRouter);
 
 app.post("/login", loginPostRouter);
+
+app.post("/forgotpw", forgotPassword);
 
 app.get("/orders/:id", ordersByUserRouter);
 

@@ -6,6 +6,12 @@ const signin = ({email, password, isStaff}, callback) => {
     });
 };
 
+const forgotPassword = ({email, isStaff}) => {
+  return Axios.post("/forgotpw", {
+    email, isStaff
+  });
+};
+
 const logout = () => {
   return Axios.get("/logout")
   .then(() => {
@@ -205,6 +211,7 @@ const sendEmail = (entries) => {
 
 export {
   signin,
+  forgotPassword,
   register,
   logout,
   updateUser,

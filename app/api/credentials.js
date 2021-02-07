@@ -1,6 +1,7 @@
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
 const ndb = require("../../databasePool");
+const { sendEmail } = require('./email');
 
 const registerRouter = (req, res) => {
     const {
@@ -104,6 +105,58 @@ const loginPostRouter = (req, res) => {
     db.end();
 }
 
+const forgotPassword = (req, res) => {
+  const email = req.body.email;
+  const isStaff = req.body.isStaff;
+
+  const sql = isStaff ? "SELECT * FROM representative WHERE username = ? OR email = ?"
+    : "SELECT * FROM users WHERE email = ? OR email = ?";
+
+  isStaff ? console.log('STAFF FORGOT PW') : console.log('CUSTOMER FORGOT PW');
+
+  const db = ndb();
+  db.query(
+    sql,
+    [email, email],
+    (err, result) => {
+      if (err) {
+        res.send({ err: err });
+      }
+
+      if (result.length > 0) {
+        return bcrypt.hash('QweAze3', saltRounds, (err2, hash) => {
+          if (err2) {
+            console.log(err2);
+          }
+
+          const sql2 = isStaff ? "UPDATE representative SET ? WHERE email = ?"
+              : "UPDATE users SET ? WHERE email = ?";
+      
+          const db2 = ndb();
+          db2.query(
+            sql2,
+            [{ password: hash}, email],
+            (error, result2) => {
+                if (error) {
+                  console.log(error);
+                  res.send(error);
+                } else {
+                  console.log(result2);
+                  sendEmail({params: {id: 6}, body: {newPassword: 'QweAze3', email}});
+                  res.send({ message: "New password successfully sent to emal provided.", status: true });
+                }
+            }
+          );
+          db2.end();
+        });
+      } else {
+        res.send({ message: "User doesn't exist" });
+      }
+    }
+  );
+  db.end();
+}
+
 const logoutRouter = (req, res) => {
     if (req.session.user) {
         req.session.user = null;
@@ -127,5 +180,6 @@ module.exports = {
     registerRouter,
     loginGetRouter,
     loginPostRouter,
-    logoutRouter
+    logoutRouter,
+    forgotPassword
 };

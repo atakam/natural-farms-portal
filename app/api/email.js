@@ -17,7 +17,8 @@ const sendEmail = (req, res) => {
 
       deliveryDate,
       deliveryNumber,
-      deliveryStatus
+      deliveryStatus,
+      newPassword
     } = req.body;
     id = id == undefined ? req.body.id : id;
 
@@ -45,7 +46,6 @@ const sendEmail = (req, res) => {
     let content_fr;
     let staff_id;
     let sendStaff = true;
-    let staffPrePendContent = '';
   
     const db = ndb();
     db.query(
@@ -75,7 +75,14 @@ const sendEmail = (req, res) => {
           content_en = result[4].content_en;
           content_fr = result[4].content_fr;
           staff_id = 4;
-          staffPrePendContent='<h4>This is just a copy what the customer received</h4><br>';
+          sendStaff = false;
+        }
+
+        else if (id == 6) {
+          subject_en = result[5].subject_en;
+          subject_fr = result[5].subject_fr;
+          content_en = result[5].content_en;
+          content_fr = result[5].content_fr;
           sendStaff = false;
         }
 
@@ -85,6 +92,7 @@ const sendEmail = (req, res) => {
           formid && (content_en = content_en.replace(/{formid}/g, formid));
           hostname && (content_en = content_en.replace(/{host_name}/g, hostname));
           nff && (content_en = content_en.replace(/{nff}/g, nff));
+          newPassword && (content_en = content_en.replace(/{new_password}/g, newPassword));
 
           deliveryNumber && (content_en = content_en.replace(/{delivery_number}/g, deliveryNumber));
           deliveryDate && (content_en = content_en.replace(/{delivery_date}/g, deliveryDate.split('T')[0]));
@@ -95,6 +103,7 @@ const sendEmail = (req, res) => {
           formid && (content_fr = content_fr.replace(/{formid}/g, formid));
           hostname && (content_fr = content_fr.replace(/{host_name}/g, hostname));
           nff && (content_fr = content_fr.replace(/{nff}/g, nff));
+          newPassword && (content_fr = content_fr.replace(/{new_password}/g, newPassword));
           
           deliveryNumber && (content_fr = content_fr.replace(/{delivery_number}/g, deliveryNumber));
           deliveryDate && (content_fr = content_fr.replace(/{delivery_date}/g, deliveryDate.split('T')[0]));
@@ -123,7 +132,7 @@ const sendEmail = (req, res) => {
           // SEND TO STAFF
           if (sendStaff) {
             subject_en = isCustomer ? result[staff_id].subject_en + ' - Needs Attention - From Customer' : result[staff_id].subject_en;
-            content_en = staffPrePendContent + result[staff_id].content_en;
+            content_en = result[staff_id].content_en;
     
             email && (content_en = content_en.replace(/{customer_email}/g, email));
             phoneNumber && (content_en = content_en.replace(/{customer_phone}/g, phoneNumber));
