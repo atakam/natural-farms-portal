@@ -3,7 +3,8 @@ import PropTypes from 'prop-types';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import {
   Box,
-    Divider,
+  Divider,
+  MenuItem,
   TextField,
   Typography
 } from '@material-ui/core';
@@ -26,6 +27,27 @@ const PaymentSelection = ({ className, productDetails, paymentDetails, setPaymen
 
         return yyyy + '-' + mm +'-' + dd;
     }
+
+    let paymentTypes = [
+        {
+            label: 'Cash',
+            value: 'cash'
+        },
+        {
+            label: 'Credit Card',
+            value: 'cc'
+        },
+        {
+            label: 'Pre-authorized Payment',
+            value: 'pa'
+        }
+    ];
+    paymentTypes = 
+        paymentTypes.map((option) => (
+            <MenuItem key={option.value} value={option.value}>
+             {option.label}
+            </MenuItem>
+        ));
 
     return (
         <PerfectScrollbar>
@@ -139,7 +161,9 @@ const PaymentSelection = ({ className, productDetails, paymentDetails, setPaymen
                     variant="outlined"
                     type="select"
                     style={{width: '33%', paddingRight: '10px'}}
-                />
+                >
+                    {paymentTypes}
+                </TextField>
                 <TextField
                     label="How many instalments?"
                     margin="normal"
