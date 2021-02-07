@@ -20,6 +20,7 @@ import {
   makeStyles
 } from '@material-ui/core';
 import InsertDriveFileIcon from '@material-ui/icons/InsertDriveFile';
+import GetAppIcon from '@material-ui/icons/GetApp';
 import EditIcon from '@material-ui/icons/Edit';
 import ShoppingBasketIcon from '@material-ui/icons/ShoppingBasket';
 import OrderView from '../OrderView';
@@ -42,6 +43,8 @@ const Results = ({ className, results, updates, callback, user, ...rest }) => {
   const [objectProp, setObject] = React.useState({});
   const [orderDialogOpen, setOrderDialogOpen] = useState(false);
   const [contractDialogOpen, setContractDialogOpen] = useState(false);
+  const [pdfView, setPdfView] = useState(false);
+  const [pdfFormId, setPdfFormId] = useState(null);
 
   const handleSelectAll = (event) => {
     let newSelectedCustomerIds;
@@ -93,6 +96,8 @@ const Results = ({ className, results, updates, callback, user, ...rest }) => {
   const handleCloseDialog = () => {
     setOrderDialogOpen(false);
     setContractDialogOpen(false);
+    setPdfView(false);
+    setPdfFormId(null);
   }
 
   const viewOrder = (object) => {
@@ -102,6 +107,11 @@ const Results = ({ className, results, updates, callback, user, ...rest }) => {
   const viewContract = (object) => {
     setContractDialogOpen(true);
     setObject(object);
+  };
+  const downloadContract = ({formid}) => {
+    setContractDialogOpen(true);
+    setPdfView(true);
+    setPdfFormId(formid)
   };
   const modify = (obj) => {
     setOpenEditOrder(true);
@@ -143,6 +153,8 @@ const Results = ({ className, results, updates, callback, user, ...rest }) => {
         <ContractView
           cancel={handleCloseDialog}
           objectProp={objectProp}
+          showPDF={pdfView}
+          pdfFormId={pdfFormId}
         />
       </Dialog>
       <OrderView
@@ -266,6 +278,16 @@ const Results = ({ className, results, updates, callback, user, ...rest }) => {
                         })}
                       >
                         <InsertDriveFileIcon />
+                      </IconButton>
+                    </Tooltip>
+                    <Tooltip title="Download">
+                      <IconButton
+                        color="primary"
+                        size="medium"
+                        variant="contained"
+                        onClick={() => downloadContract({formid: customer.formid})}
+                      >
+                        <GetAppIcon />
                       </IconButton>
                     </Tooltip>
                     {

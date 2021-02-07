@@ -2,19 +2,15 @@ import React from 'react';
 import { Navigate } from 'react-router-dom';
 import DashboardLayout from 'src/layouts/DashboardLayout';
 import MainLayout from 'src/layouts/MainLayout';
-import AccountView from 'src/views/account/AccountView';
 import MyOrderListView from 'src/views/orders/MyOrderListView';
-import AllOrderListView from 'src/views/orders/AllOrderListView';
-import DashboardView from 'src/views/reports/DashboardView';
 import LoginView from 'src/views/auth/LoginView';
 import NotFoundView from 'src/views/errors/NotFoundView';
-import ProductListView from 'src/views/product/ProductListView';
 import RegisterView from 'src/views/auth/RegisterView';
 import SettingsView from 'src/views/settings/SettingsView';
-import CustomerListView from 'src/views/users/CustomerListView';
-import StaffListView from 'src/views/users/StaffListView';
-import EmailTemplateView from 'src/views/templates/EmailTemplateView';
-import CategoryListView from 'src/views/product/CategoryListView';
+import PDF from 'src/views/orders/ContractView/PDF';
+
+const url = new URL(window.location);
+const formid = url.searchParams.get("formid");
 
 const routes = [
   {
@@ -26,6 +22,10 @@ const routes = [
       { path: 'logout', element: <LoginView doLogout /> },
       { path: '*', element: <Navigate to="/404" /> }
     ]
+  },
+  {
+    path: 'contract',
+    element: <PDF formid={formid}/>
   },
   {
     path: '/',

@@ -11,10 +11,13 @@ import {
 import CloseIcon from '@material-ui/icons/Close';
 import PrintIcon from '@material-ui/icons/Print';
 import Contract from './Contract';
+import PDF from './PDF';
 
 const CustomerListView = ({
     objectProp,
-    cancel
+    cancel,
+    showPDF,
+    pdfFormId
 }) => {
 
   const printDivId = 'printDiv';
@@ -70,7 +73,10 @@ const CustomerListView = ({
             />
             <Divider />
             <CardContent>
-                <Contract objectProp={objectProp} printDivId={printDivId}/>
+                {showPDF ? 
+                  <PDF formid={pdfFormId} closeDialog={cancel} /> :
+                  <Contract objectProp={objectProp} printDivId={printDivId}/>
+                }
             </CardContent>
       </Card>
     </Container>

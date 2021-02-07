@@ -35,7 +35,8 @@ const {
   getOrderDetailsByFormId,
   getUpdateDetailsByFormId,
   updateOrderSalesRepById,
-  resetOrder
+  resetOrder,
+  orderFormByFormId
 } = require('./api/orders');
 
 const {
@@ -108,6 +109,8 @@ app.post("/login", loginPostRouter);
 app.get("/orders/:id", ordersByUserRouter);
 
 app.get("/orders", orders);
+
+app.get("/form/:formid", orderFormByFormId);
 
 app.get("/ordersmodified", modifiedFormOrders);
 

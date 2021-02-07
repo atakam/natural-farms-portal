@@ -31,6 +31,22 @@ const orders = (req, res) => {
   db.end();
 }
 
+const orderFormByFormId = (req, res) => {
+  const formid = req.params.formid;
+  const db = ndb();
+  db.query(
+    "SELECT *, form_completion.id AS formid, users.id AS uid, users.email AS userEmail, representative.name AS repName FROM form_completion LEFT JOIN users ON users.id = form_completion.customer_id LEFT JOIN representative ON representative.id = form_completion.representative_id WHERE form_completion.customer_id = users.id AND form_completion.id = ?",
+    formid,
+    (err, result) => {
+      if (err) {
+        res.send({ err: err });
+      }
+      res.send(result);
+    }
+  );
+  db.end();
+}
+
 const createOrder = (req, res) => {
   const {
       conditions_firstdeliverydate,
@@ -581,5 +597,6 @@ module.exports = {
     getOrderDetailsByFormId,
     getUpdateDetailsByFormId,
     updateOrderSalesRepById,
-    resetOrder
+    resetOrder,
+    orderFormByFormId
 };

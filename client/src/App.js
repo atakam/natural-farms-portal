@@ -51,11 +51,14 @@ const App = () => {
     })
   }, []);
 
+  const byPassCredentials = userrouting.props.value.route.path === 'contract' || routing.props.value.route.path === 'contract';
+
   return (
     <AppContext.Provider value={userSettings}>
       <ThemeProvider theme={theme}>
         <GlobalStyles />
-        {credentials.loggedIn ? (credentials.user.role === 3 ? userrouting : routing ) : <LoginView />}
+        {byPassCredentials ? userrouting :
+        (credentials.loggedIn ? (credentials.user.role === 3 ? userrouting : routing ) : <LoginView />)}
       </ThemeProvider>
     </AppContext.Provider>
   );
