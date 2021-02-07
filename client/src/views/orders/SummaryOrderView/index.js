@@ -33,9 +33,10 @@ const SummaryOrderView = ({
     }, {});
     results = Object.values(results);
     const adds = results.map((user) => {
+      const sector = (user.sector != null ? (' (' + user.sector + ')') : '');
       return {
         user: user[0].firstName + ' ' + user[0].lastName,
-        address: user[0].streetAddress + ' ' + user[0].city + ', ' + user[0].province + ' ' + user[0].postalCode
+        address: user[0].streetAddress + ', ' + user[0].city + sector + ', ' + user[0].province + ' ' + user[0].postalCode
       }
     });
     setAddresses(adds);

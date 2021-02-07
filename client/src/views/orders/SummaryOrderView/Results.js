@@ -36,11 +36,12 @@ const Results = ({ className, results, userid, callback, date, isSupplier, ...re
         return results.map((customer, index) => {
             const user = customer[0];
             let count = 1;
+            const sector = (user.sector != null ? (' (' + user.sector + ')') : '');
             return(
             <div className={index !== 0 ? 'pagebreak' : ''} key={'i' + index} id={'print'+index}>
             <Box key={'n' + index}>
                 <h2>{user.firstName + ' ' + user.lastName}</h2>
-                <h3>{user.streetAddress + ' ' + user.city + ', ' + user.province + ' ' + user.postalCode}</h3>
+                <h3>{user.streetAddress + ', ' + user.city + sector + ', ' + user.province + ' ' + user.postalCode}</h3>
             </Box>
             <Table key={'t' + index} style={{marginBottom: '50px'}}>
                 <TableHead>

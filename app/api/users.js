@@ -8,7 +8,7 @@ const userById = (req, res) => {
   
     const db = ndb();
     db.query(
-      "SELECT id, nff, email, firstName, lastName, password, streetAddress, city, postalCode, province, phoneNumber, weekAmount FROM users WHERE id = ?",
+      "SELECT id, nff, email, firstName, lastName, password, streetAddress, city, postalCode, province, phoneNumber, homePhone, sector, weekAmount FROM users WHERE id = ?",
       id,
       (err, result) => {
         if (err) {
@@ -25,7 +25,7 @@ const userByFormId = (req, res) => {
 
   const db = ndb();
   db.query(
-    "SELECT id, email, firstName, lastName, streetAddress, city, postalCode, province, phoneNumber, role FROM users LEFT JOIN form_completion ON form_completion.customer_id = users.id WHERE form_completion.id = ?",
+    "SELECT id, email, firstName, lastName, streetAddress, homePhone, sector, city, postalCode, province, phoneNumber, role FROM users LEFT JOIN form_completion ON form_completion.customer_id = users.id WHERE form_completion.id = ?",
     id,
     (err, result) => {
       if (err) {
@@ -40,7 +40,7 @@ const userByFormId = (req, res) => {
 const usersByRole = (req, res) => {
   const db = ndb();
   db.query(
-    "SELECT id, nff, email, firstName, lastName, streetAddress, city, postalCode, province, phoneNumber, weekAmount FROM users"
+    "SELECT id, nff, email, firstName, lastName, streetAddress, homePhone, sector, city, postalCode, province, phoneNumber, weekAmount FROM users"
     ,
     (err, result) => {
       if (err) {
@@ -59,6 +59,8 @@ const updateUserById = (req, res) => {
     firstName,
     lastName,
     streetAddress,
+    homePhone,
+    sector,
     city,
     postalCode,
     province,
@@ -73,6 +75,8 @@ const updateUserById = (req, res) => {
     firstName,
     lastName,
     streetAddress,
+    homePhone,
+    sector,
     city,
     postalCode,
     province,

@@ -44,8 +44,9 @@ const CustomerListView = () => {
     const filter = value.toUpperCase();
 
     const newResults = results.filter((el) => {
+      const sector = (el.sector != null ? (' (' + el.sector + ')') : '');
       if ((String(el.firstName) + ' '+ String(el.lastName)).toUpperCase().indexOf(filter) > -1
-        || (String(el.streetAddress) + ' '+ String(el.city) + ', '+ String(el.province)+ ' '+ String(el.postalCode)).toUpperCase().indexOf(filter) > -1
+        || (String(el.streetAddress) + ', '+ String(el.city) + sector + ', '+ String(el.province)+ ' '+ String(el.postalCode)).toUpperCase().indexOf(filter) > -1
         || String(el.nff).toUpperCase().indexOf(filter) > -1
         || String(el.email).toUpperCase().indexOf(filter) > -1
         || String(el.phoneNumber).toUpperCase().indexOf(filter) > -1

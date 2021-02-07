@@ -107,7 +107,7 @@ const Results = ({ className, objectProp, printDivId,...rest }) => {
                 <div className={classes.contractTopChildLabel}>Street Address:</div>
                 <div className={classes.contractTopChild}>{objectProp.streetAddress}</div>
                 <div className={classes.contractTopChildLabel}>City:</div>
-                <div className={classes.contractTopChild}>{objectProp.city}</div>
+                <div className={classes.contractTopChild}>{objectProp.city + (objectProp.sector != null ? (' (' + objectProp.sector + ')') : '')}</div>
                 <div className={classes.contractTopChildLabel}>Province:</div>
                 <div className={classes.contractTopChild}>{objectProp.province}</div>
                 <div className={classes.contractTopChildLabel}>Postal Code:</div>

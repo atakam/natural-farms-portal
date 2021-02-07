@@ -159,7 +159,7 @@ const Results = ({ className, results, updates, userid, callback, ...rest }) => 
                     {customer.email}
                   </TableCell>
                   <TableCell>
-                    {customer.streetAddress + ' ' + customer.city + ', ' + customer.province+ ' ' + customer.postalCode }
+                    {customer.streetAddress + ', ' + customer.city + (customer.sector != null ? (' (' + customer.sector + ')') : '') + ', ' + customer.province+ ' ' + customer.postalCode }
                   </TableCell>
                   <TableCell>
                     <Button

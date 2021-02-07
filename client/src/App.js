@@ -33,6 +33,7 @@ const App = () => {
           user.lastName = '';
           user.streetAddress = '';
           user.city = '';
+          user.sector = '';
           user.postalCode = '';
           user.province = '';
           user.phoneNumber = '';

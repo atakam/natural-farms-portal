@@ -5,9 +5,12 @@ import {
   CardContent,
   CardHeader,
   Divider,
+  IconButton,
   makeStyles,
+  Tooltip,
   Container
 } from '@material-ui/core';
+import CloseIcon from '@material-ui/icons/Close';
 import RegisterView from 'src/views/auth/RegisterView';
 import StaffFormView from 'src/views/auth/StaffFormView';
 
@@ -24,6 +27,18 @@ const Profile = ({ className, title, subtitle, id, updateCallback, cancel, isSta
           <CardHeader
             subheader={subtitle}
             title={title}
+            action={
+              <Tooltip title="Close">
+                  <IconButton
+                      color="primary"
+                      size="medium"
+                      variant="contained"
+                      onClick={cancel}
+                  >
+                      <CloseIcon /> 
+                  </IconButton>
+              </Tooltip>
+            }
           />
           <Divider />
           <CardContent>

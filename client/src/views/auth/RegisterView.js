@@ -68,6 +68,8 @@ const getProfile = async (id, setResults, isStaffInProfile) => {
         firstName,
         lastName,
         streetAddress,
+        homePhone,
+        sector,
         city,
         postalCode,
         province,
@@ -81,6 +83,8 @@ const getProfile = async (id, setResults, isStaffInProfile) => {
         lastName,
         password: '',
         streetAddress,
+        homePhone,
+        sector,
         city,
         postalCode,
         province,
@@ -236,6 +240,8 @@ const RegisterView = (props) => {
     lastName: '',
     password: '',
     streetAddress: '',
+    homePhone: '',
+    sector: '',
     city: '',
     postalCode: '',
     province: 'Quebec',
@@ -253,6 +259,8 @@ const RegisterView = (props) => {
       values.firstName = values.name;
       values.lastName = '';
       values.streetAddress = '';
+      values.homePhone = '';
+      values.sector = '';
       values.city = '';
       values.postalCode = '';
       values.province = '';
@@ -476,6 +484,20 @@ const RegisterView = (props) => {
                 />
 
                 <TextField
+                  error={Boolean(touched.sector && errors.sector)}
+                  helperText={touched.sector && errors.sector}
+                  label="Sector"
+                  margin="normal"
+                  name="sector"
+                  onBlur={handleBlur}
+                  onChange={handleChange}
+                  value={values.sector}
+                  variant="outlined"
+                  className="halfWidth"
+                />
+                <span style={{ padding: '10px' }} />
+
+                <TextField
                   error={Boolean(touched.postalCode && errors.postalCode)}
                   helperText={touched.postalCode && errors.postalCode}
                   label="Postal Code"
@@ -487,7 +509,6 @@ const RegisterView = (props) => {
                   variant="outlined"
                   className="halfWidth"
                 />
-                <span style={{ padding: '10px' }} />
                 <TextField
                   error={Boolean(touched.province && errors.province)}
                   helperText={touched.province && errors.province}
@@ -503,6 +524,7 @@ const RegisterView = (props) => {
                 >
                   { provinces }
                 </TextField>
+                <span style={{ padding: '10px' }} />
 
                 <TextField
                   error={Boolean(touched.phoneNumber && errors.phoneNumber)}
@@ -513,6 +535,18 @@ const RegisterView = (props) => {
                   onBlur={handleBlur}
                   onChange={handleChange}
                   value={values.phoneNumber}
+                  variant="outlined"
+                  className="halfWidth"
+                />
+                <TextField
+                  error={Boolean(touched.homePhone && errors.homePhone)}
+                  helperText={touched.homePhone && errors.homePhone}
+                  label="Home Phone Number"
+                  margin="normal"
+                  name="homePhone"
+                  onBlur={handleBlur}
+                  onChange={handleChange}
+                  value={values.homePhone}
                   variant="outlined"
                   className="halfWidth"
                 />
