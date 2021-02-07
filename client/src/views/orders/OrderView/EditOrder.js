@@ -2,7 +2,9 @@ import React, {useState} from 'react';
 import {
   Box,
   Button,
-  Divider
+  Checkbox,
+  Divider,
+  Typography
 } from '@material-ui/core';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import Tabs from 'src/components/Tabs';
@@ -12,7 +14,7 @@ import PaymentSelection from './PaymentSelection';
 import ConfirmationSelection from './edit/EditConfirmationSelection';
 
 import AppDialog from 'src/components/AppDialog';
-import {editOrder, insertUpdatedOrderDetails, resetOrder} from 'src/functions';
+import {editOrder, insertUpdatedOrderDetails, resetOrder, sendEmail} from 'src/functions';
 
 const EditOrder = ({ className, title, subtitle, updateCallback, cancel, products, currentUser, selectedForm, order, ...rest }) => {
   let defaultProductDetails = {};
@@ -56,13 +58,16 @@ const EditOrder = ({ className, title, subtitle, updateCallback, cancel, product
     signature_consumer_name: selectedForm.signature_consumer_name,
     signature_merchant_name: selectedForm.signature_merchant_name,
     signature_address: selectedForm.signature_address,
-    signature_date: selectedForm.signature_date
+    signature_date: selectedForm.signature_date,
+    sendEmail: false
   });
 
   const customerDetails = {
     name: selectedForm.name,
     nff: selectedForm.nff,
-    form_id: selectedForm.formid
+    form_id: selectedForm.formid,
+    email: selectedForm.userEmail,
+    phoneNumber: selectedForm.phoneNumber
   };
 
   const [tabValue, setTabValue] = useState(0);
@@ -173,6 +178,16 @@ const EditOrder = ({ className, title, subtitle, updateCallback, cancel, product
             console.log(response);
           });
         });
+        confirmationDetails.sendEmail && sendEmail({
+          id: 3,
+          nff: entries.nff,
+          formid: entries.form_id,
+          name: entries.name,
+          email: entries.email,
+          phoneNumber: entries.phoneNumber,
+          repName: currentUser.name,
+          repEmail: currentUser.email
+        });
         alert('Successfully updated order!');
         updateCallback();
         cancel();
@@ -223,6 +238,28 @@ const EditOrder = ({ className, title, subtitle, updateCallback, cancel, product
                 RESET ORDER
               </Button>
             }
+              {showSubmit && 
+              <>
+                <Checkbox
+                    checked={confirmationDetails.sendEmail}
+                    name="sendEmail"
+                    onChange={(e) => {
+                        const newDetails = {
+                            ...confirmationDetails,
+                            sendEmail: e.currentTarget.checked
+                        };
+                        setConfirmationDetails(newDetails);
+                    }}
+                />
+                <Typography
+                    color="textSecondary"
+                    variant="body1"
+                    style={{lineHeight: '4', marginRight: '20px'}}
+                >
+                    Send email confirmation
+                </Typography>
+              </>
+              }
               {showPrevious && <Button
                   variant="contained"
                   onClick={()=>{setTabValue(tabValue-1)}}

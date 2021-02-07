@@ -1,5 +1,4 @@
 import React, {useState} from 'react';
-import clsx from 'clsx';
 import {
   Box,
   Button,
@@ -14,7 +13,7 @@ import PaymentSelection from './PaymentSelection';
 import TermsSelection from './TermsSelection';
 import ConfirmationSelection from './ConfirmationSelection';
 
-import {createOrder, insertOrderDetails} from 'src/functions'
+import {createOrder, insertOrderDetails, sendEmail} from 'src/functions'
 
 const CreateOrder = ({ className, title, subtitle, updateCallback, cancel, products, customers, currentUser, ...rest }) => {
   const [customerDetails, setCustomerDetails] = useState({});
@@ -119,6 +118,7 @@ const CreateOrder = ({ className, title, subtitle, updateCallback, cancel, produ
       signature_date: getDateString(new Date()),
       representative_id: currentUser.id
     };
+    entries.notice = entries.notice || '';
 
     createOrder(entries)
     .then((entry) => {
@@ -133,6 +133,16 @@ const CreateOrder = ({ className, title, subtitle, updateCallback, cancel, produ
           }).then((response) => {
             console.log(response);
           });
+        });
+        sendEmail({
+          id: 1,
+          formid: entry.data.insertId,
+          name: entries.name,
+          email: entries.email,
+          phoneNumber: entries.phoneNumber,
+          nff: entries.nff,
+          repName: currentUser.name,
+          repEmail: currentUser.email
         });
         alert('Successfully created order!');
         updateCallback();

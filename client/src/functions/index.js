@@ -191,6 +191,18 @@ const resetOrder = (entries) => {
   });
 }
 
+const sendEmail = (entries) => {
+  entries = {
+    ...entries,
+    hostname: location.hostname
+  };
+  return Axios.post("/email/" + entries.id, entries).then((response) => {
+    console.log(response);
+    entries.callback && entries.callback();
+    return response;
+  });
+}
+
 export {
   signin,
   register,
@@ -215,5 +227,6 @@ export {
   editOrder,
   insertUpdatedOrderDetails,
   setSalesRep,
-  resetOrder
+  resetOrder,
+  sendEmail
 };

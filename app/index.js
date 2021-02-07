@@ -73,6 +73,10 @@ const {
   categoryById
 } = require('./api/products');
 
+const {
+  sendEmail
+} = require('./api/email');
+
 app.use(express.json());
 app.use(
   cors({
@@ -196,7 +200,8 @@ app.delete("/category/delete/:id", deleteCategory);
 
 app.get("/packaging/product/:id", packagingByProductId);
 
-
 app.get("/statistics", getStatistics);
+
+app.post("/email/:id", sendEmail);
 
 module.exports = app;

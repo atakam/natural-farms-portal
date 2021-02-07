@@ -12,7 +12,7 @@ import PaymentSelection from './PaymentSelection';
 import ConfirmationSelection from './edit/EditConfirmationSelection';
 import TermsSelection from './TermsSelection';
 
-import {editOrder, insertUpdatedOrderDetails} from 'src/functions';
+import {editOrder, insertUpdatedOrderDetails, sendEmail} from 'src/functions';
 
 const EditOrder = ({ className, title, subtitle, updateCallback, cancel, products, currentUser, selectedForm, order, ...rest }) => {
   
@@ -187,6 +187,17 @@ const EditOrder = ({ className, title, subtitle, updateCallback, cancel, product
           }).then((response) => {
             console.log(response);
           });
+        });
+        sendEmail({
+          id: 3,
+          nff: currentUser.nff,
+          formid: entries.form_id,
+          name: currentUser.firstName + ' ' + currentUser.lastName,
+          email: currentUser.email,
+          phoneNumber: currentUser.phoneNumber,
+          repName: 'Administrator',
+          repEmail: 'austin.takam@sihone.com',
+          isCustomer: true
         });
         alert('Successfully updated order!');
         updateCallback();

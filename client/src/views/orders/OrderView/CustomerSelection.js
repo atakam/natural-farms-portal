@@ -78,12 +78,14 @@ const CustomerSelection = ({ className, customerDetails, setCustomerDetails, res
                                             nff: item.nff,
                                             customer_id: item.id,
                                             name: item.firstName + ' ' + item.lastName,
-                                            signature_address: item.city + ', ' + item.province
+                                            signature_address: item.city + ', ' + item.province,
+                                            email: item.email,
+                                            phoneNumber: item.phoneNumber
                                         }
                                         setDetails(newDetails);
                                         setCustomerDetails(newDetails);
                                     }}
-                                    disabled={details.id === item.id}
+                                    disabled={details.customer_id === item.id}
                                 >
                                     Select
                                 </Button>

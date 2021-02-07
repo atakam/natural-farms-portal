@@ -1,5 +1,4 @@
 import React, {useState} from 'react';
-import clsx from 'clsx';
 import {
   Box,
   Button,
@@ -12,7 +11,7 @@ import DeliveryDateSelection from './DeliveryDateSelection';
 import TermsSelection from './TermsSelection';
 import ConfirmationSelection from './ConfirmationSelection';
 
-import {createOrder, insertOrderDetails} from 'src/functions'
+import {createOrder, insertOrderDetails, sendEmail} from 'src/functions'
 
 const CreateOrderCustomer = ({ className, title, subtitle, updateCallback, cancel, products, currentUser, ...rest }) => {
   const [productDetails, setProductDetails] = useState({});
@@ -92,6 +91,7 @@ const CreateOrderCustomer = ({ className, title, subtitle, updateCallback, cance
       representative_id: currentUser.id,
       price: 0, rebate: 0, deposit: 0, total: 0
     };
+    entries.notice = entries.notice || '';
 
     createOrder(entries)
     .then((entry) => {
@@ -106,6 +106,17 @@ const CreateOrderCustomer = ({ className, title, subtitle, updateCallback, cance
           }).then((response) => {
             console.log(response);
           });
+        });
+        sendEmail({
+          id: 1,
+          nff: currentUser.nff,
+          formid: entry.data.insertId,
+          name: currentUser.firstName + ' ' + currentUser.lastName,
+          email: currentUser.email,
+          phoneNumber: currentUser.phoneNumber,
+          repName: 'Administrator',
+          repEmail: 'austin.takam@sihone.com',
+          isCustomer: true
         });
         alert('Successfully created order!');
         updateCallback();
