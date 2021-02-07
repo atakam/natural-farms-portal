@@ -46,7 +46,8 @@ const createOrder = (req, res) => {
       total,
       total_points,
       customer_id,
-      representative_id
+      representative_id,
+      notice
     } = req.body;
 
     const newOrders = {
@@ -69,7 +70,8 @@ const createOrder = (req, res) => {
       edited_price: -1,
       edited_rebate: -1,
       edited_deposit: -1,
-      edited_total: -1
+      edited_total: -1,
+      notice
     };
 
     const db = ndb();
@@ -356,7 +358,8 @@ const updateOrderFormById = (req, res) => {
     edited_deposit,
     edited_price,
     edited_rebate,
-    edited_points
+    edited_points,
+    notice
   } = req.body;
 
   let order = {
@@ -376,7 +379,8 @@ const updateOrderFormById = (req, res) => {
     edited_deposit,
     edited_price,
     edited_rebate,
-    edited_points
+    edited_points,
+    notice
   };
 
   console.log({order})

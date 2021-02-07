@@ -283,6 +283,37 @@ const PaymentSelection = ({ className, productDetails, paymentDetails, setPaymen
                     style={{width: '33%'}}
                     disabled={isCustomer}
                 />
+
+                <Divider style={{margin: '20px 0'}} />
+                <Typography
+                        color="textSecondary"
+                        variant="h4"
+                        style={{
+                            paddingRight: '30px'
+                        }}
+                    >
+                        {'Additional Information'}
+                </Typography>
+                {!isCustomer &&
+                <TextField
+                    label="Notes"
+                    margin="normal"
+                    name="notice"
+                    onChange={(e) => {
+                        const value = e.currentTarget.value;
+                        let newDetails = {
+                            ...details,
+                            notice: value
+                        };
+                        setDetails(newDetails);
+                        setPaymentDetails(newDetails);
+                    }}
+                    value={details.notice || ''}
+                    variant="outlined"
+                    fullWidth
+                    multiline
+                    rowsMax={8}
+                />}
             </Box>
         </PerfectScrollbar>
   );
