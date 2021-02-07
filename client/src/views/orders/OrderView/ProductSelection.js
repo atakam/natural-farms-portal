@@ -78,111 +78,116 @@ const ProductSelection = ({ className, productDetails, setProductDetails, result
                         </TableRow>
                         </TableHead>
                         <TableBody>
-                        {result.map((product, idx) => (
-                            <TableRow
-                            hover
-                            key={idx}
-                            >
-                            <TableCell>
-                                {product.name_en + ' / ' + product.name_fr}
-                            </TableCell>
-                            <TableCell style={{textAlign: 'center'}}>
-                                {product.code}
-                            </TableCell>
-                            <TableCell style={{textAlign: 'center'}}>
-                                {product.point}
-                            </TableCell>
-                            <TableCell>
-                                {product.type + ' / ' + product.quantity}
-                            </TableCell>
-                            <TableCell>
-                                <TextField
-                                    margin="normal"
-                                    name={'quantity_' + product.product_details_id + '_1'}
-                                    onChange={(e) => {
-                                        updatePoints(product.product_details_id, product.point);
-                                        const q1 = Number(e.target.value);
-                                        const q2 = (details[product.product_details_id] && details[product.product_details_id][2]) || 0;
-                                        const q3 = (details[product.product_details_id] && details[product.product_details_id][3]) || 0;
-                                        const rowPoint = (Number(q1) + Number(q2) + Number(q3)) * product.point;
-                                        const newDetails = {
-                                            ...details,
-                                            [product.product_details_id]: {
-                                                1: q1,
-                                                2: q2,
-                                                3: q3,
-                                                points: rowPoint
+                        {result.map((product, idx) => {
+                            if (product.active === 0) {
+                                return <></>;
+                            }
+                            return (
+                                <TableRow
+                                hover
+                                key={idx}
+                                >
+                                <TableCell>
+                                    {product.name_en + ' / ' + product.name_fr}
+                                </TableCell>
+                                <TableCell style={{textAlign: 'center'}}>
+                                    {product.code}
+                                </TableCell>
+                                <TableCell style={{textAlign: 'center'}}>
+                                    {product.point}
+                                </TableCell>
+                                <TableCell>
+                                    {product.type + ' / ' + product.quantity}
+                                </TableCell>
+                                <TableCell>
+                                    <TextField
+                                        margin="normal"
+                                        name={'quantity_' + product.product_details_id + '_1'}
+                                        onChange={(e) => {
+                                            updatePoints(product.product_details_id, product.point);
+                                            const q1 = Number(e.target.value);
+                                            const q2 = (details[product.product_details_id] && details[product.product_details_id][2]) || 0;
+                                            const q3 = (details[product.product_details_id] && details[product.product_details_id][3]) || 0;
+                                            const rowPoint = (Number(q1) + Number(q2) + Number(q3)) * product.point;
+                                            const newDetails = {
+                                                ...details,
+                                                [product.product_details_id]: {
+                                                    1: q1,
+                                                    2: q2,
+                                                    3: q3,
+                                                    points: rowPoint
+                                                }
+                                            };
+                                            setDetails(newDetails);
+                                            setProductDetails(newDetails);
+                                        }}
+                                        type="number"
+                                        value={(details[product.product_details_id] && details[product.product_details_id][1]) || 0}
+                                        variant="outlined"
+                                        InputProps={{ inputProps: { min: 0, style: {width: '50px'} } }} />
+                                </TableCell>
+                                <TableCell>
+                                    <TextField
+                                        margin="normal"
+                                        name={'quantity_' + product.product_details_id + '_2'}
+                                        onChange={(e) => {
+                                            updatePoints(product.product_details_id, product.point);
+                                            const q1 = (details[product.product_details_id] && details[product.product_details_id][1]) || 0;
+                                            const q2 = Number(e.target.value);
+                                            const q3 = (details[product.product_details_id] && details[product.product_details_id][3]) || 0;
+                                            const rowPoint = (Number(q1) + Number(q2) + Number(q3)) * product.point;
+                                            const newDetails = {
+                                                ...details,
+                                                [product.product_details_id]: {
+                                                    1: q1,
+                                                    2: q2,
+                                                    3: q3,
+                                                    points: rowPoint
+                                                }
                                             }
-                                        };
-                                        setDetails(newDetails);
-                                        setProductDetails(newDetails);
-                                    }}
-                                    type="number"
-                                    value={(details[product.product_details_id] && details[product.product_details_id][1]) || 0}
-                                    variant="outlined"
-                                    InputProps={{ inputProps: { min: 0, style: {width: '50px'} } }} />
-                            </TableCell>
-                            <TableCell>
-                                <TextField
-                                    margin="normal"
-                                    name={'quantity_' + product.product_details_id + '_2'}
-                                    onChange={(e) => {
-                                        updatePoints(product.product_details_id, product.point);
-                                        const q1 = (details[product.product_details_id] && details[product.product_details_id][1]) || 0;
-                                        const q2 = Number(e.target.value);
-                                        const q3 = (details[product.product_details_id] && details[product.product_details_id][3]) || 0;
-                                        const rowPoint = (Number(q1) + Number(q2) + Number(q3)) * product.point;
-                                        const newDetails = {
-                                            ...details,
-                                            [product.product_details_id]: {
-                                                1: q1,
-                                                2: q2,
-                                                3: q3,
-                                                points: rowPoint
-                                            }
-                                        }
-                                        setDetails(newDetails);
-                                        setProductDetails(newDetails);
-                                    }}
-                                    type="number"
-                                    value={(details[product.product_details_id] && details[product.product_details_id][2]) || 0}
-                                    variant="outlined"
-                                    InputProps={{ inputProps: { min: 0, style: {width: '50px'} } }}
+                                            setDetails(newDetails);
+                                            setProductDetails(newDetails);
+                                        }}
+                                        type="number"
+                                        value={(details[product.product_details_id] && details[product.product_details_id][2]) || 0}
+                                        variant="outlined"
+                                        InputProps={{ inputProps: { min: 0, style: {width: '50px'} } }}
+                                        />
+                                </TableCell>
+                                <TableCell>
+                                    <TextField
+                                        margin="normal"
+                                        name={'quantity_' + product.product_details_id + '_3'}
+                                        onChange={(e) => {
+                                            updatePoints(product.product_details_id, product.point);
+                                            const q1 = (details[product.product_details_id] && details[product.product_details_id][1]) || 0;
+                                            const q2 = (details[product.product_details_id] && details[product.product_details_id][2]) || 0;
+                                            const q3 = Number(e.target.value);
+                                            const rowPoint = (Number(q1) + Number(q2) + Number(q3)) * product.point;
+                                            const newDetails = {
+                                                ...details,
+                                                [product.product_details_id]: {
+                                                    1: q1,
+                                                    2: q2,
+                                                    3: q3,
+                                                    points: rowPoint
+                                                }
+                                            };
+                                            setDetails(newDetails);
+                                            setProductDetails(newDetails);
+                                        }}
+                                        type="number"
+                                        value={(details[product.product_details_id] && details[product.product_details_id][3]) || 0}
+                                        variant="outlined"
+                                        InputProps={{ inputProps: { min: 0, style: {width: '50px'} } }}
                                     />
-                            </TableCell>
-                            <TableCell>
-                                <TextField
-                                    margin="normal"
-                                    name={'quantity_' + product.product_details_id + '_3'}
-                                    onChange={(e) => {
-                                        updatePoints(product.product_details_id, product.point);
-                                        const q1 = (details[product.product_details_id] && details[product.product_details_id][1]) || 0;
-                                        const q2 = (details[product.product_details_id] && details[product.product_details_id][2]) || 0;
-                                        const q3 = Number(e.target.value);
-                                        const rowPoint = (Number(q1) + Number(q2) + Number(q3)) * product.point;
-                                        const newDetails = {
-                                            ...details,
-                                            [product.product_details_id]: {
-                                                1: q1,
-                                                2: q2,
-                                                3: q3,
-                                                points: rowPoint
-                                            }
-                                        };
-                                        setDetails(newDetails);
-                                        setProductDetails(newDetails);
-                                    }}
-                                    type="number"
-                                    value={(details[product.product_details_id] && details[product.product_details_id][3]) || 0}
-                                    variant="outlined"
-                                    InputProps={{ inputProps: { min: 0, style: {width: '50px'} } }}
-                                />
-                            </TableCell>
-                            <TableCell>
-                                {(details[product.product_details_id] && details[product.product_details_id].points) || 0}
-                            </TableCell>
-                            </TableRow>
-                        ))}
+                                </TableCell>
+                                <TableCell>
+                                    {(details[product.product_details_id] && details[product.product_details_id].points) || 0}
+                                </TableCell>
+                                </TableRow>
+                            )
+                        })}
                         </TableBody>
                     </Table>
         }

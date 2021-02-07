@@ -164,18 +164,12 @@ const Results = ({ className, results, updates, user, callback, calendarView, ..
     setContractDialogOpen(true);
   };
 
-  const openInNewTab = (url) => {
-    var win = window.open(url, '_blank');
-    win.focus();
-  }
-
   const handleEditContract = () => {
     setAnchorEl(null);
     setOpenEditOrder(true);
   };
   const resendEmail = () => {
     setAnchorEl(null);
-    openInNewTab(`https://www.portal.naturalfarms.ca/order/print.php?id=${objectProp.formid}&email=${objectProp.email}&phone=${objectProp.phoneNumber}&lang=fr&password=(your%20password)&name=${objectProp.name}`);
   };
   const deleteOrder = () => {
     setAnchorEl(null);
