@@ -158,9 +158,12 @@ const createOrder = (entries) => {
 }
 
 const insertOrderDetails = (entries) => {
-  return Axios.post("/orders_details/create", entries).then((response) => {
-    console.log(response);
-    return response;
+  return Axios.delete("/orders_details/original/delete/" + entries.form_id).then((response) => {
+    console.log({deleted: response});
+    return Axios.post("/orders_details/create", entries).then((response2) => {
+      console.log(response2);
+      return response2;
+    });
   });
 }
 

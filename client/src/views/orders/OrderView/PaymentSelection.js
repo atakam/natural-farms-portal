@@ -80,7 +80,7 @@ const PaymentSelection = ({ className, productDetails, paymentDetails, setPaymen
                     label="Total Points"
                     margin="normal"
                     name="name"
-                    value={total_points}
+                    value={isEditAllowed ? total_points : details.total_points}
                     variant="outlined"
                     style={{width: '33%', paddingRight: '10px'}}
                     disabled

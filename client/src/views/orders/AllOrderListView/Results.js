@@ -492,7 +492,8 @@ const Results = ({ className, results, updates, user, callback, calendarView, ..
                           nff: customer.nff,
                           id: customer.uid,
                           isEdited: edited(customer) !== '-',
-                          isEditAllowed: customer.signature_consumer_name !== '' && customer.signature_merchant_name !== ''
+                          isEditAllowed: true,
+                          isFirstEdit: customer.signature_consumer_name === '' || customer.signature_merchant_name === ''
                         })}
                         color="primary"
                       >

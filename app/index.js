@@ -32,6 +32,7 @@ const {
   updateOrderFormById,
   createOrderDetails,
   deleteUpdatedOrderDetails,
+  deleteOriginalOrderDetails,
   updateOrderDetails,
   getOrderDetailsByFormId,
   getUpdateDetailsByFormId,
@@ -128,6 +129,8 @@ app.get("/orders/updated/:formid", updatedOrders);
 app.get("/orderscheck/updated", getUpdates);
 
 app.delete("/orders/delete/:formid", deleteForm);
+
+app.delete("/orders_details/original/delete/:formid", deleteOriginalOrderDetails);
 
 app.delete("/orders_details/update/delete/:formid", deleteUpdatedOrderDetails);
 

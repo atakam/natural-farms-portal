@@ -152,6 +152,22 @@ const deleteUpdatedOrderDetails = (req, res) => {
     db.end();
 }
 
+const deleteOriginalOrderDetails = (req, res) => {
+  const formid = req.params.formid;
+  const db = ndb();
+  db.query(
+    "DELETE FROM orders WHERE form_id = ?",
+    formid,
+    (err, result) => {
+      if (err) {
+        res.send({ err: err });
+      }
+      res.send(result)
+    }
+  );
+  db.end();
+}
+
 const updateOrderDetails = (req, res) => {
   const {
     form_id,
@@ -596,6 +612,7 @@ module.exports = {
     createOrderDetails,
     updateOrderFormById,
     deleteUpdatedOrderDetails,
+    deleteOriginalOrderDetails,
     updateOrderDetails,
     getOrderDetailsByFormId,
     getUpdateDetailsByFormId,

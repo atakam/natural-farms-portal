@@ -8,13 +8,14 @@ import {
 } from '@material-ui/core';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import Tabs from 'src/components/Tabs';
-import ProductSelection from './edit/EditProductSelection';
+import ProductSelection from './ProductSelection';
+import EditProductSelection from './edit/EditProductSelection';
 import DeliveryDateSelection from './DeliveryDateSelection';
 import PaymentSelection from './PaymentSelection';
 import ConfirmationSelection from './edit/EditConfirmationSelection';
 
 import AppDialog from 'src/components/AppDialog';
-import {editOrder, insertUpdatedOrderDetails, resetOrder, sendEmail} from 'src/functions';
+import {editOrder, insertOrderDetails, insertUpdatedOrderDetails, resetOrder, sendEmail} from 'src/functions';
 
 const EditOrder = ({ className, title, subtitle, updateCallback, cancel, products, currentUser, selectedForm, order, ...rest }) => {
   let defaultProductDetails = {};
@@ -86,13 +87,22 @@ const EditOrder = ({ className, title, subtitle, updateCallback, cancel, product
   const tabs = [
       {
         label: 'SELECT PRODUCTS',
-        content: <ProductSelection
+        content: (selectedForm.isFirstEdit ?
+                  <ProductSelection
+                      results={products}
+                      productDetails={productDetails}
+                      setProductDetails={setProductDetails}
+                      selectedForm={selectedForm}
+                      paymentDetails={paymentDetails}
+                  /> :
+                  <EditProductSelection
                       results={products}
                       productDetails={productDetails}
                       setProductDetails={setProductDetails}
                       selectedForm={selectedForm}
                       paymentDetails={paymentDetails}
                   />
+                )
       },
       {
         label: 'DELIVERY DATES',
@@ -107,7 +117,7 @@ const EditOrder = ({ className, title, subtitle, updateCallback, cancel, product
                     productDetails={productDetails}
                     paymentDetails={paymentDetails}
                     setPaymentDetails={setPaymentDetails}
-                    isEditAllowed={selectedForm.isEditAllowed}
+                    isEditAllowed={!selectedForm.isFirstEdit}
                 />
       },
       {
@@ -125,10 +135,8 @@ const EditOrder = ({ className, title, subtitle, updateCallback, cancel, product
       }
   ];
 
-  if (!selectedForm.isEditAllowed) {
-    tabs.splice(0, 1);
-  } else {
-    tabs.splice(tabs.length - 1, 1);
+  if (!selectedForm.isFirstEdit) {
+    tabs.splice(tabs.length - 1, 1)
   }
 
   const showPrevious = tabValue > 0;
@@ -146,10 +154,10 @@ const EditOrder = ({ className, title, subtitle, updateCallback, cancel, product
   }
 
   const submit = () => {
-    const edited_points = selectedForm.isEditAllowed ? {
+    const edited_points = !selectedForm.isFirstEdit ? {
       edited_points: getTotalPoints()
     } : {};
-    const confirmAndComplete = !selectedForm.isEditAllowed ? {
+    const confirmAndComplete = selectedForm.isFirstEdit ? {
       confirm: 1,
       status: 1
     } : {
@@ -168,15 +176,27 @@ const EditOrder = ({ className, title, subtitle, updateCallback, cancel, product
     .then((entry) => {
       if (entry.data.affectedRows && entry.data.affectedRows > 0) {
         Object.keys(productDetails).forEach((key) => {
-          insertUpdatedOrderDetails({
-            form_id: entries.form_id,
-            product_details_id: key,
-            quantity1: productDetails[key][1],
-            quantity2: productDetails[key][2],
-            quantity3: productDetails[key][3]
-          }).then((response) => {
-            console.log(response);
-          });
+          if (selectedForm.isFirstEdit) {
+            insertOrderDetails({
+              form_id: entries.form_id,
+              product_details_id: key,
+              quantity1: productDetails[key][1],
+              quantity2: productDetails[key][2],
+              quantity3: productDetails[key][3]
+            }).then((response) => {
+              console.log(response);
+            });
+          } else {
+            insertUpdatedOrderDetails({
+              form_id: entries.form_id,
+              product_details_id: key,
+              quantity1: productDetails[key][1],
+              quantity2: productDetails[key][2],
+              quantity3: productDetails[key][3]
+            }).then((response) => {
+              console.log(response);
+            });
+          }
         });
         confirmationDetails.sendEmail && sendEmail({
           id: 3,
