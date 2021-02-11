@@ -198,7 +198,7 @@ const EditOrder = ({ className, title, subtitle, updateCallback, cancel, product
             });
           }
         });
-        confirmationDetails.sendEmail && sendEmail({
+        Boolean(confirmationDetails.sendEmail) && sendEmail({
           id: 3,
           nff: entries.nff,
           formid: entries.form_id,

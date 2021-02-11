@@ -169,8 +169,8 @@ const Results = ({ className, results, userid, callback, isCustomer, emailProps,
                         deliveryDate,
                         shouldSendEmail
                     },
-                    formid: results[0].form_id});
-                callback();
+                    formid: results[0].form_id})
+                .then(() => callback());
                 console.log(values);
             }}
           >

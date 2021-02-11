@@ -188,7 +188,7 @@ const EditOrder = ({ className, title, subtitle, updateCallback, cancel, product
             console.log(response);
           });
         });
-        sendEmail({
+        selectedForm.isEditAllowed && sendEmail({
           id: 3,
           nff: currentUser.nff,
           formid: entries.form_id,
