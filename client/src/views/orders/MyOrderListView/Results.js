@@ -36,7 +36,7 @@ const useStyles = makeStyles((theme) => ({
 
 const Results = ({ className, results, updates, callback, user, ...rest }) => {
   const classes = useStyles();
-  const [selectedCustomerIds, setSelectedCustomerIds] = useState([]);
+  //const [selectedCustomerIds, setSelectedCustomerIds] = useState([]);
   const [limit, setLimit] = useState(10);
   const [page, setPage] = useState(0);
   const [openEditOrder, setOpenEditOrder] = React.useState(false);
@@ -46,37 +46,37 @@ const Results = ({ className, results, updates, callback, user, ...rest }) => {
   const [pdfView, setPdfView] = useState(false);
   const [pdfFormId, setPdfFormId] = useState(null);
 
-  const handleSelectAll = (event) => {
-    let newSelectedCustomerIds;
+  // const handleSelectAll = (event) => {
+  //   let newSelectedCustomerIds;
 
-    if (event.target.checked) {
-      newSelectedCustomerIds = results.map((customer) => customer.formid);
-    } else {
-      newSelectedCustomerIds = [];
-    }
+  //   if (event.target.checked) {
+  //     newSelectedCustomerIds = results.map((customer) => customer.formid);
+  //   } else {
+  //     newSelectedCustomerIds = [];
+  //   }
 
-    setSelectedCustomerIds(newSelectedCustomerIds);
-  };
+  //   setSelectedCustomerIds(newSelectedCustomerIds);
+  // };
 
-  const handleSelectOne = (event, id) => {
-    const selectedIndex = selectedCustomerIds.indexOf(id);
-    let newSelectedCustomerIds = [];
+  // const handleSelectOne = (event, id) => {
+  //   const selectedIndex = selectedCustomerIds.indexOf(id);
+  //   let newSelectedCustomerIds = [];
 
-    if (selectedIndex === -1) {
-      newSelectedCustomerIds = newSelectedCustomerIds.concat(selectedCustomerIds, id);
-    } else if (selectedIndex === 0) {
-      newSelectedCustomerIds = newSelectedCustomerIds.concat(selectedCustomerIds.slice(1));
-    } else if (selectedIndex === selectedCustomerIds.length - 1) {
-      newSelectedCustomerIds = newSelectedCustomerIds.concat(selectedCustomerIds.slice(0, -1));
-    } else if (selectedIndex > 0) {
-      newSelectedCustomerIds = newSelectedCustomerIds.concat(
-        selectedCustomerIds.slice(0, selectedIndex),
-        selectedCustomerIds.slice(selectedIndex + 1)
-      );
-    }
+  //   if (selectedIndex === -1) {
+  //     newSelectedCustomerIds = newSelectedCustomerIds.concat(selectedCustomerIds, id);
+  //   } else if (selectedIndex === 0) {
+  //     newSelectedCustomerIds = newSelectedCustomerIds.concat(selectedCustomerIds.slice(1));
+  //   } else if (selectedIndex === selectedCustomerIds.length - 1) {
+  //     newSelectedCustomerIds = newSelectedCustomerIds.concat(selectedCustomerIds.slice(0, -1));
+  //   } else if (selectedIndex > 0) {
+  //     newSelectedCustomerIds = newSelectedCustomerIds.concat(
+  //       selectedCustomerIds.slice(0, selectedIndex),
+  //       selectedCustomerIds.slice(selectedIndex + 1)
+  //     );
+  //   }
 
-    setSelectedCustomerIds(newSelectedCustomerIds);
-  };
+  //   setSelectedCustomerIds(newSelectedCustomerIds);
+  // };
 
   const handleLimitChange = (event) => {
     setLimit(event.target.value);
@@ -171,7 +171,7 @@ const Results = ({ className, results, updates, callback, user, ...rest }) => {
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell padding="checkbox">
+                {/* <TableCell padding="checkbox">
                   <Checkbox
                     checked={selectedCustomerIds.length > 0 && selectedCustomerIds.length === results.length}
                     color="primary"
@@ -181,7 +181,7 @@ const Results = ({ className, results, updates, callback, user, ...rest }) => {
                     }
                     onChange={handleSelectAll}
                   />
-                </TableCell>
+                </TableCell> */}
                 <TableCell>
                   Order Date
                 </TableCell>
@@ -210,15 +210,15 @@ const Results = ({ className, results, updates, callback, user, ...rest }) => {
                 <TableRow
                   hover
                   key={customer.formid}
-                  selected={selectedCustomerIds.indexOf(customer.formid) !== -1}
+                  //selected={selectedCustomerIds.indexOf(customer.formid) !== -1}
                 >
-                  <TableCell padding="checkbox">
+                  {/* <TableCell padding="checkbox">
                     <Checkbox
                       checked={selectedCustomerIds.indexOf(customer.formid) !== -1}
                       onChange={(event) => handleSelectOne(event, customer.formid)}
                       value="true"
                     />
-                  </TableCell>
+                  </TableCell> */}
                   <TableCell>
                     <Box
                       alignItems="center"
