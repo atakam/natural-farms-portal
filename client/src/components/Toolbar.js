@@ -66,20 +66,20 @@ const Toolbar = ({ className, performSearch, buttonProps, calendarButtonProps, c
   ));
 
   const button = buttonProps ? (
-      <Box
-        display="flex"
-        justifyContent="flex-end"
+    <Box
+      display="flex"
+      justifyContent="flex-end"
+    >
+      <Button
+        color="primary"
+        variant="contained"
+        onClick={buttonProps.action}
+        startIcon={<AddIcon />}
       >
-        <Button
-          color="primary"
-          variant="contained"
-          onClick={buttonProps.action}
-          startIcon={<AddIcon />}
-        >
-          {buttonProps.label}
-        </Button>
-      </Box>
-    ) : '';
+        {buttonProps.label}
+      </Button>
+    </Box>
+  ) : '';
 
   return (
     <div
@@ -92,7 +92,7 @@ const Toolbar = ({ className, performSearch, buttonProps, calendarButtonProps, c
         p={2}
       >
         {calendarButton}
-        <span style={{padding: '0 10px'}} />
+        <span style={{ padding: '0 10px' }} />
         {button}
       </Box>
       <Box mt={3}>

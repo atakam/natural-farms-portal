@@ -62,8 +62,8 @@ const CustomerListView = (props) => {
     const body2 = await updated.text();
     let update = JSON.parse(body2);
     update = update.map(a => a.form_id);
-    update = update.filter(function(item, pos) {
-        return update.indexOf(item) == pos;
+    update = update.filter(function (item, pos) {
+      return update.indexOf(item) == pos;
     })
     console.log("updates", update);
     setUpdates(update);
@@ -92,7 +92,7 @@ const CustomerListView = (props) => {
     if (customer.signature_consumer_name === '') {
       return 'Customer Signature';
     } else if (customer.signature_merchant_name === '') {
-      return'Sales Signature';
+      return 'Sales Signature';
     } else if (customer.deliver3 === 1) return 'Expired';
     else if (customer.confirm3 === 1) return 'Confirm (3)';
     else if (customer.deliver2 === 1) return 'Not Confirm (3)';
@@ -128,6 +128,7 @@ const CustomerListView = (props) => {
     const newResults = results.filter((el) => {
       if (String(el.nff).toUpperCase().indexOf(filter) > -1
         || (String(el.firstName) + ' ' + String(el.lastName)).toUpperCase().indexOf(filter) > -1
+        || String(el.phoneNumber).toUpperCase().indexOf(filter) > -1
         || String(el.signature_date).toUpperCase().indexOf(filter) > -1
         || String(el.price).toUpperCase().indexOf(filter) > -1
         || String(el.total_points).toUpperCase().indexOf(filter) > -1
@@ -189,12 +190,12 @@ const CustomerListView = (props) => {
     }
   ];
 
-  filters = 
-  filters.map((option) => (
-        <MenuItem key={option.value} value={option.value} onClick={option.action}>
-          {option.label}
-        </MenuItem>
-      ));
+  filters =
+    filters.map((option) => (
+      <MenuItem key={option.value} value={option.value} onClick={option.action}>
+        {option.label}
+      </MenuItem>
+    ));
 
   return (
     <Page
@@ -203,32 +204,32 @@ const CustomerListView = (props) => {
     >
       <OrderView open={openNewOrder} close={handleClose} getOrders={getOrders} user={context.credentials.user} updates={updates} />
       <Container maxWidth={false}>
-      <Toolbar
-        performSearch={performSearch}
-        buttonProps={{ label: 'NEW ORDER', action: newOrder }}
-        calendarView={calendarView}
-        calendarButtonProps={{
-          calendarLabel: 'CALENDAR VIEW',
-          calendarAction: () => setCalendarView(true),
-          listLabel: 'LIST VIEW',
-          listAction: () => setCalendarView(false)
-        }}
-        rightComponent={
-          <TextField
-            label="Filter"
-            margin="normal"
-            onChange={handleFilter}
-            value={filterValue}
-            variant="outlined"
-            style={{float: 'right'}}
-            select
-          >
-            { filters }
-          </TextField>
-        }
-      />
+        <Toolbar
+          performSearch={performSearch}
+          buttonProps={{ label: 'NEW ORDER', action: newOrder }}
+          calendarView={calendarView}
+          calendarButtonProps={{
+            calendarLabel: 'CALENDAR VIEW',
+            calendarAction: () => setCalendarView(true),
+            listLabel: 'LIST VIEW',
+            listAction: () => setCalendarView(false)
+          }}
+          rightComponent={
+            <TextField
+              label="Filter"
+              margin="normal"
+              onChange={handleFilter}
+              value={filterValue}
+              variant="outlined"
+              style={{ float: 'right' }}
+              select
+            >
+              {filters}
+            </TextField>
+          }
+        />
         <Box mt={3}>
-          <Results updates={updates} results={filteredResults} user={context.credentials.user} callback={getOrders} calendarView={calendarView}/>
+          <Results updates={updates} results={filteredResults} user={context.credentials.user} callback={getOrders} calendarView={calendarView} />
         </Box>
       </Container>
     </Page>

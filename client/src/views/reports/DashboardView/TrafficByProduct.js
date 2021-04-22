@@ -45,9 +45,9 @@ const TrafficByDevice = ({ className, modifiedOrders, unModifiedOrders, ...rest 
   groupProducts(modifiedOrders);
   groupProducts(unModifiedOrders);
 
-  products = Object.keys(products).map((key) => products[key]).sort(function(a, b) {
-      return parseInt(b.count) - parseFloat(a.count);
-  }).slice(0,5);
+  products = Object.keys(products).map((key) => products[key]).sort(function (a, b) {
+    return parseInt(b.count) - parseFloat(a.count);
+  }).slice(0, 5);
 
   const dataNumbers = products.map((prod) => prod.count);
   const dataLabels = products.map((prod) => prod.label);
@@ -98,7 +98,7 @@ const TrafficByDevice = ({ className, modifiedOrders, unModifiedOrders, ...rest 
       className={clsx(classes.root, className)}
       {...rest}
     >
-      <CardHeader title="Traffic by Device" />
+      <CardHeader title="Most sold product" />
       <Divider />
       <CardContent>
         <Box
