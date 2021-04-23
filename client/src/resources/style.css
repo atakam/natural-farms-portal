@@ -98,10 +98,14 @@ tr:nth-child(even) {background-color: #f2f2f2;}
     text-align: right !important;
 }
 
-.summaryCategory {
+.summary-category {
     font-size: 18px !important;
     font-weight: 500 !important;
     padding: 15px !important;
+}
+
+.summary-category-row {
+    background-color: #cccccc !important;
 }
 
 td.MuiTableCell-root.MuiTableCell-body {
@@ -118,4 +122,8 @@ td.MuiTableCell-root.MuiTableCell-body {
 
 .summary-top-description > div.align-right {
     text-align: right;
+}
+
+.summary-border {
+    border-right: 1px solid #a9a9a9;
 }

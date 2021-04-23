@@ -73,13 +73,20 @@ const SummaryOrderView = ({
       @page { size: landscape; }
       @media print {
         table {page-break-after: always;}
+        tr:nth-child(even) {
+          background-color: #f2f2f2 !important;
+          -webkit-print-color-adjust: exact;
+        }
+        .summary-category-row {
+          background-color: #cccccc !important;
+          -webkit-print-color-adjust: exact;
+        }
       }
     </style>
     <style>
       body {
         background-color: #fff !important;
       }
-      tr:nth-child(even) {background-color: #f2f2f2 !important;}
     </style>
     `);
     const printAreas = document.getElementsByClassName('printArea');

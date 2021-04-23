@@ -13,7 +13,7 @@ import {
     TableRow,
     makeStyles
 } from '@material-ui/core';
-import { numberWithCommas } from 'src/utils/utils'
+import { numberWithCommas } from 'src/utils/utils';
 
 const useStyles = makeStyles((theme) => ({
     root: {},
@@ -68,7 +68,7 @@ const Results = ({ className, results, userid, callback, date, isSupplier, slotD
                 totalQuantity: 0
             };
 
-            summaries.push(_summary)
+            summaries.push(_summary);
 
             return (
                 <div className={index !== 0 ? 'pagebreak' : ''} key={'i' + index} id={'print' + index} className='printArea'>
@@ -90,21 +90,21 @@ const Results = ({ className, results, userid, callback, date, isSupplier, slotD
                     <Table key={'t' + index} style={{ marginBottom: '50px' }}>
                         <TableHead>
                             <TableRow>
-                                <TableCell>
+                                <TableCell className='summary-border'>
                                     #
                     </TableCell>
-                                <TableCell>
+                                <TableCell className='summary-border'>
                                     Product Name
                     </TableCell>
-                                <TableCell>
+                                <TableCell className='summary-border'>
                                     Packaging
                     </TableCell>
-                                <TableCell>
+                                <TableCell className='summary-border'>
                                     Quantity
                     </TableCell>
                                 {isSupplier ? (
                                     <>
-                                        <TableCell className='text-right'>
+                                        <TableCell className='text-right summary-border'>
                                             Price
                             </TableCell>
                                         <TableCell className='text-right'>
@@ -116,7 +116,7 @@ const Results = ({ className, results, userid, callback, date, isSupplier, slotD
                         </TableHead>
                         <TableBody>
                             {
-                                Object.values(grouped).map((gcustomer) => {
+                                Object.values(grouped).map((gcustomer, ix) => {
                                     return gcustomer.map((product, idx) => {
 
                                         let quantity = product.quantity1;
@@ -141,11 +141,16 @@ const Results = ({ className, results, userid, callback, date, isSupplier, slotD
                                                 {idx === 0 &&
                                                     <TableRow
                                                         hover
-                                                        key={'gr' + idx}
+                                                        key={'gr' + index + '_' + ix + '_' + idx + '_' + product.code}
+                                                        className='summary-category-row'
                                                     >
-                                                        <TableCell colSpan={6} className='summaryCategory'>
+                                                        <TableCell colSpan={2} className='summary-category' className='summary-border'>
                                                             {product.category_name_en.toUpperCase() + ' / ' + product.category_name_fr.toUpperCase()}
                                                         </TableCell>
+                                                        <TableCell className='summary-border' />
+                                                        <TableCell className='summary-border' />
+                                                        <TableCell className='summary-border' />
+                                                        <TableCell className='summary-border' />
                                                     </TableRow>
                                                 }
                                                 {
@@ -154,17 +159,18 @@ const Results = ({ className, results, userid, callback, date, isSupplier, slotD
                                                             hover
                                                             key={'c' + idx}
                                                         >
-                                                            <TableCell>
+                                                            <TableCell className='summary-border'>
                                                                 {count++}
                                                             </TableCell>
-                                                            <TableCell>
+                                                            <TableCell className='summary-border'>
                                                                 {product.code + ' - ' + product.product_name_en}
                                                             </TableCell>
-                                                            <TableCell>
+                                                            <TableCell className='summary-border'>
                                                                 {product.type + ' ' + product.quantity}
                                                             </TableCell>
                                                             <TableCell
                                                                 style={{ textAlign: 'center' }}
+                                                                className='summary-border'
                                                             >
                                                                 {product['quantity' + deliveryNumber]}
                                                             </TableCell>
@@ -172,6 +178,7 @@ const Results = ({ className, results, userid, callback, date, isSupplier, slotD
                                                                 <>
                                                                     <TableCell
                                                                         style={{ textAlign: 'right' }}
+                                                                        className='summary-border'
                                                                     >
                                                                         {'$ ' + purchasePrice.toFixed(2)}
                                                                     </TableCell>
@@ -201,13 +208,13 @@ const Results = ({ className, results, userid, callback, date, isSupplier, slotD
                                     TOTAL
                         </TableCell>
                                 <TableCell />
-                                <TableCell />
-                                <TableCell style={{ textAlign: 'center' }}>
+                                <TableCell className='summary-border' />
+                                <TableCell style={{ textAlign: 'center' }} className='summary-border'>
                                     {totalQuantity}
                                 </TableCell>
                                 {isSupplier && (
                                     <>
-                                        <TableCell />
+                                        <TableCell className='summary-border' />
                                         <TableCell
                                             style={{ textAlign: 'right' }}
                                         >
@@ -236,13 +243,13 @@ const Results = ({ className, results, userid, callback, date, isSupplier, slotD
                                 </TableCell>
                             </TableRow>
                             <TableRow>
-                                <TableCell>
+                                <TableCell className='summary-border'>
                                     #
                             </TableCell>
-                                <TableCell>
+                                <TableCell className='summary-border'>
                                     Customer Name
                             </TableCell>
-                                <TableCell style={{ textAlign: 'center' }}>
+                                <TableCell style={{ textAlign: 'center' }} className='summary-border'>
                                     Product Quantity
                             </TableCell>
                                 {
@@ -262,11 +269,11 @@ const Results = ({ className, results, userid, callback, date, isSupplier, slotD
                                             hover
                                             key={'sum' + indx}
                                         >
-                                            <TableCell>
+                                            <TableCell className='summary-border'>
                                                 {indx + 1}
                                             </TableCell>
-                                            <TableCell>{s.name}</TableCell>
-                                            <TableCell style={{ textAlign: 'center' }}>{s.totalQuantity}</TableCell>
+                                            <TableCell className='summary-border'>{s.name}</TableCell>
+                                            <TableCell style={{ textAlign: 'center' }} className='summary-border'>{s.totalQuantity}</TableCell>
                                             {
                                                 isSupplier && (
                                                     <TableCell style={{ textAlign: 'right' }}>{'$ ' + numberWithCommas(s.totalPrice.toFixed(2))}</TableCell>
