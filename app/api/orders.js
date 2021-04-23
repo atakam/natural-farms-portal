@@ -3,19 +3,19 @@ const ndb = require("../../databasePool");
 const { sendEmail } = require('./email');
 
 const ordersByUserRouter = (req, res) => {
-    const id = req.params.id;
-    const db = ndb();
-    db.query(
-      "SELECT *, form_completion.id AS formid, users.email AS userEmail, representative.name AS repName FROM form_completion LEFT JOIN users ON users.id = form_completion.customer_id LEFT JOIN representative ON representative.id = form_completion.representative_id WHERE form_completion.customer_id = ?",
-      id,
-      (err, result) => {
-        if (err) {
-          res.send({ err: err });
-        }
-        res.send(result);
+  const id = req.params.id;
+  const db = ndb();
+  db.query(
+    "SELECT *, form_completion.id AS formid, users.email AS userEmail, representative.name AS repName FROM form_completion LEFT JOIN users ON users.id = form_completion.customer_id LEFT JOIN representative ON representative.id = form_completion.representative_id WHERE form_completion.customer_id = ?",
+    id,
+    (err, result) => {
+      if (err) {
+        res.send({ err: err });
       }
-    );
-    db.end();
+      res.send(result);
+    }
+  );
+  db.end();
 }
 
 const orders = (req, res) => {
@@ -50,106 +50,106 @@ const orderFormByFormId = (req, res) => {
 
 const createOrder = (req, res) => {
   const {
-      conditions_firstdeliverydate,
-      conditions_seconddeliverydate,
-      conditions_thirddeliverydate,
-      deposit,
-      price,
-      rebate,
-      signature_address,
-      signature_consumer_name,
-      signature_merchant_name,
-      signature_date,
-      total,
-      total_points,
-      customer_id,
-      representative_id,
-      notice
-    } = req.body;
+    conditions_firstdeliverydate,
+    conditions_seconddeliverydate,
+    conditions_thirddeliverydate,
+    deposit,
+    price,
+    rebate,
+    signature_address,
+    signature_consumer_name,
+    signature_merchant_name,
+    signature_date,
+    total,
+    total_points,
+    customer_id,
+    representative_id,
+    notice
+  } = req.body;
 
-    const newOrders = {
-      conditions_firstdeliverydate,
-      conditions_seconddeliverydate,
-      conditions_thirddeliverydate,
-      deposit,
-      price,
-      rebate,
-      signature_address,
-      signature_consumer_name,
-      signature_merchant_name,
-      signature_date,
-      total,
-      total_points,
-      customer_id,
-      representative_id,
-      confirm1: 0,
-      edited_points: -1,
-      edited_price: -1,
-      edited_rebate: -1,
-      edited_deposit: -1,
-      edited_total: -1,
-      notice
-    };
+  const newOrders = {
+    conditions_firstdeliverydate,
+    conditions_seconddeliverydate,
+    conditions_thirddeliverydate,
+    deposit,
+    price,
+    rebate,
+    signature_address,
+    signature_consumer_name,
+    signature_merchant_name,
+    signature_date,
+    total,
+    total_points,
+    customer_id,
+    representative_id,
+    confirm1: 0,
+    edited_points: -1,
+    edited_price: -1,
+    edited_rebate: -1,
+    edited_deposit: -1,
+    edited_total: -1,
+    notice
+  };
 
-    const db = ndb();
-    db.query(
-      "INSERT INTO form_completion SET ?",
-      newOrders,
-      (err, result) => {
-        if (err) {
-          res.send({ err: err });
-        }
-        res.send(result);
+  const db = ndb();
+  db.query(
+    "INSERT INTO form_completion SET ?",
+    newOrders,
+    (err, result) => {
+      if (err) {
+        res.send({ err: err });
       }
-    );
-    db.end();
+      res.send(result);
+    }
+  );
+  db.end();
 }
 
 const createOrderDetails = (req, res) => {
   const {
-      form_id,
-      product_details_id,
-      quantity1,
-      quantity2,
-      quantity3
-    } = req.body;
+    form_id,
+    product_details_id,
+    quantity1,
+    quantity2,
+    quantity3
+  } = req.body;
 
-    const orderDetails = {
-      form_id,
-      product_details_id,
-      quantity1,
-      quantity2,
-      quantity3
-    };
+  const orderDetails = {
+    form_id,
+    product_details_id,
+    quantity1,
+    quantity2,
+    quantity3
+  };
 
-    const db = ndb();
-    db.query(
-      "INSERT INTO orders SET ?",
-      orderDetails,
-      (err, result) => {
-        if (err) {
-          res.send({ err: err });
-        }
-        res.send(result);
+  const db = ndb();
+  db.query(
+    "INSERT INTO orders SET ?",
+    orderDetails,
+    (err, result) => {
+      if (err) {
+        res.send({ err: err });
       }
-    );
-    db.end();
+      res.send(result);
+    }
+  );
+  db.end();
 }
 
 const deleteUpdatedOrderDetails = (req, res) => {
-    const formid = req.params.formid;
-    const db = ndb();
-    db.query(
-      "DELETE FROM orders_updates WHERE form_id = ?",
-      formid,
-      (err, result) => {
-        if (err) {
-          res.send({ err: err });
-        }
-        res.send(result)
+  const formid = req.params.formid;
+  const db = ndb();
+  db.query(
+    "DELETE FROM orders_updates WHERE form_id = ?",
+    formid,
+    (err, result) => {
+      if (err) {
+        res.send({ err: err });
       }
-    );
-    db.end();
+      res.send(result)
+    }
+  );
+  db.end();
 }
 
 const deleteOriginalOrderDetails = (req, res) => {
@@ -418,7 +418,7 @@ const updateOrderFormById = (req, res) => {
     notice
   };
 
-  console.log({order})
+  console.log({ order })
 
   order = clean(order);
 
@@ -442,7 +442,7 @@ const resetOrder = (req, res) => {
     status: 1,
     edited_deposit: -1,
     edited_price: -1,
-    edited_rebate:-1,
+    edited_rebate: -1,
     edited_points: -1
   }
 
@@ -462,7 +462,7 @@ const resetOrder = (req, res) => {
           if (err2) {
             res.send({ err: err2 });
           }
-          res.send({result, result2});
+          res.send({ result, result2 });
         }
       );
       db2.end();
@@ -584,7 +584,7 @@ const getSummary = (req, res) => {
   console.log('SUMMARY CHECK');
   const db = ndb();
   db.query(
-    "SELECT * FROM form_completion LEFT JOIN orders ON orders.form_id = form_completion.id LEFT JOIN products_details ON products_details.id = orders.product_details_id LEFT JOIN products ON products.id = products_details.product_id LEFT JOIN product_packaging ON product_packaging.id = products_details.packaging_id LEFT JOIN users ON users.id = form_completion.customer_id WHERE form_completion.conditions_firstdeliverydate = ? OR form_completion.conditions_seconddeliverydate = ? OR form_completion.conditions_thirddeliverydate = ?",
+    "SELECT *, products.name_en AS product_name_en, products.name_fr AS product_name_fr, products_category.name_en AS category_name_en, products_category.name_fr AS category_name_fr FROM form_completion LEFT JOIN orders ON orders.form_id = form_completion.id LEFT JOIN products_details ON products_details.id = orders.product_details_id LEFT JOIN products ON products.id = products_details.product_id LEFT JOIN product_packaging ON product_packaging.id = products_details.packaging_id LEFT JOIN users ON users.id = form_completion.customer_id LEFT JOIN products_category ON products_category.id = products.category_id WHERE form_completion.conditions_firstdeliverydate = ? OR form_completion.conditions_seconddeliverydate = ? OR form_completion.conditions_thirddeliverydate = ?",
     [date, date, date],
     (err, result) => {
       if (err) {
@@ -597,26 +597,26 @@ const getSummary = (req, res) => {
 }
 
 module.exports = {
-    ordersByUserRouter,
-    orders,
-    deleteForm,
-    originalOrders,
-    updatedOrders,
-    modifiedFormOrders,
-    getUpdates,
-    updateOrderConfirmDeliverById,
-    updateDeliveryDateById,
-    getStatistics,
-    getSummary,
-    createOrder,
-    createOrderDetails,
-    updateOrderFormById,
-    deleteUpdatedOrderDetails,
-    deleteOriginalOrderDetails,
-    updateOrderDetails,
-    getOrderDetailsByFormId,
-    getUpdateDetailsByFormId,
-    updateOrderSalesRepById,
-    resetOrder,
-    orderFormByFormId
+  ordersByUserRouter,
+  orders,
+  deleteForm,
+  originalOrders,
+  updatedOrders,
+  modifiedFormOrders,
+  getUpdates,
+  updateOrderConfirmDeliverById,
+  updateDeliveryDateById,
+  getStatistics,
+  getSummary,
+  createOrder,
+  createOrderDetails,
+  updateOrderFormById,
+  deleteUpdatedOrderDetails,
+  deleteOriginalOrderDetails,
+  updateOrderDetails,
+  getOrderDetailsByFormId,
+  getUpdateDetailsByFormId,
+  updateOrderSalesRepById,
+  resetOrder,
+  orderFormByFormId
 };

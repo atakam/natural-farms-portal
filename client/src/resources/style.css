@@ -89,3 +89,33 @@ tr:nth-child(even) {background-color: #f2f2f2;}
     height: 100px;
     position: absolute;
 }
+
+.rbc-row-content {
+    cursor: pointer;
+}
+
+.text-right {
+    text-align: right !important;
+}
+
+.summaryCategory {
+    font-size: 18px !important;
+    font-weight: 500 !important;
+    padding: 15px !important;
+}
+
+td.MuiTableCell-root.MuiTableCell-body {
+    padding: 10px !important;
+}
+
+.summary-top-description {
+    display: flex;
+}
+
+.summary-top-description > div {
+    width: 50%;
+}
+
+.summary-top-description > div.align-right {
+    text-align: right;
+}

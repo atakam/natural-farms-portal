@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import {
   Container,
   Card,
@@ -15,21 +15,21 @@ import Results from './Results';
 import MapView from './MapView';
 
 const SummaryOrderView = ({
-    title,
-    subtitle,
-    isSupplier,
-    summary,
-    updateCallback,
-    cancel,
-    slotDate
+  title,
+  subtitle,
+  isSupplier,
+  summary,
+  updateCallback,
+  cancel,
+  slotDate
 }) => {
   const [showMap, setShowMap] = useState(false);
   const [addresses, setAddresses] = useState([]);
 
   const showMapView = () => {
     let results = summary.reduce((r, a) => {
-        r[a.form_id] = [...r[a.form_id] || [], a];
-        return r;
+      r[a.form_id] = [...r[a.form_id] || [], a];
+      return r;
     }, {});
     results = Object.values(results);
     const adds = results.map((user) => {
@@ -48,87 +48,106 @@ const SummaryOrderView = ({
   }
 
   const printDiv = () => {
-    const mywindow = window.open('', 'PRINT', 'height=400,width=600');
+    // const mywindow = window.open('', 'PRINT', 'height=400,width=600');
 
-    mywindow.document.write('<html><head><title>' + document.title  + '</title><style>');
-    const styles = document.head.getElementsByTagName('style')
-    for (let i=0; i<styles.length; i++) {
-      mywindow.document.write(styles[i].innerHTML);
+    // mywindow.document.write('<html><head>' + document.head.innerHTML);
+    // mywindow.document.write('</head><body >');
+    // mywindow.document.write('<h1>' + document.title + '</h1>');
+    // mywindow.document.write(document.getElementById('printDiv').innerHTML);
+    // mywindow.document.write('</body></html>');
+
+    // mywindow.document.close(); // necessary for IE >= 10
+    // mywindow.focus(); // necessary for IE >= 10*/
+
+    // mywindow.print();
+    // mywindow.close();
+
+    // return true;
+    // console.log('HEAD', document.head.innerHTML);
+    // console.log('CONTENT', document.getElementById('printDiv').innerHTML);
+
+    const _window = window.open('', 'PRINT', 'height=400,width=600');
+    _window.document.write(document.head.innerHTML);
+    _window.document.write(`
+    <style type="text/css" media="print">
+      @page { size: landscape; }
+      @media print {
+        table {page-break-after: always;}
+      }
+    </style>
+    <style>
+      body {
+        background-color: #fff !important;
+      }
+      tr:nth-child(even) {background-color: #f2f2f2 !important;}
+    </style>
+    `);
+    const printAreas = document.getElementsByClassName('printArea');
+    for (let i = 0; i < printAreas.length; i++) {
+      _window.document.write(printAreas[i].innerHTML);
     }
-    mywindow.document.write('</style>');
-    
-    mywindow.document.write('</head><body >');
-    mywindow.document.write('<h1>' + document.title  + '</h1>');
-    mywindow.document.write(document.getElementById('printDiv').innerHTML);
-    mywindow.document.write('</body></html>');
-
-    mywindow.document.close(); // necessary for IE >= 10
-    mywindow.focus(); // necessary for IE >= 10*/
-
-    mywindow.print();
-    mywindow.close();
-
-    return true;
+    _window.document.write('<script>window.print();window.close();</script>');
+    //_window.print();
   }
 
   return (
-    <Container maxWidth="lg">
+    <Container maxWidth="lg" id='printDiv'>
       <Card>
-            <CardHeader
-                subheader={subtitle}
-                title={slotDate}
-                action={
-                  <>
-                  {
-                    showMap ? (
-                      <IconButton
-                          color="primary"
-                          size="medium"
-                          variant="contained"
-                          onClick={hideMapView}
-                      >
-                          <ListIcon /> 
-                      </IconButton>
-                    ) : (
-                      <IconButton
-                          color="primary"
-                          size="medium"
-                          variant="contained"
-                          onClick={showMapView}
-                      >
-                          <RoomIcon /> 
-                      </IconButton>
-                    )
-                  }
-                  {
-                    showMap ? <></> : (
-                      <IconButton
-                          color="primary"
-                          size="medium"
-                          variant="contained"
-                          onClick={printDiv}
-                      >
-                          <PrintIcon /> 
-                      </IconButton>
-                    )
-                  }
+        <CardHeader
+          subheader={subtitle}
+          title={slotDate}
+          action={
+            <>
+              {
+                showMap ? (
                   <IconButton
-                      color="primary"
-                      size="medium"
-                      variant="contained"
-                      onClick={cancel}
+                    color="primary"
+                    size="medium"
+                    variant="contained"
+                    onClick={hideMapView}
                   >
-                      <CloseIcon /> 
+                    <ListIcon />
                   </IconButton>
-                  </>
-                }
-            />
-            <Divider />
-            <CardContent>
-                {
-                    showMap ? <MapView addresses={addresses} /> : <Results results={summary} isSupplier={isSupplier} callback={updateCallback} date={title} />
-                }
-            </CardContent>
+                ) : (
+                  <IconButton
+                    color="primary"
+                    size="medium"
+                    variant="contained"
+                    onClick={showMapView}
+                  >
+                    <RoomIcon />
+                  </IconButton>
+                )
+              }
+              {
+                showMap ? <></> : (
+                  <IconButton
+                    color="primary"
+                    size="medium"
+                    variant="contained"
+                    onClick={printDiv}
+                  >
+                    <PrintIcon />
+                  </IconButton>
+                )
+              }
+              <IconButton
+                color="primary"
+                size="medium"
+                variant="contained"
+                onClick={cancel}
+              >
+                <CloseIcon />
+              </IconButton>
+            </>
+          }
+        />
+        <Divider />
+        <CardContent>
+          {
+            showMap ? <MapView addresses={addresses} /> : <Results results={summary} isSupplier={isSupplier} callback={updateCallback} date={title} slotDate={slotDate} />
+          }
+        </CardContent>
       </Card>
     </Container>
   );
